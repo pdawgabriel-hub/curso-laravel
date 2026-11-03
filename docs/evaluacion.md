@@ -21,7 +21,7 @@ El proyecto se evalúa con tests automáticos, en dos niveles:
 La batería se entrega como una carpeta `tests/` completa que sustituye a la del proyecto. **El proyecto está aprobado cuando toda la batería está en verde**, igual que se haría con una batería entregada al final de un módulo: no se conocen los tests de antemano, pero sí el contrato que comprueban.
 
 {: .importante }
-Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. Hasta entonces la referencia es el [contrato de la API](contrato-api.html): rutas, campos, `$fillable`, validaciones y códigos de respuesta.
+Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en los apartados [6.2](RA6_2_modelos.html) y [6.6](RA6_6_relaciones.html). Hasta entonces la referencia es el [contrato de la API](contrato-api.html): rutas, campos, `$fillable`, validaciones y códigos de respuesta.
 
 ## Contenido de la batería
 

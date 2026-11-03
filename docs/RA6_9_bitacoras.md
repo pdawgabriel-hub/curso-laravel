@@ -1,0 +1,59 @@
+---
+title: 6.9. Bitácoras y adjuntos
+parent: Bloque 6. Acceso a datos
+nav_order: 9
+---
+
+# 6.9. Bitácoras y adjuntos
+{: .no_toc }
+
+{: .nota }
+> **Referencia teórica:** [Utilizar ficheros](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/0476_utilizarFicheros.html) · [Laravel: Polymorphic Relationships](https://laravel.com/docs/13.x/eloquent-relationships#polymorphic-relationships) · [Laravel: File Storage](https://laravel.com/docs/13.x/filesystem)
+
+1. TOC
+{:toc}
+
+## Objetivo
+
+Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres tablas en lugar de las 21 que tenía el módulo de Odoo.
+
+## Conceptos clave
+
+- **Relación polimórfica**: `observaciones.observable_type` + `observable_id` apuntan a cualquier modelo. `morphMany(Observacion::class, 'observable')` en el padre, `morphTo()` en el hijo.
+- **Mapa polimórfico** con `Relation::enforceMorphMap([...])` en `AppServiceProvider::boot()`: en `*_type` se guarda `obras` en vez de `App\Models\Obra`. Las claves coinciden con los segmentos de URL de la API (`partes-trabajo`), lo que permite resolver el padre desde la ruta en el Bloque 7. Como `enforceMorphMap` obliga a registrar **todos** los modelos que participan en relaciones polimórficas, también va `'users' => User::class` (Sanctum guarda los tokens de forma polimórfica).
+- `Storage::put()`, `$file->store('archivos/obras')`, `Storage::delete($ruta)`, `Storage::download($ruta, $nombre)`; en los tests, `Storage::fake()`.
+
+## Ejercicios
+
+### Ejercicio 1. Trait TieneBitacoras
+
+Trait con `observaciones()`, `incidencias()` (ambas ordenadas de la más nueva a la más antigua) y `archivos()`, y un evento `deleting` que borra las tres. Los archivos se borran **uno a uno** para que se dispare su propio `deleting`.
+
+### Ejercicio 2. Modelos Observacion, Incidencia y Archivo
+
+- `Observacion` e `Incidencia`: `texto`, `user_id` y la relación `usuario()`.
+- `Archivo`: `nombre_archivo`, `ruta` y `tipo` (`imagen`, `pdf`, `otro`), y en `deleting` borra su fichero del disco.
+
+### Ejercicio 3. Mapa polimórfico
+
+Registrar en `AppServiceProvider` las claves `users`, `clientes`, `trabajadores`, `proveedores`, `especialistas`, `obras`, `presupuestos`, `gastos`, `ingresos`, `partes-trabajo`, `partes-proveedor` y `partes-especialista`.
+
+### Ejercicio 4. En las vistas
+
+En los detalles de las entidades que los admiten (lista en el [contrato](contrato-api.html#bitácoras-y-adjuntos)):
+
+- Sección de observaciones e incidencias con un formulario de una sola línea; el autor es el usuario conectado y se muestra con la fecha.
+- Sección de adjuntos con subida de fichero (`enctype="multipart/form-data"`), descarga y borrado.
+
+## Comprobación
+
+```bash
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_9_BitacorasTest.php tests/Feature/
+php artisan test
+```
+
+Resultado esperado: `RA6_9`: `Tests: 5 passed`, y todo el bloque en verde.
+
+## Git
+
+Rama `RA6_9`. Al fusionar: `git tag -a bloque-6 -m "Bloque 6: acceso a datos" && git push --tags`.
