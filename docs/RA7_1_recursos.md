@@ -52,6 +52,9 @@ Sin `->name('api.')`, los nombres de las rutas de la API (`clientes.index`) sust
 
 `php artisan make:controller API/ClienteController --api` y `ClienteResource`. Validación, respuestas y regla de borrado según el contrato. Para la validación, el mismo `ClienteRequest` de la web sirve si sus reglas usan `sometimes|required` en la actualización, o se crea uno específico de la API.
 
+{: .aviso }
+La autorización (`Gate::authorize()`) se añade en [7.4](RA7_4_autorizacion.html): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
+
 ### Ejercicio 3. Resto de recursos
 
 Aplicar el patrón a todos los recursos del contrato, en este orden: trabajadores y faltas, proveedores, especialistas, presupuestos y líneas, obras (con `ObraService`), gastos (`only(['index', 'show', 'update'])`), ingresos, partes de trabajo y sus líneas, partes de proveedor y de especialista.
