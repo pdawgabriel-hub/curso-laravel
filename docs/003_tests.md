@@ -19,6 +19,8 @@ Comprobar cada apartado con tests automáticos, en local y en cada push a GitHub
 
 ## Cómo son los tests de los apartados
 
+Los apuntes se clonan junto a la aplicación (`~/Documentos/laravel/curso-laravel`, apartado [5.1](RA5_1_instalacion.html)), de modo que desde el `workspace` están en `/var/www/curso-laravel`.
+
 Cada apartado tiene un fichero `RAx_y_NombreTest.php` en [`docs/materiales/tests/`](https://github.com/pdawgabriel-hub/curso-laravel/tree/main/docs/materiales/tests). Se copia a `tests/Feature/` de la aplicación y se ejecuta filtrando por su nombre:
 
 ```bash

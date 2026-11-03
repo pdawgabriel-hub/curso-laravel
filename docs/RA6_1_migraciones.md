@@ -29,18 +29,24 @@ Crear con migraciones el esquema completo de la aplicación sobre MariaDB, con s
 
 ### Ejercicio 1. Conexión con MariaDB
 
-En `.env`:
+En phpMyAdmin (<http://localhost:8081>), *Cuentas de usuarios* → *Agregar cuenta de usuario*: usuario `gestion`, contraseña `gestion`, y marcar **Crear base de datos con el mismo nombre y otorgar todos los privilegios**.
+
+En el `.env` del proyecto:
 
 ```ini
 DB_CONNECTION=mariadb
 DB_HOST=mariadb
-DB_PORT=3306
-DB_DATABASE=gestion_obras
+DB_DATABASE=gestion
 DB_USERNAME=gestion
 DB_PASSWORD=gestion
 ```
 
-`php artisan migrate` crea las tablas del esqueleto en `gestion_obras` (comprobarlo en phpMyAdmin).
+```bash
+php artisan migrate:install
+php artisan migrate
+```
+
+En phpMyAdmin deben aparecer la tabla `migrations` y las del esqueleto.
 
 ### Ejercicio 2. Esquema completo
 

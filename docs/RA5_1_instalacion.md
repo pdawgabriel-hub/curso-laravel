@@ -37,7 +37,7 @@ docker run -it --rm -v "$PWD:/usr/src/app" thecodingmachine/php:8.4-v4-slim-cli 
 
 ### Ejercicio 2. Primer commit y repositorio en GitHub
 
-Crear en GitHub el repositorio vacío `gestion-obras-laravel` (sin README ni `.gitignore`) y subir el esqueleto:
+Crear en GitHub el repositorio **vacío** `gestion-obras-laravel` (sin README, `.gitignore` ni licencia) y subir el esqueleto:
 
 ```bash
 cd gestion-obras
@@ -48,21 +48,61 @@ git remote add origin git@github.com:<usuario>/gestion-obras-laravel.git
 git push -u origin main
 ```
 
-### Ejercicio 3. Servir la aplicación
+{: .nota }
+El orden es este (primero el proyecto, después el repositorio) porque `composer create-project` exige que la carpeta de destino no exista o esté vacía: no se puede generar dentro de un clon, que ya contiene `.git`. Por la misma razón, el repositorio de GitHub debe crearse vacío; si trae un README, el primer `push` es rechazado.
 
-Con el sitio de nginx del [apartado 0.1](001_laradock.html), dentro del `workspace`:
+### Ejercicio 3. Un terminal dentro de workspace
 
 ```bash
-cd /var/www/gestion-obras
-php artisan migrate
-npm install && npm run build
+cd ~/Documentos/laravel/laradock
+docker compose up -d nginx php-fpm workspace
+docker compose exec --user=laradock --workdir /var/www/gestion-obras workspace bash
+```
+
+Para salir: `exit`. Comprobar la instalación desde ese terminal:
+
+```bash
+php artisan about
+```
+
+{: .consejo }
+En otro equipo, o tras borrar la carpeta, el proyecto se recupera clonándolo y regenerando lo que el `.gitignore` excluye:
+`git clone git@github.com:<usuario>/gestion-obras-laravel.git gestion-obras`, y en el `workspace`, `composer install`, `cp .env.example .env`, `php artisan key:generate` y `php artisan migrate`.
+
+### Ejercicio 4. El sitio de nginx
+
+En la máquina, no en el `workspace`:
+
+```bash
+cd ~/Documentos/laravel/laradock/nginx/sites
+cp laravel.conf.example gestion-obras.conf
+```
+
+En `gestion-obras.conf`, cambiar solo estas dos líneas:
+
+```nginx
+server_name gestion-obras.test;
+root /var/www/gestion-obras/public;
+```
+
+```bash
+echo "127.0.0.1  gestion-obras.test" | sudo tee -a /etc/hosts
+cd ~/Documentos/laravel/laradock
+docker compose restart nginx
 ```
 
 <http://gestion-obras.test> debe mostrar la página de bienvenida de Laravel.
 
-### Ejercicio 4. Integración continua
+### Ejercicio 5. Integración continua
 
-Añadir el workflow del [apartado 0.3](003_tests.html) y comprobar en la pestaña *Actions* que los tests de ejemplo del esqueleto pasan.
+Clonar los apuntes junto al proyecto, para tener a mano las plantillas y los tests ([0.3](003_tests.html)):
+
+```bash
+cd ~/Documentos/laravel
+git clone git@github.com:pdawgabriel-hub/curso-laravel.git
+```
+
+En el `workspace`, añadir el workflow y comprobar en la pestaña *Actions* que los tests de ejemplo del esqueleto pasan:
 
 ```bash
 git switch -c RA5_1
@@ -71,9 +111,9 @@ git add .github && git commit -m "chore: ejecuta los tests en GitHub Actions"
 git push -u origin RA5_1
 ```
 
-### Ejercicio 5. README de la aplicación
+### Ejercicio 6. README de la aplicación
 
-Sustituir el `README.md` del esqueleto por uno propio: qué es la aplicación, cómo se instala en local (los comandos del ejercicio 3 tras clonar) y la insignia de la CI.
+Sustituir el `README.md` del esqueleto por uno propio: qué es la aplicación, cómo se instala en local (los comandos del consejo del ejercicio 3) y la insignia de la CI.
 
 ## Comprobación
 
