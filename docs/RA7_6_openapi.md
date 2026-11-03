@@ -1,19 +1,6 @@
----
-title: 7.6. Documentación OpenAPI
-parent: Bloque 7. Servicios web
-nav_order: 6
----
-
 # 7.6. Documentación OpenAPI
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [OpenAPI Specification 3.0](https://spec.openapis.org/oas/v3.0.3) · [Swagger UI](https://swagger.io/tools/swagger-ui/)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [OpenAPI Specification 3.0](https://spec.openapis.org/oas/v3.0.3) · [Swagger UI](https://swagger.io/tools/swagger-ui/)
 
 Publicar la especificación de la API en formato OpenAPI 3 y una página con Swagger UI para probarla desde el navegador.
 
@@ -30,7 +17,7 @@ Publicar la especificación de la API en formato OpenAPI 3 y una página con Swa
 3. Vista `documentacion.blade.php` con Swagger UI y la ruta web `GET /api/documentacion`.
 4. Completar la especificación con el resto de recursos.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_6_DocumentacionApiTest.php tests/Feature/
@@ -41,4 +28,8 @@ Resultado esperado: `Tests: 4 passed`. Además, en <http://gestion-obras.test/ap
 
 ## Git
 
-Rama `RA7_6`. Al fusionar: `git tag -a bloque-7 -m "Bloque 7: servicios web" && git push --tags`, y empezar la [evaluación](evaluacion.html).
+Rama `RA7_6`. Al fusionar: `git tag -a bloque-7 -m "Bloque 7: servicios web" && git push --tags`, y empezar la [evaluación](./evaluacion.md).
+
+---
+
+**Siguiente:** [8.1. React-Admin sobre la API](./RA8_1_reactAdmin.md)

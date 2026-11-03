@@ -1,19 +1,6 @@
----
-title: 9.1. Documentos PDF
-parent: Bloque 9. Aplicaciones híbridas
-nav_order: 1
----
-
 # 9.1. Documentos PDF
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [laravel-dompdf](https://github.com/barryvdh/laravel-dompdf) · [Laravel: Responses](https://laravel.com/docs/13.x/responses#file-responses)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [laravel-dompdf](https://github.com/barryvdh/laravel-dompdf) · [Laravel: Responses](https://laravel.com/docs/13.x/responses#file-responses)
 
 Los tres informes del módulo de Odoo: el presupuesto para entregar al cliente, el parte de trabajo y el seguimiento de gastos de la obra.
 
@@ -38,7 +25,7 @@ Los tres informes del módulo de Odoo: el presupuesto para entregar al cliente, 
 4. **Seguimiento de gastos**: datos de la obra y de su ficha (fechas, licencia, ICIO), costes por tipo, ingresos, beneficio real y pendiente.
 5. Botón *Imprimir* en el detalle de cada uno de los tres.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque9/RA9_1_PdfTest.php tests/Feature/
@@ -50,3 +37,7 @@ Resultado esperado: `Tests: 5 passed`.
 ## Git
 
 Rama `RA9_1`, commit `feat: informes PDF de presupuesto, parte y seguimiento`.
+
+---
+
+**Siguiente:** [9.2. Correo electrónico](./RA9_2_correo.md)

@@ -1,45 +1,5 @@
 title: Gestión de Obras con Laravel
 description: Construcción paso a paso de un ERP de obras y reformas con Laravel 13
 lang: es
-
-remote_theme: just-the-docs/just-the-docs@v0.10.1
-plugins:
-  - jekyll-remote-theme
-
-color_scheme: light
-search_enabled: true
-search:
-  button: true
-  placeholder: Buscar en los apuntes
-heading_anchors: true
-back_to_top: true
-back_to_top_text: Volver arriba
-
-aux_links:
-  "Repositorio de los apuntes":
-    - "https://github.com/pdawgabriel-hub/curso-laravel"
-aux_links_new_tab: true
-
-gh_edit_link: true
-gh_edit_link_text: Editar esta página en GitHub
-gh_edit_repository: "https://github.com/pdawgabriel-hub/curso-laravel"
-gh_edit_branch: main
-gh_edit_source: docs
-gh_edit_view_mode: tree
-
-callouts_level: quiet
-callouts:
-  nota:
-    title: Nota
-    color: blue
-  consejo:
-    title: Consejo
-    color: green
-  aviso:
-    title: Aviso
-    color: yellow
-  importante:
-    title: Importante
-    color: red
-
-footer_content: "Apuntes de práctica de Desarrollo Web en Entorno Servidor con Laravel 13."
+theme: jekyll-theme-primer
+repository: pdawgabriel-hub/curso-laravel

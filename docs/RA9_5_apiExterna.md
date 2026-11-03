@@ -1,19 +1,6 @@
----
-title: 9.5. Consumir una API externa
-parent: Bloque 9. Aplicaciones híbridas
-nav_order: 5
----
-
 # 9.5. Consumir una API externa
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Consumiendo API externas](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/12_apiExterna.html) · [Laravel: HTTP Client](https://laravel.com/docs/13.x/http-client) · [Nominatim](https://nominatim.org/release-docs/latest/api/Search/)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Consumiendo API externas](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/12_apiExterna.html) · [Laravel: HTTP Client](https://laravel.com/docs/13.x/http-client) · [Nominatim](https://nominatim.org/release-docs/latest/api/Search/)
 
 Obtener las coordenadas de la dirección de una obra con el servicio público de geocodificación de OpenStreetMap (Nominatim) y mostrarla en un mapa.
 
@@ -35,7 +22,7 @@ Obtener las coordenadas de la dirección de una obra con el servicio público de
    - **503** si el servicio falla o no responde.
 3. Mapa en el detalle de la obra con [Leaflet](https://leafletjs.com/) (desde un CDN) y un marcador en las coordenadas.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque9/RA9_5_ApiExternaTest.php tests/Feature/
@@ -47,3 +34,7 @@ Resultado esperado: `Tests: 6 passed`. Ninguno de los tests llama de verdad a No
 ## Git
 
 Rama `RA9_5`. Al fusionar: `git tag -a bloque-9 -m "Bloque 9: aplicaciones híbridas" && git push --tags`.
+
+---
+
+**Siguiente:** [Anexo. Escenario de prueba completo](./anexo_escenario.md)

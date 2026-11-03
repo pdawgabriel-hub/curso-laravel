@@ -1,19 +1,6 @@
----
-title: 6.4. Query Builder
-parent: Bloque 6. Acceso a datos
-nav_order: 4
----
-
 # 6.4. Query Builder
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Constructor de consultas (Query Builder)](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/046_queryBuilder.html) · [Laravel: Queries](https://laravel.com/docs/13.x/queries)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Constructor de consultas (Query Builder)](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/046_queryBuilder.html) · [Laravel: Queries](https://laravel.com/docs/13.x/queries)
 
 Resolver con el Query Builder (`DB::table()`) y con Eloquent las consultas de negocio que más adelante usarán el panel de análisis y la API.
 
@@ -41,8 +28,12 @@ Resolver en `php artisan tinker`, sobre los datos de demostración, primero con 
 
 ## Comprobación
 
-Cada consulta debe devolver el mismo resultado con `DB::table()` y con Eloquent. La consulta 10 se puede contrastar con el resultado de [6.7](RA6_7_calculos.html).
+Cada consulta debe devolver el mismo resultado con `DB::table()` y con Eloquent. La consulta 10 se puede contrastar con el resultado de [6.7](./RA6_7_calculos.md).
 
 ## Git
 
 Rama `RA6_4`, commit `docs: consultas de negocio con Query Builder`.
+
+---
+
+**Siguiente:** [6.5. CRUD web con base de datos](./RA6_5_crud.md)

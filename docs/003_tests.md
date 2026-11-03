@@ -1,25 +1,12 @@
----
-title: 0.3. Tests e integración continua
-parent: Bloque 0. Entorno y forma de trabajo
-nav_order: 3
----
-
 # 0.3. Tests e integración continua
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Testing en Laravel](https://laravel.com/docs/13.x/testing) · [HTTP Tests](https://laravel.com/docs/13.x/http-tests) · [Database Testing](https://laravel.com/docs/13.x/database-testing)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Testing en Laravel](https://laravel.com/docs/13.x/testing) · [HTTP Tests](https://laravel.com/docs/13.x/http-tests) · [Database Testing](https://laravel.com/docs/13.x/database-testing)
 
 Comprobar cada apartado con tests automáticos, en local y en cada push a GitHub.
 
 ## Cómo son los tests de los apartados
 
-Los apuntes se clonan junto a la aplicación (`~/Documentos/laravel/curso-laravel`, apartado [5.1](RA5_1_instalacion.html)), de modo que desde el `workspace` están en `/var/www/curso-laravel`.
+Los apuntes se clonan junto a la aplicación (`~/Documentos/laravel/curso-laravel`, apartado [5.1](./RA5_1_instalacion.md)), de modo que desde el `workspace` están en `/var/www/curso-laravel`.
 
 Cada apartado tiene un fichero `RAx_y_NombreTest.php` en [`docs/materiales/tests/`](https://github.com/pdawgabriel-hub/curso-laravel/tree/main/docs/materiales/tests). Se copia a `tests/Feature/` de la aplicación y se ejecuta filtrando por su nombre:
 
@@ -36,8 +23,7 @@ php artisan test --filter=RA5_3
   Tests:    6 passed (32 assertions)
 ```
 
-{: .aviso }
-Los tests reflejan el estado de su apartado. Al avanzar, algunos dejan de aplicarse (por ejemplo, los de 5.3 esperan textos que en 5.4 pasan a ser vistas). Cuando eso ocurra se borran de `tests/Feature/` en el commit que los deja obsoletos.
+> **Aviso.** Los tests reflejan el estado de su apartado. Al avanzar, algunos dejan de aplicarse (por ejemplo, los de 5.3 esperan textos que en 5.4 pasan a ser vistas). Cuando eso ocurra se borran de `tests/Feature/` en el commit que los deja obsoletos.
 
 ## Piezas que conviene conocer
 
@@ -69,3 +55,7 @@ El workflow compila los assets (`npm run build`), porque los tests de Breeze ren
 2. Hacer un push con un test que falle a propósito, ver la ejecución en rojo en la pestaña *Actions* y corregirlo.
 3. Añadir la insignia del workflow al `README.md` de la aplicación:
    `![tests](https://github.com/<usuario>/gestion-obras-laravel/actions/workflows/tests.yml/badge.svg)`
+
+---
+
+**Siguiente:** [0.4. De Odoo a Laravel](./004_de_odoo_a_laravel.md)

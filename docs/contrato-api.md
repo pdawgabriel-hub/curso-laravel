@@ -1,15 +1,6 @@
----
-title: Contrato de la API
-nav_order: 10
----
-
 # Contrato de la API
-{: .no_toc }
 
-Especificación de la API REST y de los modelos que comprueban los tests del Bloque 7 y la [batería de evaluación](evaluacion.html). Cualquier implementación que cumpla esta página pasa los tests.
-
-1. TOC
-{:toc}
+Especificación de la API REST y de los modelos que comprueban los tests del Bloque 7 y la [batería de evaluación](./evaluacion.md). Cualquier implementación que cumpla esta página pasa los tests.
 
 ## Convenciones generales
 
@@ -151,7 +142,7 @@ Respuesta: campos + `id, codigo, anio, base_imponible, cuota_iva, total, proveed
 
 Al crear una obra se crea **en la misma transacción** su ficha de Gastos (`GAS0001`).
 
-Respuesta: `id, codigo, descripcion, cliente_id, total, horas_totales, coste_moo, estado_pago, gastos_totales, beneficio, pendiente_cobro, margen_proyectado, porcentaje_cobrado, salud, gasto_id, created_at, updated_at` (fórmulas en [0.4](004_de_odoo_a_laravel.html#reglas-de-negocio)).
+Respuesta: `id, codigo, descripcion, cliente_id, total, horas_totales, coste_moo, estado_pago, gastos_totales, beneficio, pendiente_cobro, margen_proyectado, porcentaje_cobrado, salud, gasto_id, created_at, updated_at` (fórmulas en [0.4](./004_de_odoo_a_laravel.md#reglas-de-negocio)).
 
 Borrar: con ingresos → **409** y no se toca nada; sin ingresos → se borran sus partes (con sus líneas, bitácoras y adjuntos), su ficha de Gastos y sus bitácoras y adjuntos, y sus presupuestos quedan con `obra_id = null`.
 
@@ -160,7 +151,7 @@ Borrar: con ingresos → **409** y no se toca nada; sin ingresos → se borran s
 | GET `/obras/{obra}/presupuestos-disponibles` | Presupuestos sin obra (y del cliente de la obra, si tiene) |
 | POST `/obras/{obra}/vincular-presupuesto` | `{ presupuesto_id }` → **200** con el presupuesto. Solo presupuestos sin obra y del mismo cliente; si no **422** en `presupuesto_id` |
 | GET `/obras/{obra}/trabajadores` · `/proveedores` · `/especialistas` | Participantes deducidos de sus partes, sin repetir |
-| GET `/obras/{obra}/ubicacion` | Ver [9.5](RA9_5_apiExterna.html) |
+| GET `/obras/{obra}/ubicacion` | Ver [9.5](./RA9_5_apiExterna.md) |
 
 ## Ficha de Gastos
 

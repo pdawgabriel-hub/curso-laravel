@@ -1,19 +1,6 @@
----
-title: 5.2. Estructura y configuración
-parent: Bloque 5. Introducción a Laravel
-nav_order: 2
----
-
 # 5.2. Estructura y configuración
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Estructura de un proyecto, configuración y Artisan](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_2_estructura.html) · [Laravel: Configuration](https://laravel.com/docs/13.x/configuration)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Estructura de un proyecto, configuración y Artisan](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_2_estructura.html) · [Laravel: Configuration](https://laravel.com/docs/13.x/configuration)
 
 Adaptar la configuración a una empresa española y crear un fichero de configuración propio con los datos de la empresa, que usarán el layout, los PDF y los correos.
 
@@ -35,41 +22,35 @@ Adaptar la configuración a una empresa española y crear un fichero de configur
 
 ## Ejercicios
 
-### Ejercicio 1. Idioma, zona horaria y datos falsos en español
+1. **Idioma, zona horaria y datos falsos en español.** En `.env` **y** en `.env.example` (la CI usa este último):
 
-En `.env` **y** en `.env.example` (la CI usa este último):
+    ```ini
+    APP_NAME="Gestión de Obras"
+    APP_LOCALE=es
+    APP_FALLBACK_LOCALE=es
+    APP_FAKER_LOCALE=es_ES
+    ```
 
-```ini
-APP_NAME="Gestión de Obras"
-APP_LOCALE=es
-APP_FALLBACK_LOCALE=es
-APP_FAKER_LOCALE=es_ES
-```
+    En `config/app.php`, `'timezone' => 'Europe/Madrid'`.
 
-En `config/app.php`, `'timezone' => 'Europe/Madrid'`.
+2. **Configuración propia.** Copiar la plantilla [`config/gestionobras.php`](https://github.com/pdawgabriel-hub/curso-laravel/blob/main/docs/materiales/plantillas/RA5_2/config/gestionobras.php):
 
-### Ejercicio 2. Configuración propia
+    ```bash
+    cp /var/www/curso-laravel/docs/materiales/plantillas/RA5_2/config/gestionobras.php config/
+    ```
 
-Copiar la plantilla [`config/gestionobras.php`](https://github.com/pdawgabriel-hub/curso-laravel/blob/main/docs/materiales/plantillas/RA5_2/config/gestionobras.php):
+    Añadir a `.env` y `.env.example` las claves `EMPRESA_NOMBRE`, `EMPRESA_CIF`, `EMPRESA_DIRECCION`, `EMPRESA_TELEFONO` y `EMPRESA_EMAIL` con los datos de la empresa.
 
-```bash
-cp /var/www/curso-laravel/docs/materiales/plantillas/RA5_2/config/gestionobras.php config/
-```
+3. **Artisan.** Explorar los comandos que se usarán a lo largo del proyecto y anotar en el README de la aplicación los más útiles:
 
-Añadir a `.env` y `.env.example` las claves `EMPRESA_NOMBRE`, `EMPRESA_CIF`, `EMPRESA_DIRECCION`, `EMPRESA_TELEFONO` y `EMPRESA_EMAIL` con los datos de la empresa.
+    ```bash
+    php artisan list
+    php artisan about
+    php artisan config:show gestionobras
+    php artisan tinker      # >>> config('gestionobras.empresa.nombre')
+    ```
 
-### Ejercicio 3. Artisan
-
-Explorar los comandos que se usarán a lo largo del proyecto y anotar en el README de la aplicación los más útiles:
-
-```bash
-php artisan list
-php artisan about
-php artisan config:show gestionobras
-php artisan tinker      # >>> config('gestionobras.empresa.nombre')
-```
-
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque5/RA5_2_ConfiguracionTest.php tests/Feature/
@@ -81,3 +62,7 @@ Resultado esperado: `Tests: 4 passed`.
 ## Git
 
 Rama `RA5_2`, commit `feat: configuración de la empresa e idioma español`.
+
+---
+
+**Siguiente:** [5.3. Rutas](./RA5_3_rutas.md)

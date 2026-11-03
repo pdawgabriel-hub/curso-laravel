@@ -1,16 +1,6 @@
----
-title: 0.4. De Odoo a Laravel
-parent: Bloque 0. Entorno y forma de trabajo
-nav_order: 4
----
-
 # 0.4. De Odoo a Laravel
-{: .no_toc }
 
 La especificación funcional de la aplicación es el informe técnico del módulo `gestion_bd` de Odoo 18. Esta página resume qué se conserva, qué cambia de nombre y cómo se traduce cada mecanismo de Odoo a Laravel.
-
-1. TOC
-{:toc}
 
 ## Modelos y tablas
 
@@ -38,8 +28,7 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `gestion.dashboard` | servicio `Estadisticas` | — | — |
 | `res.users` + grupos | `User` con columna `rol` | `users` | — |
 
-{: .nota }
-Los nombres de tabla en plural español no coinciden con los que deduce Laravel (`Trabajador` → `trabajadors`), así que todos los modelos declaran `protected $table`.
+> **Nota.** Los nombres de tabla en plural español no coinciden con los que deduce Laravel (`Trabajador` → `trabajadors`), así que todos los modelos declaran `protected $table`.
 
 ## Cambios de nombre
 
@@ -57,22 +46,22 @@ Los nombres de tabla en plural español no coinciden con los que deduce Laravel 
 
 | Odoo | Laravel | Apartado |
 |:--|:--|:--|
-| `ir.sequence` | Tabla `secuencias` + `lockForUpdate()` en una transacción | [6.8](RA6_8_transacciones.html) |
-| `create()` que asigna el código | Evento `creating` del modelo (trait `TieneCodigo`) | [6.2](RA6_2_modelos.html) |
-| `Obras.create()` que crea su Gastos | `ObraService::crear()` en una transacción | [6.8](RA6_8_transacciones.html) |
-| `Obras.unlink()` con sus reglas | `ObraService::borrar()` + `ReglaNegocioException` (409) | [6.8](RA6_8_transacciones.html) |
-| `compute=... store=True` | Accessors o servicio `ResumenFinanciero` calculados al leer | [6.7](RA6_7_calculos.html) |
-| `related='cliente_id.nombre'` | Relación + accessor, o `with()` | [6.6](RA6_6_relaciones.html) |
-| `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.6](RA6_6_relaciones.html) |
-| `@api.constrains`, `_sql_constraints` | Reglas de validación + `unique`/`foreign` en migraciones | [5.6](RA5_6_formularios.html), [6.1](RA6_1_migraciones.html) |
-| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.2](RA7_2_busqueda.html) |
-| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.4](RA7_4_autorizacion.html) |
-| `post_init_hook` (datos de demo) | `DatabaseSeeder` + factories | [6.3](RA6_3_seeders.html) |
-| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.1](RA7_1_recursos.html) |
-| Vistas list/form/kanban | Vistas Blade | [5.4](RA5_4_vistas.html) |
-| Reportes QWeb | Vistas Blade → PDF con dompdf | [9.1](RA9_1_pdf.html) |
-| Componente OWL del dashboard | Vista Blade + Chart.js sobre el servicio `Estadisticas` | [9.3](RA9_3_dashboard.html) |
-| Modelo `_auto = False` (VIEW SQL) | Servicio que une cinco consultas | [9.4](RA9_4_calendario.html) |
+| `ir.sequence` | Tabla `secuencias` + `lockForUpdate()` en una transacción | [6.8](./RA6_8_transacciones.md) |
+| `create()` que asigna el código | Evento `creating` del modelo (trait `TieneCodigo`) | [6.2](./RA6_2_modelos.md) |
+| `Obras.create()` que crea su Gastos | `ObraService::crear()` en una transacción | [6.8](./RA6_8_transacciones.md) |
+| `Obras.unlink()` con sus reglas | `ObraService::borrar()` + `ReglaNegocioException` (409) | [6.8](./RA6_8_transacciones.md) |
+| `compute=... store=True` | Accessors o servicio `ResumenFinanciero` calculados al leer | [6.7](./RA6_7_calculos.md) |
+| `related='cliente_id.nombre'` | Relación + accessor, o `with()` | [6.6](./RA6_6_relaciones.md) |
+| `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.6](./RA6_6_relaciones.md) |
+| `@api.constrains`, `_sql_constraints` | Reglas de validación + `unique`/`foreign` en migraciones | [5.6](./RA5_6_formularios.md), [6.1](./RA6_1_migraciones.md) |
+| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.2](./RA7_2_busqueda.md) |
+| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.4](./RA7_4_autorizacion.md) |
+| `post_init_hook` (datos de demo) | `DatabaseSeeder` + factories | [6.3](./RA6_3_seeders.md) |
+| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.1](./RA7_1_recursos.md) |
+| Vistas list/form/kanban | Vistas Blade | [5.4](./RA5_4_vistas.md) |
+| Reportes QWeb | Vistas Blade → PDF con dompdf | [9.1](./RA9_1_pdf.md) |
+| Componente OWL del dashboard | Vista Blade + Chart.js sobre el servicio `Estadisticas` | [9.3](./RA9_3_dashboard.md) |
+| Modelo `_auto = False` (VIEW SQL) | Servicio que une cinco consultas | [9.4](./RA9_4_calendario.md) |
 
 ## Reglas de negocio
 
@@ -147,3 +136,7 @@ ingreso.total_ingresos = Σ importe de todos los ingresos de su obra;  ingreso.d
 | `0 ≤ horas ≤ 24` | Líneas de parte de trabajo |
 | `fecha_fin ≥ fecha_inicio` | Faltas; `fin_obra ≥ inicio_obra` en Gastos |
 | No se borra un cliente con presupuestos, un trabajador con partes ni un proveedor o especialista con partes | Restricción de borrado → 409 |
+
+---
+
+**Siguiente:** [5.1. Instalación](./RA5_1_instalacion.md)

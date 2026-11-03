@@ -1,19 +1,7 @@
----
-title: 5.6. Formularios y validación
-parent: Bloque 5. Introducción a Laravel
-nav_order: 6
----
 {% raw %}
 # 5.6. Formularios y validación
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Formularios, datos de entrada, validación y redirecciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_6_formularios.html) · [Laravel: Validation](https://laravel.com/docs/13.x/validation)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Formularios, datos de entrada, validación y redirecciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_6_formularios.html) · [Laravel: Validation](https://laravel.com/docs/13.x/validation)
 
 Formularios de alta y edición de clientes, obras y trabajadores, validados con **Form Requests**, que redirigen con mensaje o vuelven con los errores y lo que se había escrito.
 
@@ -27,41 +15,37 @@ Formularios de alta y edición de clientes, obras y trabajadores, validados con 
 
 ## Ejercicios
 
-### Ejercicio 1. Formulario de clientes
+1. **Formulario de clientes.**
 
-```bash
-P=/var/www/curso-laravel/docs/materiales/plantillas/RA5_6
-cp $P/app/Http/Requests/ClienteRequest.php app/Http/Requests/
-cp $P/resources/views/clientes/*.blade.php resources/views/clientes/
-```
+    ```bash
+    P=/var/www/curso-laravel/docs/materiales/plantillas/RA5_6
+    cp $P/app/Http/Requests/ClienteRequest.php app/Http/Requests/
+    cp $P/resources/views/clientes/*.blade.php resources/views/clientes/
+    ```
 
-Añadir a `routes/clientes.php`:
+    Añadir a `routes/clientes.php`:
 
-| Método | URL | Nombre | Acción |
-|:--|:--|:--|:--|
-| POST | `/clientes/store` | `clientes.store` | `store(ClienteRequest $request)` → redirige a `clientes.index` con `mensaje` |
-| PUT | `/clientes/update/{id}` | `clientes.update` | `update(ClienteRequest $request, int $id)` → redirige a `clientes.show` |
+    | Método | URL | Nombre | Acción |
+    |:--|:--|:--|:--|
+    | POST | `/clientes/store` | `clientes.store` | `store(ClienteRequest $request)` → redirige a `clientes.index` con `mensaje` |
+    | PUT | `/clientes/update/{id}` | `clientes.update` | `update(ClienteRequest $request, int $id)` → redirige a `clientes.show` |
 
-Hasta el Bloque 6 no hay dónde guardar: los métodos solo validan y redirigen.
+    Hasta el Bloque 6 no hay dónde guardar: los métodos solo validan y redirigen.
 
-### Ejercicio 2. Formulario de trabajadores
+2. **Formulario de trabajadores.** Crear `TrabajadorRequest` (nombre y apellido obligatorios; `coste_hora_estandar` obligatorio, numérico y ≥ 0, con valor inicial `config('gestionobras.coste_hora_por_defecto')` en el formulario de alta) y sus formularios, rutas `trabajadores.store` y `trabajadores.update`.
 
-Crear `TrabajadorRequest` (nombre y apellido obligatorios; `coste_hora_estandar` obligatorio, numérico y ≥ 0, con valor inicial `config('gestionobras.coste_hora_por_defecto')` en el formulario de alta) y sus formularios, rutas `trabajadores.store` y `trabajadores.update`.
+3. **Formulario de obras.** Formulario con `descripcion` (obligatoria) y un `<select>` de clientes construido con el array de clientes. Rutas `obras.store` y `obras.update`.
 
-### Ejercicio 3. Formulario de obras
+4. **Mensajes en español.**
 
-Formulario con `descripcion` (obligatoria) y un `<select>` de clientes construido con el array de clientes. Rutas `obras.store` y `obras.update`.
+    ```bash
+    composer require laravel-lang/common --dev
+    php artisan lang:add es
+    ```
 
-### Ejercicio 4. Mensajes en español
+    Comprobar que los errores aparecen en español y que los nombres de campo salen de `attributes()` del Form Request.
 
-```bash
-composer require laravel-lang/common --dev
-php artisan lang:add es
-```
-
-Comprobar que los errores aparecen en español y que los nombres de campo salen de `attributes()` del Form Request.
-
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque5/RA5_6_FormulariosTest.php tests/Feature/
@@ -74,3 +58,7 @@ Resultado esperado: `Tests: 7 passed`. El test inicia sesión con un usuario por
 
 Rama `RA5_6`. Commits: `feat: alta y edición de clientes con ClienteRequest`, `feat: formularios de trabajadores`, `feat: formularios de obras`.
 {% endraw %}
+
+---
+
+**Siguiente:** [5.7. Breeze y middleware](./RA5_7_breeze.md)

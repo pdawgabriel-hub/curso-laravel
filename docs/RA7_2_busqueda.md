@@ -1,19 +1,6 @@
----
-title: 7.2. Búsqueda, orden y paginación
-parent: Bloque 7. Servicios web
-nav_order: 2
----
-
 # 7.2. Búsqueda, orden y paginación
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Helper para la búsqueda](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/073_helperBusqueda.html) · [Laravel: Pagination](https://laravel.com/docs/13.x/pagination)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Helper para la búsqueda](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/073_helperBusqueda.html) · [Laravel: Pagination](https://laravel.com/docs/13.x/pagination)
 
 Un único helper que aplique a todos los listados la búsqueda multipalabra, el orden, la paginación y los filtros por igualdad.
 
@@ -40,7 +27,7 @@ foreach (preg_split('/\s+/', trim($request->search)) as $palabra) {
 3. Todos los `index` de la API usan el helper, con los filtros de cada recurso (`estado`, `obra_id`, `cliente_id`, `tipo`…).
 4. El mismo helper sirve para los listados web: añadir un buscador a los listados de clientes, obras y presupuestos.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_2_BusquedaApiTest.php tests/Feature/
@@ -52,3 +39,7 @@ Resultado esperado: `Tests: 4 passed`.
 ## Git
 
 Rama `RA7_2`, commit `feat: búsqueda multipalabra, orden y paginación comunes`.
+
+---
+
+**Siguiente:** [7.3. Autenticación con Sanctum](./RA7_3_sanctum.md)

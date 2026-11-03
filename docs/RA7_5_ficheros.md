@@ -1,19 +1,6 @@
----
-title: 7.5. Ficheros en la API
-parent: Bloque 7. Servicios web
-nav_order: 5
----
-
 # 7.5. Ficheros y bitácoras en la API
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Manejo de ficheros en la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/11_manejarFicheros.html) · [Laravel: File Uploads](https://laravel.com/docs/13.x/requests#files)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Manejo de ficheros en la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/11_manejarFicheros.html) · [Laravel: File Uploads](https://laravel.com/docs/13.x/requests#files)
 
 Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas las entidades que las admiten, resolviendo el padre con el mapa polimórfico de 6.9.
 
@@ -30,7 +17,7 @@ Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas la
 2. Clasificación del adjunto por MIME: `image/*` → `imagen`, `application/pdf` → `pdf`, el resto → `otro`.
 3. Comprobar en los tests de la batería, más adelante, que borrar una entidad borra sus ficheros del disco.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_5_ArchivosApiTest.php tests/Feature/
@@ -42,3 +29,7 @@ Resultado esperado: `Tests: 5 passed`.
 ## Git
 
 Rama `RA7_5`, commit `feat: bitácoras y adjuntos en la API`.
+
+---
+
+**Siguiente:** [7.6. Documentación OpenAPI](./RA7_6_openapi.md)

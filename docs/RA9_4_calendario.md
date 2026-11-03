@@ -1,19 +1,6 @@
----
-title: 9.4. Calendario
-parent: Bloque 9. Aplicaciones híbridas
-nav_order: 4
----
-
 # 9.4. Calendario unificado
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [FullCalendar: events as JSON feed](https://fullcalendar.io/docs/events-json-feed)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [FullCalendar: events as JSON feed](https://fullcalendar.io/docs/events-json-feed)
 
 Un calendario con presupuestos, ingresos y los tres tipos de parte, cada tipo con su color, que en Odoo era un modelo de solo lectura sobre una vista SQL.
 
@@ -30,7 +17,7 @@ Un calendario con presupuestos, ingresos y los tres tipos de parte, cada tipo co
 2. Vista mensual por defecto, en español (`locale: 'es'`, la semana empieza en lunes), con una leyenda de colores.
 3. Al pulsar un evento se abre el detalle del registro de origen (equivalente al botón "Abrir registro original" de Odoo).
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque9/RA9_4_CalendarioTest.php tests/Feature/
@@ -42,3 +29,7 @@ Resultado esperado: `Tests: 3 passed`.
 ## Git
 
 Rama `RA9_4`, commit `feat: calendario unificado con FullCalendar`.
+
+---
+
+**Siguiente:** [9.5. Consumir una API externa](./RA9_5_apiExterna.md)

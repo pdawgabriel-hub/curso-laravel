@@ -8,7 +8,7 @@ Apuntes para construir paso a paso, con **Laravel 13**, un ERP de obras y reform
 
 | Ruta | Qué es |
 |---|---|
-| `docs/` | Apuntes (GitHub Pages con Jekyll y el tema just-the-docs) |
+| `docs/` | Apuntes (GitHub Pages con el tema por defecto) |
 | `docs/materiales/plantillas/` | Código de partida del Bloque 5, organizado por apartado |
 | `docs/materiales/tests/` | Tests de cada apartado (`RA5_3_RutasTest.php`…) |
 | `docs/materiales/ci/` | Workflow de GitHub Actions para el repositorio de la aplicación |
@@ -20,7 +20,7 @@ La aplicación se desarrolla en un repositorio aparte, `gestion-obras-laravel`, 
 
 ```bash
 cd docs
-bundle init && bundle add jekyll jekyll-remote-theme just-the-docs
+bundle init && bundle add github-pages webrick
 bundle exec jekyll serve
 ```
 

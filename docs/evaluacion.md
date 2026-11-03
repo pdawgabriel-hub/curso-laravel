@@ -1,13 +1,4 @@
----
-title: Evaluación
-nav_order: 11
----
-
 # Evaluación
-{: .no_toc }
-
-1. TOC
-{:toc}
 
 ## Cómo se evalúa
 
@@ -16,12 +7,11 @@ El proyecto se evalúa con tests automáticos, en dos niveles:
 | Nivel | Cuándo | Qué comprueba |
 |:--|:--|:--|
 | Tests de apartado | Al terminar cada apartado | El ejercicio del apartado (`RA5_3_RutasTest`, `RA7_1_ClientesApiTest`…) |
-| Batería de evaluación | Al terminar el Bloque 7 | La API completa y los modelos, según el [contrato](contrato-api.html), más el [escenario completo](anexo_escenario.html) |
+| Batería de evaluación | Al terminar el Bloque 7 | La API completa y los modelos, según el [contrato](./contrato-api.md), más el [escenario completo](./anexo_escenario.md) |
 
 La batería se entrega como una carpeta `tests/` completa que sustituye a la del proyecto. **El proyecto está aprobado cuando toda la batería está en verde**, igual que se haría con una batería entregada al final de un módulo: no se conocen los tests de antemano, pero sí el contrato que comprueban.
 
-{: .importante }
-Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en los apartados [6.2](RA6_2_modelos.html) y [6.6](RA6_6_relaciones.html). Hasta entonces la referencia es el [contrato de la API](contrato-api.html): rutas, campos, `$fillable`, validaciones y códigos de respuesta.
+> **Importante.** Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en los apartados [6.2](./RA6_2_modelos.md) y [6.6](./RA6_6_relaciones.md). Hasta entonces la referencia es el [contrato de la API](./contrato-api.md): rutas, campos, `$fillable`, validaciones y códigos de respuesta.
 
 ## Contenido de la batería
 
@@ -76,8 +66,7 @@ Para que la evaluación tenga sentido, la batería se abre **después** de termi
 
 6. Cuando `php artisan test` esté en verde, abrir la pull request `evaluacion → main` con el resumen de la ejecución y, tras fusionarla, crear el tag `evaluacion-api`.
 
-{: .consejo }
-Si un test falla por un detalle del contrato (el nombre de un campo, el orden del `$fillable`, un código de estado), el mensaje de PHPUnit indica exactamente qué esperaba. Es la misma situación que con una batería entregada al final del curso: conviene leer el contrato con atención antes de empezar el Bloque 7.
+> **Consejo.** Si un test falla por un detalle del contrato (el nombre de un campo, el orden del `$fillable`, un código de estado), el mensaje de PHPUnit indica exactamente qué esperaba. Es la misma situación que con una batería entregada al final del curso: conviene leer el contrato con atención antes de empezar el Bloque 7.
 
 ## Errores frecuentes
 

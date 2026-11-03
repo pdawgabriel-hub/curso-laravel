@@ -1,19 +1,6 @@
----
-title: 7.3. Autenticación con Sanctum
-parent: Bloque 7. Servicios web
-nav_order: 3
----
-
 # 7.3. Autenticación con Sanctum
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Autenticación](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/09_autenticacion.html) · [Por tokens](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/091_autenticacionTokens.html) · [Por sesiones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/092_autenticacionSesionAPI.html) · [Laravel: Sanctum](https://laravel.com/docs/13.x/sanctum)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Autenticación](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/09_autenticacion.html) · [Por tokens](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/091_autenticacionTokens.html) · [Por sesiones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/092_autenticacionSesionAPI.html) · [Laravel: Sanctum](https://laravel.com/docs/13.x/sanctum)
 
 Que un cliente externo (una aplicación móvil, otro sistema o un frontend separado) obtenga un token con su email y contraseña y lo use en la cabecera `Authorization: Bearer …`.
 
@@ -36,7 +23,7 @@ Que un cliente externo (una aplicación móvil, otro sistema o un frontend separ
    curl -s http://gestion-obras.test/api/v1/obras -H "Authorization: Bearer $TOKEN" -H 'Accept: application/json' | jq '.meta.total'
    ```
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_3_TokensApiTest.php tests/Feature/
@@ -48,3 +35,7 @@ Resultado esperado: `Tests: 5 passed`.
 ## Git
 
 Rama `RA7_3`, commit `feat: emisión y revocación de tokens con Sanctum`.
+
+---
+
+**Siguiente:** [7.4. Autorización: Gates, Policies y roles](./RA7_4_autorizacion.md)

@@ -1,19 +1,6 @@
----
-title: 9.2. Correo electrónico
-parent: Bloque 9. Aplicaciones híbridas
-nav_order: 2
----
-
 # 9.2. Correo electrónico
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Enviando correos electrónicos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/13_email.html) · [Laravel: Mail](https://laravel.com/docs/13.x/mail)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Enviando correos electrónicos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/13_email.html) · [Laravel: Mail](https://laravel.com/docs/13.x/mail)
 
 Enviar un presupuesto por correo con su PDF adjunto, desde la API y desde el detalle del presupuesto.
 
@@ -30,7 +17,7 @@ Enviar un presupuesto por correo con su PDF adjunto, desde la API y desde el det
 3. Botón *Enviar por correo* en el detalle del presupuesto, con un campo para el email.
 4. Opcional: enviar el correo en segundo plano (`ShouldQueue` y `php artisan queue:work`).
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque9/RA9_2_CorreoTest.php tests/Feature/
@@ -42,3 +29,7 @@ Resultado esperado: `Tests: 4 passed`.
 ## Git
 
 Rama `RA9_2`, commit `feat: envío del presupuesto por correo con el PDF adjunto`.
+
+---
+
+**Siguiente:** [9.3. Panel de análisis financiero](./RA9_3_dashboard.md)

@@ -1,15 +1,6 @@
----
-title: "Anexo. Escenario completo"
-nav_order: 9
----
-
 # Anexo. Escenario de prueba completo
-{: .no_toc }
 
-El ciclo de negocio de una obra de principio a fin, con el resultado esperado en cada paso. Sirve para comprobar a mano la aplicación (en la web o con la API) y es también el test `EscenarioCompletoTest` de la [batería de evaluación](evaluacion.html).
-
-1. TOC
-{:toc}
+El ciclo de negocio de una obra de principio a fin, con el resultado esperado en cada paso. Sirve para comprobar a mano la aplicación (en la web o con la API) y es también el test `EscenarioCompletoTest` de la [batería de evaluación](./evaluacion.md).
 
 ## Datos de partida
 
@@ -37,7 +28,7 @@ El ciclo de negocio de una obra de principio a fin, con el resultado esperado en
 
 ## Comprobación con la API
 
-Con un token de [7.3](RA7_3_sanctum.html), los pasos se pueden reproducir con `curl` o con Swagger UI ([7.6](RA7_6_openapi.html)). Las rutas de cada paso:
+Con un token de [7.3](./RA7_3_sanctum.md), los pasos se pueden reproducir con `curl` o con Swagger UI ([7.6](./RA7_6_openapi.md)). Las rutas de cada paso:
 
 | Paso | Petición |
 |:--:|:--|

@@ -1,19 +1,6 @@
----
-title: 8.1. React-Admin sobre la API
-parent: Bloque 8. Frontend dinámico (opcional)
-nav_order: 1
----
-
 # 8.1. React-Admin sobre la API
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [React-Admin](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/063_React_Admin.html) · [React-Admin sobre Inertia](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/064_inertia_reactadmin.html) · [Personalizar las tablas](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/066_componentesRA.html) · [React-Admin: Data Providers](https://marmelab.com/react-admin/DataProviders.html)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [React-Admin](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/063_React_Admin.html) · [React-Admin sobre Inertia](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/064_inertia_reactadmin.html) · [Personalizar las tablas](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/066_componentesRA.html) · [React-Admin: Data Providers](https://marmelab.com/react-admin/DataProviders.html)
 
 Un panel React-Admin en `/admin` que lista, crea, edita y borra clientes, obras y presupuestos a través de `/api/v1`.
 
@@ -37,3 +24,7 @@ Manual en el navegador: el listado de obras pagina y ordena, un alta con errores
 ## Git
 
 Rama `RA8_1`, tag `bloque-8`.
+
+---
+
+**Siguiente:** [9.1. Documentos PDF](./RA9_1_pdf.md)

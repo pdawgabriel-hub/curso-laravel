@@ -1,19 +1,7 @@
----
-title: 9.3. Panel de análisis
-parent: Bloque 9. Aplicaciones híbridas
-nav_order: 3
----
 {% raw %}
 # 9.3. Panel de análisis financiero
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [Chart.js](https://www.chartjs.org/docs/latest/) · [Blade: @json / Js::from](https://laravel.com/docs/13.x/blade#rendering-json)
-
-1. TOC
-{:toc}
-
-## Objetivo
+**Referencia teórica:** [Chart.js](https://www.chartjs.org/docs/latest/) · [Blade: @json / Js::from](https://laravel.com/docs/13.x/blade#rendering-json)
 
 El "Análisis Financiero" del módulo de Odoo: indicadores globales, rentabilidad por obra, distribución de costes, cobros pendientes, trabajadores con más horas y evolución mensual, con un selector de periodo.
 
@@ -35,7 +23,7 @@ El "Análisis Financiero" del módulo de Odoo: indicadores globales, rentabilida
    - tablas de las 10 obras más rentables, de los cobros pendientes y de los 5 trabajadores con más horas.
 4. Formato de moneda en JavaScript: `new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })`.
 
-## Comprobación
+## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque9/RA9_3_DashboardTest.php tests/Feature/
@@ -48,3 +36,7 @@ Resultado esperado: `Tests: 5 passed`.
 
 Rama `RA9_3`, commit `feat: panel de análisis financiero con Chart.js`.
 {% endraw %}
+
+---
+
+**Siguiente:** [9.4. Calendario unificado](./RA9_4_calendario.md)

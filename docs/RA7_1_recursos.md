@@ -1,21 +1,8 @@
----
-title: 7.1. API REST y controladores de recursos
-parent: Bloque 7. Servicios web
-nav_order: 1
----
-
 # 7.1. API REST y controladores de recursos
-{: .no_toc }
 
-{: .nota }
-> **Referencia teórica:** [API y REST](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/061_api_y_rest.html) · [Esqueleto de la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/062_esqueleto_API.html) · [Controladores de recursos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/07_resourceController.html) · [Laravel: API Resources](https://laravel.com/docs/13.x/eloquent-resources)
+**Referencia teórica:** [API y REST](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/061_api_y_rest.html) · [Esqueleto de la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/062_esqueleto_API.html) · [Controladores de recursos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/07_resourceController.html) · [Laravel: API Resources](https://laravel.com/docs/13.x/eloquent-resources)
 
-1. TOC
-{:toc}
-
-## Objetivo
-
-Implementar todos los recursos del [contrato](contrato-api.html) en `/api/v1`, con controladores en `App\Http\Controllers\API` y respuestas con API Resources.
+Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, con controladores en `App\Http\Controllers\API` y respuestas con API Resources.
 
 ## Conceptos clave
 
@@ -28,46 +15,36 @@ Implementar todos los recursos del [contrato](contrato-api.html) en `/api/v1`, c
 
 ## Ejercicios
 
-### Ejercicio 1. Esqueleto
+1. **Esqueleto.**
 
-```bash
-php artisan install:api
-```
+    ```bash
+    php artisan install:api
+    ```
 
-Añadir `HasApiTokens` al modelo `User`. En `routes/api.php`:
+    Añadir `HasApiTokens` al modelo `User`. En `routes/api.php`:
 
-```php
-Route::prefix('v1')->name('api.')->group(function () {
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::apiResource('clientes', API\ClienteController::class)->parameters(['clientes' => 'cliente']);
-        // …
+    ```php
+    Route::prefix('v1')->name('api.')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::apiResource('clientes', API\ClienteController::class)->parameters(['clientes' => 'cliente']);
+            // …
+        });
     });
-});
-```
+    ```
 
-{: .importante }
-Sin `->name('api.')`, los nombres de las rutas de la API (`clientes.index`) sustituyen a los de la web y las vistas generan URLs de la API.
+    > **Importante.** Sin `->name('api.')`, los nombres de las rutas de la API (`clientes.index`) sustituyen a los de la web y las vistas generan URLs de la API.
 
-### Ejercicio 2. Clientes (ejemplo guiado)
+2. **Clientes (ejemplo guiado).** `php artisan make:controller API/ClienteController --api` y `ClienteResource`. Validación, respuestas y regla de borrado según el contrato. Para la validación, el mismo `ClienteRequest` de la web sirve si sus reglas usan `sometimes|required` en la actualización, o se crea uno específico de la API.
 
-`php artisan make:controller API/ClienteController --api` y `ClienteResource`. Validación, respuestas y regla de borrado según el contrato. Para la validación, el mismo `ClienteRequest` de la web sirve si sus reglas usan `sometimes|required` en la actualización, o se crea uno específico de la API.
+    > **Aviso.** La autorización (`Gate::authorize()`) se añade en [7.4](./RA7_4_autorizacion.md): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
 
-{: .aviso }
-La autorización (`Gate::authorize()`) se añade en [7.4](RA7_4_autorizacion.html): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
+3. **Resto de recursos.** Aplicar el patrón a todos los recursos del contrato, en este orden: trabajadores y faltas, proveedores, especialistas, presupuestos y líneas, obras (con `ObraService`), gastos (`only(['index', 'show', 'update'])`), ingresos, partes de trabajo y sus líneas, partes de proveedor y de especialista.
 
-### Ejercicio 3. Resto de recursos
+4. **Endpoints adicionales de obras.** `presupuestos-disponibles`, `vincular-presupuesto` (el asistente de Odoo) y los participantes `trabajadores`, `proveedores` y `especialistas`.
 
-Aplicar el patrón a todos los recursos del contrato, en este orden: trabajadores y faltas, proveedores, especialistas, presupuestos y líneas, obras (con `ObraService`), gastos (`only(['index', 'show', 'update'])`), ingresos, partes de trabajo y sus líneas, partes de proveedor y de especialista.
+5. **Estadísticas y calendario.** `GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
 
-### Ejercicio 4. Endpoints adicionales de obras
-
-`presupuestos-disponibles`, `vincular-presupuesto` (el asistente de Odoo) y los participantes `trabajadores`, `proveedores` y `especialistas`.
-
-### Ejercicio 5. Estadísticas y calendario
-
-`GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
-
-## Comprobación
+## Comprueba tu solución automáticamente
 
 Copiar las clases base de los tests de la API (no son tests: aportan `actuarComo()`, `assertImporte()` y `assertListado()`) y el test del apartado:
 
@@ -84,3 +61,7 @@ Resultado esperado: `Tests: 10 passed`. El resto de recursos se comprueba con pe
 ## Git
 
 Rama `RA7_1` con un commit por recurso, o una rama por grupo de recursos (`RA7_1_obras`…).
+
+---
+
+**Siguiente:** [7.2. Búsqueda, orden y paginación](./RA7_2_busqueda.md)
