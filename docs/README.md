@@ -54,16 +54,17 @@ Primera versión de la aplicación, **sin base de datos**: los datos salen de ar
 
 Los arrays se sustituyen por MariaDB y _Eloquent_.
 
-1. [Migraciones y _Schema Builder_](./RA6_1_migraciones.md)
-2. [Modelos _Eloquent_ y códigos correlativos](./RA6_2_modelos.md)
-3. [_Factories_ y _seeders_: datos de demostración](./RA6_3_seeders.md)
+1. [Configuración, migraciones y _Schema Builder_](./RA6_1_migraciones.md)
+2. [Modelos de datos mediante ORM](./RA6_2_modelos.md)
+3. [Inicialización de la base de datos: _seeders_ y _factories_](./RA6_3_seeders.md)
 4. [Constructor de consultas (_Query Builder_)](./RA6_4_queryBuilder.md)
-5. [CRUD web con base de datos](./RA6_5_crud.md)
-6. [Relaciones entre modelos](./RA6_6_relaciones.md)
-7. [Cálculos financieros](./RA6_7_calculos.md)
-8. [Transacciones y bloqueos](./RA6_8_transacciones.md)
-9. [Bitácoras y adjuntos: relaciones polimórficas y ficheros](./RA6_9_bitacoras.md)
-10. _Proyecto:_ [flujo completo de una obra por la web](./RA6_10_proyecto.md)
+5. Ejercicios: [clientes en la base de datos](./RA6_5_clientes.md) · [trabajadores](./RA6_6_trabajadores.md) · [proveedores y especialistas](./RA6_7_proveedores.md)
+6. [Relaciones: obras y faltas](./RA6_8_relaciones.md)
+7. Ejercicios: [presupuestos](./RA6_9_presupuestos.md) · [partes](./RA6_10_partes.md) · [ingresos y ficha de gastos](./RA6_11_ingresos.md)
+8. [Cálculos financieros](./RA6_12_calculos.md)
+9. [Transacciones y bloqueos](./RA6_13_transacciones.md)
+10. [Bitácoras y adjuntos: relaciones polimórficas y ficheros](./RA6_14_bitacoras.md)
+11. _Proyecto:_ [flujo completo de una obra por la web](./RA6_15_proyecto.md)
 
 ## Bloque 7. Servicios web reutilizables (RA7)
 

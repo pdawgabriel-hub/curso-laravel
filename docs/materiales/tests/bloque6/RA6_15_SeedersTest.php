@@ -12,7 +12,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class RA6_3_SeedersTest extends TestCase
+class RA6_15_SeedersTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -25,6 +25,7 @@ class RA6_3_SeedersTest extends TestCase
     public function test_crea_veinte_registros_de_cada_maestro()
     {
         $this->assertSame(20, Cliente::count());
+        $this->assertDatabaseHas('clientes', ['nombre' => 'Juan', 'nif' => '12345678Z']);
         $this->assertSame(20, Trabajador::count());
         $this->assertSame(20, Proveedor::count());
         $this->assertSame(20, Especialista::count());

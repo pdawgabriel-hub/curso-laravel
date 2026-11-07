@@ -1,4 +1,4 @@
-# 6.9. Bitácoras y adjuntos
+# 6.14. Bitácoras y adjuntos
 
 **Referencia teórica:** [Utilizar ficheros](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/0476_utilizarFicheros.html) · [Laravel: Polymorphic Relationships](https://laravel.com/docs/13.x/eloquent-relationships#polymorphic-relationships) · [Laravel: File Storage](https://laravel.com/docs/13.x/filesystem)
 
@@ -9,6 +9,8 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
 - **Relación polimórfica**: `observaciones.observable_type` + `observable_id` apuntan a cualquier modelo. `morphMany(Observacion::class, 'observable')` en el padre, `morphTo()` en el hijo.
 - **Mapa polimórfico** con `Relation::enforceMorphMap([...])` en `AppServiceProvider::boot()`: en `*_type` se guarda `obras` en vez de `App\Models\Obra`. Las claves coinciden con los segmentos de URL de la API (`partes-trabajo`), lo que permite resolver el padre desde la ruta en el Bloque 7. Como `enforceMorphMap` obliga a registrar **todos** los modelos que participan en relaciones polimórficas, también va `'users' => User::class` (Sanctum guarda los tokens de forma polimórfica).
 - `Storage::put()`, `$file->store('archivos/obras')`, `Storage::delete($ruta)`, `Storage::download($ruta, $nombre)`; en los tests, `Storage::fake()`.
+
+> **Nota.** Los adjuntos de este proyecto se guardan en el disco privado y se descargan a través de un controlador, porque son contratos y facturas. Para ficheros públicos se usa el disco `public` y el enlace `public/storage`. En Docker, `php artisan storage:link` genera una ruta absoluta que no sirve dentro del contenedor, así que el enlace se crea a mano: `cd public/ && ln -s ../storage/app/public storage`.
 
 ## Ejercicios
 
@@ -36,10 +38,12 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
 
     `{tipo}` es la clave del mapa polimórfico, limitada con `whereIn` a las entidades de cada lista.
 
+5. **Investiga.** Responde en tu _pull request_: quita `enforceMorphMap` y añade una observación a una obra. ¿Qué se guarda en `observable_type`? ¿Qué problema habría si mañana cambias de carpeta el modelo?
+
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_9_BitacorasTest.php tests/Feature/
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_14_BitacorasTest.php tests/Feature/
 php artisan test
 ```
 
@@ -47,8 +51,8 @@ Resultado esperado: `RA6_9`: `Tests: 5 passed`, y todo el bloque en verde.
 
 ## Git
 
-Rama `RA6_9`, commit `feat: bitácoras y adjuntos polimórficos`.
+Rama `RA6_14`, commit `feat: bitácoras y adjuntos polimórficos`.
 
 ---
 
-**Siguiente:** [6.10. Proyecto: flujo completo de una obra por la web](./RA6_10_proyecto.md)
+**Siguiente:** [6.15. Proyecto: flujo completo de una obra por la web](./RA6_15_proyecto.md)

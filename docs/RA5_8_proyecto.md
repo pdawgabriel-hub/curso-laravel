@@ -7,7 +7,7 @@ Cierre del bloque: los **clientes** dejan de ser un array dentro del controlador
 
 Solo cambian los clientes. Las obras y los trabajadores se quedan con sus arrays hasta el Bloque 6.
 
-> **Aviso.** Lo que se construye aquí es para aprender los patrones. En [6.5](./RA6_5_crud.md), `ClientesController` pasa a usar el modelo de _Eloquent_ directamente, y `app/Dominio` y `app/Repositorios` se borran.
+> **Aviso.** Lo que se construye aquí es para aprender los patrones. En [6.5](./RA6_5_clientes.md), `ClientesController` pasa a usar el modelo de _Eloquent_ directamente, y `app/Dominio` y `app/Repositorios` se borran.
 
 ## MVC, por fin completo
 
@@ -303,5 +303,5 @@ Rama `RA5_8`. Al fusionar: `git tag -a bloque-5 -m "Bloque 5: introducción a La
 
 ---
 
-**Siguiente:** [6.1. Migraciones y Schema Builder](./RA6_1_migraciones.md)
+**Siguiente:** [6.1. Configuración, migraciones y _Schema Builder_](./RA6_1_migraciones.md)
 <!-- {% endraw %} -->

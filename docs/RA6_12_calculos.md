@@ -1,4 +1,4 @@
-# 6.7. Cálculos financieros
+# 6.12. Cálculos financieros
 
 **Referencia teórica:** reglas de negocio de [0.4](./004_de_odoo_a_laravel.md#reglas-de-negocio) · [Laravel: Accessors](https://laravel.com/docs/13.x/eloquent-mutators#accessors-and-mutators) · [Agregados de relaciones](https://laravel.com/docs/13.x/eloquent-relationships#aggregating-related-models)
 
@@ -39,19 +39,23 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
     - **Textos:** estado de pago `Pendiente`, `Parcial` o `Pagado`; salud `Verde`, `Ámbar` o `Rojo`; estado de la ficha `En proceso` o `Finalizada`.
     - Listado de obras: columnas de total, estado de pago y salud. Usar `with()` para no lanzar una consulta por obra al pedir el cliente.
 
+5. **Investiga.** Responde en tu _pull request_:
+    - ¿Por qué `beneficio` es `ingresos − gastos` y no `total − gastos`? ¿Qué mostraría cada fórmula en una obra recién presupuestada, sin ningún cobro?
+    - ¿Cuántas consultas lanza el listado de obras con 15 obras? ¿Cómo lo reducirías?
+
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_7_CalculosTest.php tests/Feature/
-php artisan test --filter=RA6_7
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_12_CalculosTest.php tests/Feature/
+php artisan test --filter=RA6_12
 ```
 
 Resultado esperado: `Tests: 6 passed`. Los valores del test son los del [escenario completo](./anexo_escenario.md): total 1 210 €, gastos 670 €, cobro de 500 € → beneficio −170 €, debe 710 €, 41,3 % cobrado, salud roja.
 
 ## Git
 
-Rama `RA6_7`, commit `feat: ResumenFinanciero con los indicadores de la obra`.
+Rama `RA6_12`, commit `feat: ResumenFinanciero con los indicadores de la obra`.
 
 ---
 
-**Siguiente:** [6.8. Transacciones y bloqueos](./RA6_8_transacciones.md)
+**Siguiente:** [6.13. Transacciones y bloqueos](./RA6_13_transacciones.md)

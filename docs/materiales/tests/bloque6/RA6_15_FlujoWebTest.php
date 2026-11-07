@@ -28,7 +28,7 @@ use Tests\TestCase;
  * El ciclo de una obra de principio a fin a través de las pantallas:
  * se inicia sesión, se usan los formularios y se comprueba lo que se muestra.
  */
-class RA6_10_FlujoWebTest extends TestCase
+class RA6_15_FlujoWebTest extends TestCase
 {
     use RefreshDatabase;
 

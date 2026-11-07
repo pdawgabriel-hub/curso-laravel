@@ -1,4 +1,4 @@
-# 6.8. Transacciones y bloqueos
+# 6.13. Transacciones y bloqueos
 
 **Referencia teórica:** [Query Builder: transacciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/046_queryBuilder.html) · [Laravel: Database Transactions](https://laravel.com/docs/13.x/database#database-transactions) · [Pessimistic Locking](https://laravel.com/docs/13.x/queries#pessimistic-locking) · [Laravel: Errors](https://laravel.com/docs/13.x/errors#renderable-exceptions)
 
@@ -20,30 +20,32 @@ Que las operaciones de varios pasos sean atómicas (todo o nada), que dos altas 
     - Si `$request->expectsJson()` → `response()->json(['message' => …], 409)`.
     - Si no → `back()->with('error', …)`.
 
-    Sustituir por ella los `if` de borrado de 6.5 (cliente con presupuestos, trabajador con partes).
+    Sustituye por ella las comprobaciones de borrado de 6.9 y 6.10 (cliente con presupuestos, trabajador, proveedor o especialista con partes).
 
 3. **ObraService.** `App\Services\ObraService` con:
 
     - `crear(array $datos): Obra`: crea la obra y su ficha de Gastos en una transacción.
     - `borrar(Obra $obra): void`: si la obra tiene ingresos lanza `ReglaNegocioException`; si no, en una transacción borra sus partes **uno a uno con Eloquent** (para que sus líneas, bitácoras y adjuntos se borren también), desvincula sus presupuestos (`obra_id = null`), borra su ficha de Gastos y la obra.
 
-    `ObrasController` y el `DatabaseSeeder` usan el servicio.
+    `ObrasController` y las semillas usan el servicio.
 
     > **Importante.** El borrado en cascada de la base de datos no ejecuta los eventos de Eloquent, así que no borraría los ficheros adjuntos ni las bitácoras polimórficas. Por eso los partes se borran con `->get()->each->delete()`.
+
+4. **Investiga.** Responde en tu _pull request_: quita temporalmente `DB::transaction` de `crear()` y haz que falle la creación de la ficha lanzando una excepción en el evento `creating` de `Gasto`. ¿Qué queda en la base de datos? Deshaz el cambio.
 
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_8_TransaccionesTest.php tests/Feature/
-php artisan test --filter=RA6_8
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_13_TransaccionesTest.php tests/Feature/
+php artisan test --filter=RA6_13
 ```
 
 Resultado esperado: `Tests: 5 passed`. El test de atomicidad simula un fallo al crear la ficha de Gastos y comprueba que tampoco queda la obra.
 
 ## Git
 
-Rama `RA6_8`. Commits: `feat: secuencias con bloqueo pesimista`, `feat: ReglaNegocioException`, `refactor: extrae ObraService`.
+Rama `RA6_13`. Commits: `feat: secuencias con bloqueo pesimista`, `feat: ReglaNegocioException`, `refactor: extrae ObraService`.
 
 ---
 
-**Siguiente:** [6.9. Bitácoras y adjuntos](./RA6_9_bitacoras.md)
+**Siguiente:** [6.14. Bitácoras y adjuntos](./RA6_14_bitacoras.md)

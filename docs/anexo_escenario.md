@@ -52,4 +52,4 @@ php artisan test tests/Feature/Escenario
 
 Resultado esperado: `Tests: 3 passed`.
 
-El mismo ciclo por las pantallas, con formularios y sesión iniciada, es el test `RA6_10_FlujoWebTest` del apartado [6.10](./RA6_10_proyecto.md).
+El mismo ciclo por las pantallas, con formularios y sesión iniciada, es el test `RA6_15_FlujoWebTest` del apartado [6.15](./RA6_15_proyecto.md).

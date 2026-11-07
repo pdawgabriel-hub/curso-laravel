@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
 use Tests\TestCase;
 
-class RA6_8_TransaccionesTest extends TestCase
+class RA6_13_TransaccionesTest extends TestCase
 {
     use RefreshDatabase;
 

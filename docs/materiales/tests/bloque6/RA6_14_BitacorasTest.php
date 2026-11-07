@@ -13,7 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class RA6_9_BitacorasTest extends TestCase
+class RA6_14_BitacorasTest extends TestCase
 {
     use RefreshDatabase;
 

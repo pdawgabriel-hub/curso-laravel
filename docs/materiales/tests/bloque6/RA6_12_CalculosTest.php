@@ -14,7 +14,7 @@ use App\Services\ResumenFinanciero;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class RA6_7_CalculosTest extends TestCase
+class RA6_12_CalculosTest extends TestCase
 {
     use RefreshDatabase;
 

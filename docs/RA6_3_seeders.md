@@ -1,56 +1,62 @@
-# 6.3. Factories y seeders
+# 6.3. Inicialización de la base de datos (_seeders_ y _factories_)
 
-**Referencia teórica:** [Inicialización de la base de datos (Seeding)](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/045_databaseSeeding.html) · [Laravel: Factories](https://laravel.com/docs/13.x/eloquent-factories) · [Laravel: Seeding](https://laravel.com/docs/13.x/seeding)
+**Referencia teórica:** [Inicialización de la base de datos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/045_databaseSeeding.html) · [Laravel: Factories](https://laravel.com/docs/13.x/eloquent-factories)
 
-Factories para todos los modelos que las necesitan y un `DatabaseSeeder` que genere una empresa de demostración coherente: el equivalente al `post_init_hook` de Odoo.
+Este apartado es teoría: cada entidad crea su semilla en sus ejercicios, a partir de [6.5](./RA6_5_clientes.md).
 
-## Conceptos clave
+## Ficheros semilla
 
-- Una factory define datos válidos por defecto; los tests sobrescriben solo lo que les importa: `Ingreso::factory()->create(['importe' => 500])`.
-- Las claves foráneas se definen con otra factory (`'obra_id' => Obra::factory()`), que solo se ejecuta si no se pasa el valor.
-- `afterCreating()` completa lo que debe existir siempre junto al modelo (la ficha de Gastos de una obra).
-- Con `APP_FAKER_LOCALE=es_ES`, `fake()->firstName()` genera nombres en español.
-
-## Ejercicios
-
-1. **Factories.** Una factory por modelo, salvo `Gasto`, `Observacion`, `Incidencia` y `Archivo` (requisitos en el [contrato](./contrato-api.md#factories)).
-
-    - `ObraFactory`: toda obra creada con la factory tiene su ficha de Gastos.
-    - `PresupuestoFactory`: sin `nombre_cliente` (se copia del cliente al crear, en 6.6).
-    - `LineaParteTrabajoFactory`: sin `coste_hora` (se copia del trabajador, en 6.6).
-    - `FaltaFactory`: `fecha_fin` igual o posterior a `fecha_inicio`.
-
-2. **DatabaseSeeder.**
-
-    1. Tres usuarios: el administrador (`config('app.admin.email')`), uno con rol `jefe` y otro con rol `administrativa`. Añadir `ADMIN_EMAIL` a `.env` y `.env.example`, y la clave `'admin' => ['email' => env('ADMIN_EMAIL')]` a `config/app.php`.
-    2. 20 clientes, 20 trabajadores (con 0 a 4 faltas cada uno), 20 proveedores y 20 especialistas.
-    3. Por cada una de las 20 obras:
-       - un presupuesto **aprobado** de su cliente con 3 a 6 líneas;
-       - 2 a 5 partes de trabajo con 2 a 4 trabajadores distintos cada uno;
-       - 1 a 3 partes de proveedor y 1 a 2 de especialista, con importes proporcionales al total para que el beneficio no salga siempre negativo;
-       - fechas de inicio y fin en su ficha de Gastos;
-       - 0 a 3 ingresos cuya suma **nunca supere el total** de la obra.
-
-    ```bash
-    php artisan migrate:fresh --seed
-    ```
-
-    > **Consejo.** Para que los ingresos no superen el total, se calcula el total de la obra después de crear el presupuesto y cada ingreso se toma como un porcentaje de lo que queda pendiente.
-
-## Comprueba tu solución automáticamente
+Una clase por tabla, que `DatabaseSeeder` llama en orden. Es el equivalente a los datos de demostración del módulo de _Odoo_.
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_3_SeedersTest.php tests/Feature/
-php artisan test --filter=RA6_3
-php artisan test tests/Unit/Models --filter=factory
+php artisan make:seeder ClientesTableSeeder
 ```
 
-Resultado esperado: `RA6_3`: `Tests: 5 passed`.
+```php
+public function run(): void
+{
+    Model::unguard();
+    Schema::disableForeignKeyConstraints();
 
-## Git
+    $this->call(ClientesTableSeeder::class);
 
-Rama `RA6_3`. Commits: `feat: factories`, `feat: datos de demostración en DatabaseSeeder`.
+    Model::reguard();
+    Schema::enableForeignKeyConstraints();
+}
+```
+
+| Comando | Para qué |
+|---|---|
+| `php artisan db:seed` | Ejecuta `DatabaseSeeder` |
+| `php artisan db:seed --class=ClientesTableSeeder` | Ejecuta una sola semilla |
+| `php artisan migrate:fresh --seed` | Rehace las tablas y las rellena |
+
+## _Factories_
+
+Una _factory_ define datos válidos de ejemplo. La usan las semillas para generar volumen y los tests para crear lo que necesitan:
+
+```bash
+php artisan make:factory ClienteFactory --model=Cliente
+```
+
+```php
+public function definition(): array
+{
+    return [
+        'nombre' => fake()->firstName(),
+        'nif' => fake()->unique()->numerify('########') . fake()->randomLetter(),
+        // ...
+    ];
+}
+```
+
+```php
+Cliente::factory()->count(10)->create();                  // diez clientes
+Ingreso::factory()->create(['importe' => 500]);           // lo demás, de la factory
+```
+
+El modelo necesita `use HasFactory;`. Las claves ajenas se definen con otra _factory_ (`'obra_id' => Obra::factory()`), que solo se ejecuta si no se pasa ese valor. Con `APP_FAKER_LOCALE=es_ES` (de [5.2](./RA5_2_estructura.md)), los datos salen en español.
 
 ---
 
-**Siguiente:** [6.4. Query Builder](./RA6_4_queryBuilder.md)
+**Siguiente:** [6.4. Constructor de consultas](./RA6_4_queryBuilder.md)
