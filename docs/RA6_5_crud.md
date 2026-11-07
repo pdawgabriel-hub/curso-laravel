@@ -1,5 +1,5 @@
-{% raw %}
 # 6.5. CRUD web con base de datos
+{% raw %}
 
 **Referencia teórica:** [Ejercicios de bases de datos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/047_ejerciciosBD.html) · [Crear y modificar](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/0475_crearModificarFamiliaProfesional.html) · [Laravel: Route Model Binding](https://laravel.com/docs/13.x/routing#route-model-binding)
 
@@ -19,12 +19,12 @@ Las pantallas del Bloque 5 pasan a leer y escribir en la base de datos, y se com
 1. **Clientes.**
 
     1. Rutas con binding: `show/{cliente}`, `edit/{cliente}`, `update/{cliente}` y la nueva `DELETE destroy/{cliente}` (`clientes.destroy`, protegida con `auth`).
-    2. `ClientesController` usa el modelo `Cliente` (o un `EloquentClienteRepository` que sustituya al de arrays en el contenedor).
+    2. `ClientesController` usa el modelo `App\Models\Cliente` directamente: `Cliente::all()`, `findOrFail()`, `save()`. Es _Active Record_, así que ya no hace falta el repositorio: borra `app/Dominio`, `app/Repositorios`, `resources/datos`, su registro en `AppServiceProvider` y `storage/app/clientes.json`, y usa `$cliente->nombre_completo` en lugar de `nombreCompleto()`.
     3. `store` crea, `update` guarda, `destroy` borra; un cliente con presupuestos no se borra y se vuelve atrás con `error`.
     4. El listado enlaza cada cliente con `route('clientes.show', $cliente->id)` y el detalle muestra su `codigo`.
     5. Mostrar `session('error')` en el layout, como `session('mensaje')`.
 
-2. **Obras y trabajadores.** Mismo cambio en `ObrasController` (el alta crea también la ficha de Gastos) y `TrabajadoresController`. Desaparecen los repositorios de arrays y `RA5_8_ProyectoTest`.
+2. **Obras y trabajadores.** Mismo cambio en `ObrasController` (el alta crea también la ficha de Gastos) y `TrabajadoresController`. Desaparecen los arrays. `RA5_8_ProyectoTest` deja de aplicarse.
 
 3. **Resto de módulos.** Pantallas para todos los módulos, con estas rutas. Lo que exigen las rutas de escritura es iniciar sesión (`auth`), y todas tienen nombre.
 

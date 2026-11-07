@@ -19,6 +19,10 @@ class RA5_5_ControladoresTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
+        // A partir de 5.8: repositorio en memoria, para no tocar storage/app/clientes.json
+        if (interface_exists(\App\Repositorios\ClienteRepository::class)) {
+            $this->app->instance(\App\Repositorios\ClienteRepository::class, new \App\Repositorios\ArrayClienteRepository());
+        }
     }
 
     public function test_cada_ruta_apunta_a_su_controlador()

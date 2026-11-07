@@ -1,5 +1,5 @@
-{% raw %}
 # 5.7. Breeze y middleware
+{% raw %}
 
 **Referencia teórica:** [Middleware y control de usuarios con Breeze](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_7_breeze.html) · [Laravel: Authentication](https://laravel.com/docs/13.x/authentication) · [Laravel: Middleware](https://laravel.com/docs/13.x/middleware)
 
@@ -47,4 +47,4 @@ Rama `RA5_7`. Commits: `chore: instala laravel/breeze`, `feat: crear y modificar
 
 ---
 
-**Siguiente:** [5.8. Proyecto: MVC y patrones de diseño](./RA5_8_proyecto.md)
+**Siguiente:** [5.8. Proyecto: POO y patrones de diseño](./RA5_8_proyecto.md)

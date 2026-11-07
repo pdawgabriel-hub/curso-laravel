@@ -48,7 +48,7 @@ Primera versión de la aplicación, **sin base de datos**: los datos salen de ar
 5. [Controladores](./RA5_5_controladores.md)
 6. [Formularios, validación con _Form Requests_ y redirecciones](./RA5_6_formularios.md)
 7. [_Middleware_ y control de usuarios con _Breeze_](./RA5_7_breeze.md)
-8. _Proyecto:_ [MVC y patrones de diseño (repositorio, inyección de dependencias, _Singleton_)](./RA5_8_proyecto.md)
+8. _Proyecto:_ [POO y patrones de diseño (MVC, repositorio, _Singleton_, DAO)](./RA5_8_proyecto.md)
 
 ## Bloque 6. Acceso a almacenes de datos (RA6)
 

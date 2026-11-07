@@ -21,6 +21,10 @@ class RA5_6_FormulariosTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
+        // A partir de 5.8: repositorio en memoria, para no tocar storage/app/clientes.json
+        if (interface_exists(\App\Repositorios\ClienteRepository::class)) {
+            $this->app->instance(\App\Repositorios\ClienteRepository::class, new \App\Repositorios\ArrayClienteRepository());
+        }
         // A partir de 5.7 estas rutas exigen sesión iniciada
         $this->actingAs(User::factory()->create());
     }

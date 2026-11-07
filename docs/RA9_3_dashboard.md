@@ -1,5 +1,5 @@
-{% raw %}
 # 9.3. Panel de análisis financiero
+{% raw %}
 
 **Referencia teórica:** [Chart.js](https://www.chartjs.org/docs/latest/) · [Blade: @json / Js::from](https://laravel.com/docs/13.x/blade#rendering-json)
 

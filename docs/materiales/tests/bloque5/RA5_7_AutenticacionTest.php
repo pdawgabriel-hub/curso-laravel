@@ -14,6 +14,10 @@ class RA5_7_AutenticacionTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
+        // A partir de 5.8: repositorio en memoria, para no tocar storage/app/clientes.json
+        if (interface_exists(\App\Repositorios\ClienteRepository::class)) {
+            $this->app->instance(\App\Repositorios\ClienteRepository::class, new \App\Repositorios\ArrayClienteRepository());
+        }
     }
 
     public function test_los_listados_y_detalles_son_publicos()

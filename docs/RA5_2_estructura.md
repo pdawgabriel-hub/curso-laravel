@@ -11,7 +11,8 @@ Adaptar la configuración a una empresa española y crear un fichero de configur
 | `app/Models` | Modelos Eloquent (Bloque 6) |
 | `app/Http/Controllers` | Controladores web; `API/` para los de la API (Bloque 7) |
 | `app/Http/Requests` | Form Requests (5.6) |
-| `app/Services`, `app/Repositories` | Lógica de negocio y acceso a datos (5.8 y Bloque 6) |
+| `app/Dominio`, `app/Repositorios` | Clases del dominio y repositorios (solo en 5.8) |
+| `app/Services` | Lógica de negocio (Bloque 6) |
 | `config/` | Configuración; `config/gestionobras.php` es propio |
 | `database/` | Migraciones, factories y seeders |
 | `resources/views` | Vistas Blade |

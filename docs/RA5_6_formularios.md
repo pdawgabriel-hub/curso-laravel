@@ -1,5 +1,5 @@
-{% raw %}
 # 5.6. Formularios y validación
+{% raw %}
 
 **Referencia teórica:** [Formularios, datos de entrada, validación y redirecciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_6_formularios.html) · [Laravel: Validation](https://laravel.com/docs/13.x/validation)
 

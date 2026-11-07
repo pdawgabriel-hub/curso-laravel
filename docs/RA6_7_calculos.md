@@ -26,7 +26,7 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
     beneficio, debe, margen_proyectado, porcentaje_cobrado, estado_pago, salud, coste_hora, estado
     ```
 
-    `estado_pago` reutiliza `EstadoPago::calcular()` de 5.8.
+    `estado_pago` sigue la regla de [0.4](./004_de_odoo_a_laravel.md#reglas-de-negocio), la misma que ya calculaba `ObrasController` en 5.5: ahora vive en un único sitio.
 
 3. **Acumulados del trabajador.** `horas_totales` y `total_euros` del trabajador: suma de sus líneas en cualquier obra.
 

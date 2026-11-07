@@ -1,5 +1,5 @@
-{% raw %}
 # 5.4. Vistas y Blade
+{% raw %}
 
 **Referencia teórica:** [Vistas, Blade y layouts](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/RA5_4_vistas.html) · [Laravel: Blade](https://laravel.com/docs/13.x/blade)
 
