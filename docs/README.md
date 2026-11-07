@@ -63,6 +63,7 @@ Los arrays se sustituyen por MariaDB y _Eloquent_.
 7. [Cálculos financieros](./RA6_7_calculos.md)
 8. [Transacciones y bloqueos](./RA6_8_transacciones.md)
 9. [Bitácoras y adjuntos: relaciones polimórficas y ficheros](./RA6_9_bitacoras.md)
+10. _Proyecto:_ [flujo completo de una obra por la web](./RA6_10_proyecto.md)
 
 ## Bloque 7. Servicios web reutilizables (RA7)
 

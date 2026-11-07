@@ -26,17 +26,50 @@ Las pantallas del Bloque 5 pasan a leer y escribir en la base de datos, y se com
 
 2. **Obras y trabajadores.** Mismo cambio en `ObrasController` (el alta crea también la ficha de Gastos) y `TrabajadoresController`. Desaparecen los repositorios de arrays y `RA5_8_ProyectoTest`.
 
-3. **Resto de módulos.** Pantallas de listado, detalle, alta, edición y borrado para:
+3. **Resto de módulos.** Pantallas para todos los módulos, con estas rutas. Lo que exigen las rutas de escritura es iniciar sesión (`auth`), y todas tienen nombre.
 
-    | Módulo | Detalles |
-    |:--|:--|
-    | Proveedores, Especialistas | Formularios con sus validaciones del [contrato](./contrato-api.md) |
-    | Presupuestos | Selector de cliente y obra; líneas editables en el detalle (añadir y quitar); base, IVA y total al pie |
-    | Partes de trabajo | Desde la obra: fecha, descripción y una línea por trabajador |
-    | Partes de proveedor y especialista | Desde la obra |
-    | Ingresos | Desde la obra |
-    | Gastos | Solo listado, detalle y edición de los datos de seguimiento (no se crea ni se borra) |
-    | Faltas | Desde el trabajador |
+    **Módulos de primer nivel:** `clientes`, `trabajadores`, `proveedores`, `especialistas`, `presupuestos` y `obras`. Cada uno con el mismo patrón (`{modulo}` es el módulo y `{id}` el registro):
+
+    | Método | URL | Nombre | Tras guardar |
+    |:--|:--|:--|:--|
+    | GET | `/{modulo}` | `{modulo}.index` | |
+    | GET | `/{modulo}/show/{id}` | `{modulo}.show` | |
+    | GET | `/{modulo}/create` | `{modulo}.create` | |
+    | GET | `/{modulo}/edit/{id}` | `{modulo}.edit` | |
+    | POST | `/{modulo}/store` | `{modulo}.store` | Al listado; en `presupuestos` y `obras`, a su detalle |
+    | PUT | `/{modulo}/update/{id}` | `{modulo}.update` | Al detalle |
+    | DELETE | `/{modulo}/destroy/{id}` | `{modulo}.destroy` | Al listado |
+
+    **Lo que cuelga de un registro.** Los formularios se abren desde el detalle del padre, y al guardar o borrar se vuelve a él:
+
+    | Método | URL | Nombre |
+    |:--|:--|:--|
+    | POST | `/presupuestos/{presupuesto}/lineas` | `presupuestos.lineas.store` |
+    | DELETE | `/presupuestos/{presupuesto}/lineas/{linea}` | `presupuestos.lineas.destroy` |
+    | POST | `/obras/{obra}/vincular-presupuesto` | `obras.vincular-presupuesto` |
+    | GET | `/obras/{obra}/partes-trabajo/create` | `obras.partes-trabajo.create` |
+    | POST | `/obras/{obra}/partes-trabajo` | `obras.partes-trabajo.store` |
+    | DELETE | `/obras/{obra}/partes-trabajo/{parte}` | `obras.partes-trabajo.destroy` |
+    | GET · POST · DELETE | Igual para `partes-proveedor`, `partes-especialista` e `ingresos` | `obras.partes-proveedor.*`, `obras.partes-especialista.*`, `obras.ingresos.*` |
+    | GET | `/trabajadores/{trabajador}/faltas/create` | `trabajadores.faltas.create` |
+    | POST | `/trabajadores/{trabajador}/faltas` | `trabajadores.faltas.store` |
+    | DELETE | `/trabajadores/{trabajador}/faltas/{falta}` | `trabajadores.faltas.destroy` |
+
+    **Módulos especiales:**
+
+    | Método | URL | Nombre | Nota |
+    |:--|:--|:--|:--|
+    | GET | `/gastos` | `gastos.index` | Las fichas se listan, se ven y se editan; **no** hay `create`, `store` ni `destroy` |
+    | GET | `/gastos/show/{gasto}` | `gastos.show` | |
+    | GET | `/gastos/edit/{gasto}` | `gastos.edit` | |
+    | PUT | `/gastos/update/{gasto}` | `gastos.update` | Al detalle |
+    | GET | `/faltas` | `faltas.index` | Todas las faltas, con el nombre del trabajador |
+
+    Los **campos** de cada formulario se llaman como en el [contrato](./contrato-api.md), y las validaciones son las mismas. En el parte de trabajo, las líneas se envían como `lineas[0][trabajador_id]` y `lineas[0][horas]`, con un selector de trabajadores.
+
+    En el presupuesto, además de los datos de cabecera, las líneas se añaden y se quitan desde el detalle (con los campos `descripcion`, `uds` y `precio`), y al pie se muestran la base, el IVA y el total. Las casillas de proveedores y especialistas se añaden en [6.6](./RA6_6_relaciones.md).
+
+    En el detalle de la obra se ofrecen los presupuestos libres de su cliente en un selector `presupuesto_id`, que es el equivalente al asistente de vincular de _Odoo_.
 
     El menú del layout muestra cada entrada en cuanto existe su ruta `*.index`.
 
@@ -48,7 +81,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_5_CrudWebTest.php te
 php artisan test --filter=RA6_5
 ```
 
-Resultado esperado: `Tests: 10 passed`. El resto de módulos se comprueba en el navegador con los datos de demostración.
+Resultado esperado: `Tests: 10 passed`. El resto de módulos se comprueba al final del bloque con el [flujo completo](./RA6_10_proyecto.md).
 
 ## Git
 

@@ -26,6 +26,16 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
     - Sección de observaciones e incidencias con un formulario de una sola línea; el autor es el usuario conectado y se muestra con la fecha.
     - Sección de adjuntos con subida de fichero (`enctype="multipart/form-data"`), descarga y borrado.
 
+    Rutas web de los formularios, protegidas con `auth`, que al guardar vuelven a la página anterior:
+
+    | Método | URL | Nombre |
+    |:--|:--|:--|
+    | POST | `/{tipo}/{id}/observaciones` | `bitacoras.observaciones` |
+    | POST | `/{tipo}/{id}/incidencias` | `bitacoras.incidencias` |
+    | POST | `/{tipo}/{id}/archivos` | `bitacoras.archivos` |
+
+    `{tipo}` es la clave del mapa polimórfico, limitada con `whereIn` a las entidades de cada lista.
+
 ## Comprueba tu solución automáticamente
 
 ```bash
@@ -37,8 +47,8 @@ Resultado esperado: `RA6_9`: `Tests: 5 passed`, y todo el bloque en verde.
 
 ## Git
 
-Rama `RA6_9`. Al fusionar: `git tag -a bloque-6 -m "Bloque 6: acceso a datos" && git push --tags`.
+Rama `RA6_9`, commit `feat: bitácoras y adjuntos polimórficos`.
 
 ---
 
-**Siguiente:** [7.1. API REST y controladores de recursos](./RA7_1_recursos.md)
+**Siguiente:** [6.10. Proyecto: flujo completo de una obra por la web](./RA6_10_proyecto.md)

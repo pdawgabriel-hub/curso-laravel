@@ -33,6 +33,10 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
 4. **En las vistas.**
 
     - Detalle de la obra: cinco tarjetas con *Total presupuesto*, *Gastos*, *Beneficio de caja*, *Pendiente de cobro* y *Margen proyectado*, una barra de progreso con el porcentaje cobrado y un indicador de color con la salud.
+    - Detalle de la ficha de Gastos (`gastos.show`): gastos, ingresos, beneficio real, pendiente y estado.
+    - Detalle del trabajador: horas y coste acumulados.
+    - **Formato:** importes y horas con `number_format($x, 2, ',', '.')` (`1.210,00`, `-170,00`, `16,00`); el porcentaje con un decimal (`41,3`). Conviene un único helper, por ejemplo `App\Support\Formato`.
+    - **Textos:** estado de pago `Pendiente`, `Parcial` o `Pagado`; salud `Verde`, `Ámbar` o `Rojo`; estado de la ficha `En proceso` o `Finalizada`.
     - Listado de obras: columnas de total, estado de pago y salud. Usar `with()` para no lanzar una consulta por obra al pedir el cliente.
 
 ## Comprueba tu solución automáticamente
