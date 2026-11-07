@@ -90,4 +90,4 @@ Rama `RA6_15`. Al fusionar: `git tag -a bloque-6 -m "Bloque 6: acceso a datos" &
 
 ---
 
-**Siguiente:** [7.1. API REST y controladores de recursos](./RA7_2_recursos.md)
+**Siguiente:** [7.1. Introducción a API y REST. Swagger](./RA7_1_swagger.md)

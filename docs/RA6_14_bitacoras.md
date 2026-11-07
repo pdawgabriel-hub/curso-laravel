@@ -47,7 +47,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_14_BitacorasTest.php
 php artisan test
 ```
 
-Resultado esperado: `RA6_9`: `Tests: 5 passed`, y todo el bloque en verde.
+Resultado esperado: los 5 tests de `RA6_14_BitacorasTest` pasan, y todo el bloque en verde.
 
 ## Git
 
