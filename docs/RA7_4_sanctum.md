@@ -1,4 +1,4 @@
-# 7.3. Autenticación con Sanctum
+# 7.4. Autenticación con Sanctum
 
 **Referencia teórica:** [Autenticación](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/09_autenticacion.html) · [Por tokens](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/091_autenticacionTokens.html) · [Por sesiones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/092_autenticacionSesionAPI.html) · [Laravel: Sanctum](https://laravel.com/docs/13.x/sanctum)
 
@@ -14,7 +14,7 @@ Que un cliente externo (una aplicación móvil, otro sistema o un frontend separ
 
 1. `API\TokenController` con `store` (valida `email` y `password`; si no coinciden, `ValidationException` en `email`; si coinciden, `{ token_type: 'Bearer', access_token }`) y `destroy` (borra `currentAccessToken()` y responde 204).
 2. Rutas `POST /api/v1/tokens` (pública) y `DELETE /api/v1/tokens` (autenticada).
-3. `GET /api/v1/user` devuelve el usuario y sus `roles` (en 7.4 se completa el cálculo de roles).
+3. `GET /api/v1/user` devuelve el usuario y sus `roles` (en 7.5 se completa el cálculo de roles).
 4. Probar el flujo completo con `curl`:
 
    ```bash
@@ -23,19 +23,21 @@ Que un cliente externo (una aplicación móvil, otro sistema o un frontend separ
    curl -s http://gestion-obras.test/api/v1/obras -H "Authorization: Bearer $TOKEN" -H 'Accept: application/json' | jq '.meta.total'
    ```
 
+5. **Investiga.** Responde en tu _pull request_: mira la tabla `personal_access_tokens` en phpMyAdmin. ¿Coincide el valor guardado con el que recibiste? ¿Qué pasa si se filtra la base de datos? Autentícate en _Swagger UI_ con *Authorize* y prueba una ruta.
+
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_3_TokensApiTest.php tests/Feature/
-php artisan test --filter=RA7_3
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_4_TokensApiTest.php tests/Feature/
+php artisan test --filter=RA7_4
 ```
 
 Resultado esperado: `Tests: 5 passed`.
 
 ## Git
 
-Rama `RA7_3`, commit `feat: emisión y revocación de tokens con Sanctum`.
+Rama `RA7_4`, commit `feat: emisión y revocación de tokens con Sanctum`.
 
 ---
 
-**Siguiente:** [7.4. Autorización: Gates, Policies y roles](./RA7_4_autorizacion.md)
+**Siguiente:** [7.5. Autorización](./RA7_5_autorizacion.md)

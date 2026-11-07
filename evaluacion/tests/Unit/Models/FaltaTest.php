@@ -14,7 +14,7 @@ class FaltaTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['trabajador_id', 'fecha_inicio', 'fecha_fin', 'tipo', 'motivo'], (new Falta())->getFillable());
+        $this->assertEquals(['trabajador_id', 'fecha_inicio', 'fecha_fin', 'tipo', 'motivo', 'user_id'], (new Falta())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()
@@ -26,6 +26,7 @@ class FaltaTest extends TestCase
     {
         return [
             ['trabajador', BelongsTo::class],
+            ['usuario', BelongsTo::class],
         ];
     }
 

@@ -10,13 +10,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_5_ArchivosApiTest extends FeatureTestCase
+class RA7_6_ArchivosApiTest extends FeatureTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
         Storage::fake();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     private function subir(string $tipo, int $id, UploadedFile $fichero)

@@ -13,7 +13,7 @@ class LineaPresupuestoApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->presupuesto = Presupuesto::factory()->create();
     }
 

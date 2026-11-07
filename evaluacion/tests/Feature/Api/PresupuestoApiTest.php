@@ -20,7 +20,7 @@ class PresupuestoApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->cliente = Cliente::factory()->create(['nombre' => 'Juan', 'apellidos' => 'Pérez', 'nif' => '12345678Z']);
     }
 

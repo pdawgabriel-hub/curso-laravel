@@ -3,17 +3,16 @@
 namespace Tests\Feature;
 
 use App\Models\Cliente;
-use App\Models\Presupuesto;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_2_BusquedaApiTest extends FeatureTestCase
+class RA7_3_BusquedaApiTest extends FeatureTestCase
 {
     private const CAMPOS = ['id', 'codigo', 'nombre', 'apellidos', 'nombre_completo', 'nif', 'direccion', 'cod_postal', 'telefono', 'created_at', 'updated_at'];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     private function datos(array $cambios = []): array
@@ -67,5 +66,12 @@ class RA7_2_BusquedaApiTest extends FeatureTestCase
         $response = $this->getJson('/api/v1/clientes?sort=nombre&order=asc');
 
         $this->assertSame('Andrés', $response->json('data.0.nombre'));
+    }
+
+    public function test_pagina_clientes()
+    {
+        Cliente::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/clientes?per_page=10"), 10, 25);
     }
 }

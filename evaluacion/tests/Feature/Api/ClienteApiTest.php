@@ -13,7 +13,7 @@ class ClienteApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     private function datos(array $cambios = []): array

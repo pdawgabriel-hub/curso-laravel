@@ -1,5 +1,5 @@
-<!-- {% raw %} -->
 # 6.5. Ejercicios: clientes en la base de datos
+<!-- {% raw %} -->
 
 **Referencia teórica:** [Ejercicios de bases de datos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/047_ejerciciosBD.html) · [Crear y modificar](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/0475_crearModificarFamiliaProfesional.html)
 

@@ -41,7 +41,7 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `mandante`, `gestion_licencia`, `pago_icio` (sí/no) | `boolean` | Tipo nativo |
 | `gastos.coste_moo_total` y `coste_moo` | `coste_moo` | Eran el mismo valor |
 | `proveedores.nombre` (opcional) | obligatorio | Un proveedor sin nombre no se puede identificar en los selectores |
-| Bitácoras: las borra cualquier usuario con acceso | Solo su autor, el jefe o el administrador | Una nota no la debería poder eliminar otro compañero; es el único caso en que los roles se distinguen |
+| Administrativa y Jefe, con los mismos permisos | [Tabla de permisos](./contrato-api.md#permisos): obras, ingresos, gastos, aprobar y borrar son del jefe; cada uno gestiona sus partes y faltas | Permite practicar _Policies_ con roles y propietario |
 | Líneas de parte, de una en una | Además, alta por lote | Una cuadrilla suele hacer la misma jornada |
 
 ## Mecanismos de Odoo y su equivalente
@@ -56,10 +56,10 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `related='cliente_id.nombre'` | Relación + accessor, o `with()` | [6.8](./RA6_8_relaciones.md) |
 | `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.9](./RA6_9_presupuestos.md) |
 | `@api.constrains`, `_sql_constraints` | Reglas de validación + `unique`/`foreign` en migraciones | [5.6](./RA5_6_formularios.md), [6.1](./RA6_1_migraciones.md) |
-| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.2](./RA7_2_busqueda.md) |
-| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.4](./RA7_4_autorizacion.md) |
+| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.3](./RA7_3_busqueda.md) |
+| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.5](./RA7_5_autorizacion.md) |
 | `post_init_hook` (datos de demo) | `DatabaseSeeder`, una semilla por tabla y factories | [6.15](./RA6_15_proyecto.md) |
-| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.1](./RA7_1_recursos.md) |
+| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.2](./RA7_2_recursos.md) |
 | Vistas list/form/kanban | Vistas Blade | [5.4](./RA5_4_vistas.md) |
 | Reportes QWeb | Vistas Blade → PDF con dompdf | [9.1](./RA9_1_pdf.md) |
 | Componente OWL del dashboard | Vista Blade + Chart.js sobre el servicio `Estadisticas` | [9.3](./RA9_3_dashboard.md) |

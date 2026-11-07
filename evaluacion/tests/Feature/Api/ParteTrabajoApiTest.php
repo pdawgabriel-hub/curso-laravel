@@ -10,7 +10,7 @@ use Tests\Feature\FeatureTestCase;
 
 class ParteTrabajoApiTest extends FeatureTestCase
 {
-    private const CAMPOS = ['id', 'obra_id', 'fecha', 'descripcion', 'horas_totales', 'coste_total', 'lineas', 'created_at', 'updated_at'];
+    private const CAMPOS = ['id', 'obra_id', 'fecha', 'descripcion', 'horas_totales', 'coste_total', 'lineas', 'user_id', 'created_at', 'updated_at'];
 
     private Obra $obra;
 
@@ -185,5 +185,15 @@ class ParteTrabajoApiTest extends FeatureTestCase
         $parte = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id]);
 
         $this->getJson($this->url("/{$parte->id}"))->assertOk()->assertJsonPath('data.obra_id', $this->obra->id);
+    }
+
+    public function test_el_propietario_es_el_usuario_autenticado_aunque_se_intente_falsear()
+    {
+        $yo = $this->actuarComo('administrativa');
+        $otro = \App\Models\User::factory()->create();
+
+        $this->postJson($this->url(), ['descripcion' => 'Tarea', 'user_id' => $otro->id])
+            ->assertCreated()
+            ->assertJsonPath('data.user_id', $yo->id);
     }
 }

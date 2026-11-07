@@ -15,7 +15,7 @@ class ParteProveedorTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['obra_id', 'proveedor_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago'], (new ParteProveedor())->getFillable());
+        $this->assertEquals(['obra_id', 'proveedor_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago', 'user_id'], (new ParteProveedor())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()
@@ -27,6 +27,7 @@ class ParteProveedorTest extends TestCase
     {
         return [
             ['obra', BelongsTo::class],
+            ['usuario', BelongsTo::class],
             ['proveedor', BelongsTo::class],
             ['archivos', MorphMany::class],
             ['incidencias', MorphMany::class],

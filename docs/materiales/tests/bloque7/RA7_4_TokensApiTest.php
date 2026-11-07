@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Laravel\Sanctum\Sanctum;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_3_TokensApiTest extends FeatureTestCase
+class RA7_4_TokensApiTest extends FeatureTestCase
 {
     public function test_emite_un_token_con_credenciales_correctas()
     {

@@ -25,8 +25,25 @@ class UserTest extends TestCase
 
     public function test_es_administrador_segun_la_configuracion()
     {
-        $this->assertTrue(User::factory()->make(['email' => config('app.admin.email')])->esAdministrador());
-        $this->assertFalse(User::factory()->make(['email' => 'otro@correo.test', 'rol' => 'jefe'])->esAdministrador());
+        $this->assertTrue(User::factory()->make(['email' => config('app.admin.email')])->esAdmin());
+        $this->assertFalse(User::factory()->make(['email' => 'otro@correo.test', 'rol' => 'jefe'])->esAdmin());
+    }
+
+    public function test_jefe_y_administrativa()
+    {
+        $this->assertTrue(User::factory()->make(['rol' => 'jefe'])->esJefe());
+        $this->assertFalse(User::factory()->make(['rol' => 'administrativa'])->esJefe());
+        $this->assertTrue(User::factory()->make(['rol' => 'administrativa'])->esAdministrativa());
+        $this->assertFalse(User::factory()->make(['rol' => null])->esAdministrativa());
+    }
+
+    public function test_es_propietario_de_un_recurso()
+    {
+        $user = User::factory()->create();
+
+        $this->assertTrue($user->esPropietario((object) ['user_id' => $user->id]));
+        $this->assertFalse($user->esPropietario((object) ['user_id' => $user->id + 1]));
+        $this->assertTrue($user->esPropietario((object) ['tutor_id' => $user->id], 'tutor_id'));
     }
 
     public function test_tiene_rol()

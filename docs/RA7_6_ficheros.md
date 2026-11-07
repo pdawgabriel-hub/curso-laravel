@@ -1,4 +1,4 @@
-# 7.5. Ficheros y bitácoras en la API
+# 7.6. Ficheros y bitácoras en la API
 
 **Referencia teórica:** [Manejo de ficheros en la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/11_manejarFicheros.html) · [Laravel: File Uploads](https://laravel.com/docs/13.x/requests#files)
 
@@ -15,21 +15,22 @@ Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas la
 
 1. `API\BitacoraController` (`index`, `store` y borrado de observaciones e incidencias) y `API\ArchivoController` (`index`, `store`, `descarga` y `destroy`), con las listas de entidades del contrato.
 2. Clasificación del adjunto por MIME: `image/*` → `imagen`, `application/pdf` → `pdf`, el resto → `otro`.
-3. Comprobar en los tests de la batería, más adelante, que borrar una entidad borra sus ficheros del disco.
+3. Permisos: ver un adjunto o una nota exige poder ver su registro; escribir una nota, solo tener rol y poder verlo; subir o borrar un adjunto exige poder modificar su registro. La administrativa no sube adjuntos a una obra, pero sí a un parte suyo.
+4. **Investiga.** Responde en tu _pull request_: intenta descargar un adjunto por su ruta en `storage/`. ¿Por qué no funciona? ¿Qué aporta que la descarga pase por un controlador?
 
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_5_ArchivosApiTest.php tests/Feature/
-php artisan test --filter=RA7_5
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_6_ArchivosApiTest.php tests/Feature/
+php artisan test --filter=RA7_6
 ```
 
 Resultado esperado: `Tests: 5 passed`.
 
 ## Git
 
-Rama `RA7_5`, commit `feat: bitácoras y adjuntos en la API`.
+Rama `RA7_6`, commit `feat: bitácoras y adjuntos en la API`. Al fusionar: `git tag -a bloque-7 -m "Bloque 7: servicios web" && git push --tags`, y empieza la [evaluación](./evaluacion.md).
 
 ---
 
-**Siguiente:** [7.6. Documentación OpenAPI](./RA7_6_openapi.md)
+**Siguiente:** [7.7. Opcional: _PHP-CRUD-API_ y sesiones en la API](./RA7_7_opcional.md)

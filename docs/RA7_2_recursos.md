@@ -1,4 +1,4 @@
-# 7.1. API REST y controladores de recursos
+# 7.2. Controladores de recursos
 
 **Referencia teórica:** [API y REST](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/061_api_y_rest.html) · [Esqueleto de la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/062_esqueleto_API.html) · [Controladores de recursos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/07_resourceController.html) · [Laravel: API Resources](https://laravel.com/docs/13.x/eloquent-resources)
 
@@ -6,7 +6,8 @@ Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, c
 
 ## Conceptos clave
 
-- `php artisan install:api` instala Sanctum y crea `routes/api.php` (prefijo `/api`).
+- `php artisan install:api` instala Sanctum y crea `routes/api.php` (prefijo `/api`). Los apuntes del módulo usan `php artisan breeze:install api`, que además borra `package.json`, Vite y los estilos, porque su interfaz pasa a otro proyecto. Aquí seguimos usando _Blade_, así que no se usa.
+- `php artisan make:controller API/ClienteController --api --model=Cliente` genera los cinco métodos, y `php artisan make:resource ClienteResource`, el recurso.
 - `Route::apiResource('clientes', API\ClienteController::class)` genera `index`, `store`, `show`, `update` y `destroy`.
 - **Recursos anidados**: `apiResource('obras.ingresos', …)` → `/obras/{obra}/ingresos/{ingreso}`. Con `->scoped()`, Laravel comprueba que el hijo pertenece al padre si encuentra la relación por el nombre del parámetro (`ingreso` → `$obra->ingresos()`); si el nombre no coincide (`parteTrabajo` → `partesTrabajo`), la comprobación se hace en el controlador con `abort_if($parte->obra_id !== $obra->id, 404)`.
 - `->parameters(['trabajadores' => 'trabajador'])`: Laravel singulariza en inglés (`trabajadore`), así que conviene fijar los nombres de los parámetros.
@@ -36,7 +37,7 @@ Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, c
 
 2. **Clientes (ejemplo guiado).** `php artisan make:controller API/ClienteController --api` y `ClienteResource`. Validación, respuestas y regla de borrado según el contrato. Para la validación, el mismo `ClienteRequest` de la web sirve si sus reglas usan `sometimes|required` en la actualización, o se crea uno específico de la API.
 
-    > **Aviso.** La autorización (`Gate::authorize()`) se añade en [7.4](./RA7_4_autorizacion.md): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
+    > **Aviso.** La autorización (`Gate::authorize()`) se añade en [7.5](./RA7_5_autorizacion.md): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
 
 3. **Resto de recursos.** Aplicar el patrón a todos los recursos del contrato, en este orden: trabajadores y faltas, proveedores, especialistas, presupuestos y líneas, obras (con `ObraService`), gastos (`only(['index', 'show', 'update'])`), ingresos, partes de trabajo y sus líneas, partes de proveedor y de especialista.
 
@@ -46,6 +47,11 @@ Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, c
 
 6. **Estadísticas y calendario.** `GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
 
+7. **Investiga.** Responde en tu _pull request_:
+    - Quita temporalmente `->name('api.')`. ¿Qué devuelve `route('clientes.index')`? ¿Qué le pasa al menú de la web?
+    - Quita `refresh()` en `store` y crea un cliente sin apellidos. ¿Qué campos faltan en la respuesta?
+    - Prueba cada ruta desde _Swagger UI_: ¿responde lo que dice la especificación?
+
 ## Comprueba tu solución automáticamente
 
 Copiar las clases base de los tests de la API (no son tests: aportan `actuarComo()`, `assertImporte()` y `assertListado()`) y el test del apartado:
@@ -54,16 +60,16 @@ Copiar las clases base de los tests de la API (no son tests: aportan `actuarComo
 E=/var/www/curso-laravel/evaluacion/tests
 cp $E/TestCase.php tests/
 cp $E/Feature/FeatureTestCase.php tests/Feature/
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_1_ClientesApiTest.php tests/Feature/
-php artisan test --filter=RA7_1
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_2_ClientesApiTest.php tests/Feature/
+php artisan test --filter=RA7_2
 ```
 
 Resultado esperado: `Tests: 10 passed`. El resto de recursos se comprueba con peticiones manuales (por ejemplo, con la extensión REST Client de VS Code o con `curl`) y, al final del bloque, con la batería de evaluación.
 
 ## Git
 
-Rama `RA7_1` con un commit por recurso, o una rama por grupo de recursos (`RA7_1_obras`…).
+Rama `RA7_2` con un commit por recurso, o una rama por grupo de recursos (`RA7_2_obras`…).
 
 ---
 
-**Siguiente:** [7.2. Búsqueda, orden y paginación](./RA7_2_busqueda.md)
+**Siguiente:** [7.3. Búsqueda, orden y paginación](./RA7_3_busqueda.md)

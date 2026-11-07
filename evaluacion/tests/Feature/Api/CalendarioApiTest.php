@@ -14,7 +14,7 @@ class CalendarioApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     public function test_unifica_los_eventos_de_cinco_origenes()
@@ -48,5 +48,16 @@ class CalendarioApiTest extends FeatureTestCase
         $this->actuarComo(null);
 
         $this->getJson('/api/v1/calendario?desde=2026-05-01&hasta=2026-05-31')->assertForbidden();
+    }
+
+    public function test_quien_no_es_jefe_no_ve_los_ingresos_en_el_calendario()
+    {
+        Ingreso::factory()->create(['fecha' => '2026-05-02']);
+        ParteTrabajo::factory()->create(['fecha' => '2026-05-03']);
+        $this->actuarComo('administrativa');
+
+        $response = $this->getJson('/api/v1/calendario?desde=2026-05-01&hasta=2026-05-31')->assertOk();
+
+        $this->assertSame(['parte_trabajo'], array_column($response->json('data'), 'tipo'));
     }
 }

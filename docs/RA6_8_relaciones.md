@@ -1,5 +1,5 @@
-<!-- {% raw %} -->
 # 6.8. Relaciones: obras y faltas
+<!-- {% raw %} -->
 
 **Referencia teórica:** [Relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/08_relaciones.html) · [Uno a uno](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/081_relaciones_unoAuno.html) · [Uno a muchos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/082_relaciones_unoAmuchos.html) · [Insertar y actualizar con relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/084_DML_Relaciones.html)
 

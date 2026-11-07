@@ -7,7 +7,7 @@ El "Análisis Financiero" del módulo de Odoo: indicadores globales, rentabilida
 
 ## Conceptos clave
 
-- El servicio `App\Services\Estadisticas` de 7.1 calcula los datos; la API los devuelve en JSON y la web los pinta. Un único cálculo para las dos interfaces.
+- El servicio `App\Services\Estadisticas` de 7.2 calcula los datos; la API los devuelve en JSON y la web los pinta. Un único cálculo para las dos interfaces.
 - `Js::from($estadisticas['evolucion_mensual'])` (o `@json`) pasa datos de PHP a JavaScript de forma segura.
 - Chart.js desde un CDN: `<canvas id="grafico-evolucion">` + `new Chart(...)`.
 

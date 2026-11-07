@@ -6,7 +6,7 @@ Un calendario con presupuestos, ingresos y los tres tipos de parte, cada tipo co
 
 ## Conceptos clave
 
-- El servicio `App\Services\Calendario` de 7.1 une las cinco consultas y devuelve eventos con `tipo`, `fecha`, `titulo`, `modelo` e `id`.
+- El servicio `App\Services\Calendario` de 7.2 une las cinco consultas y devuelve eventos con `tipo`, `fecha`, `titulo`, `modelo` e `id`.
 - FullCalendar pide los eventos del rango visible a una URL con `?start=…&end=…` (fechas ISO con hora y zona) y espera objetos con `title`, `start` y, opcionalmente, `color` y `extendedProps`.
 
 ## Ejercicios

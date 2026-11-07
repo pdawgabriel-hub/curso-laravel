@@ -19,7 +19,7 @@ class IngresoApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->obra = Obra::factory()->create(['descripcion' => 'Reforma de baño']);
         $p = Presupuesto::factory()->create(['cliente_id' => $this->obra->cliente_id, 'obra_id' => $this->obra->id, 'estado' => 'aprobado', 'iva' => 21]);
         LineaPresupuesto::factory()->create(['presupuesto_id' => $p->id, 'uds' => 1, 'precio' => 1000]);

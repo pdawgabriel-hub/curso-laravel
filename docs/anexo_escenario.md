@@ -28,7 +28,7 @@ El ciclo de negocio de una obra de principio a fin, con el resultado esperado en
 
 ## Comprobación con la API
 
-Con un token de [7.3](./RA7_3_sanctum.md), los pasos se pueden reproducir con `curl` o con Swagger UI ([7.6](./RA7_6_openapi.md)). Las rutas de cada paso:
+Con un token de [7.4](./RA7_4_sanctum.md), los pasos se pueden reproducir con `curl` o con Swagger UI ([7.1](./RA7_1_swagger.md)). Las rutas de cada paso:
 
 | Paso | Petición |
 |:--:|:--|

@@ -14,7 +14,7 @@ class ProveedorApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     public function test_puede_listar_proveedores()

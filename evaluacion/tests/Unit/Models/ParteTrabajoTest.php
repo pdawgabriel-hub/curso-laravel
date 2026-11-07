@@ -16,7 +16,7 @@ class ParteTrabajoTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['obra_id', 'fecha', 'descripcion'], (new ParteTrabajo())->getFillable());
+        $this->assertEquals(['obra_id', 'fecha', 'descripcion', 'user_id'], (new ParteTrabajo())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()
@@ -28,6 +28,7 @@ class ParteTrabajoTest extends TestCase
     {
         return [
             ['obra', BelongsTo::class],
+            ['usuario', BelongsTo::class],
             ['lineas', HasMany::class],
             ['incidencias', MorphMany::class],
         ];

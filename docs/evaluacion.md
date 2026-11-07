@@ -11,26 +11,27 @@ El proyecto se evalúa con tests automáticos, en dos niveles:
 
 La batería se entrega como una carpeta `tests/` completa que sustituye a la del proyecto. **El proyecto está aprobado cuando toda la batería está en verde**, igual que se haría con una batería entregada al final de un módulo: no se conocen los tests de antemano, pero sí el contrato que comprueban.
 
-> **Importante.** Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en los apartados [6.2](./RA6_2_modelos.md) y [6.6](./RA6_6_relaciones.md). Hasta entonces la referencia es el [contrato de la API](./contrato-api.md): rutas, campos, `$fillable`, validaciones y códigos de respuesta.
+> **Importante.** Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en [6.15](./RA6_15_proyecto.md).
 
 ## Contenido de la batería
 
 | Fichero | Tests |
 |:--|--:|
-| `Unit/Models/*Test.php` (17 modelos) | 108 |
-| `Unit/UserTest.php` | 5 |
+| `Unit/Models/*Test.php` (17 modelos) | 112 |
+| `Unit/UserTest.php` | 7 |
 | `Feature/Api/AutenticacionApiTest.php` | 9 |
+| `Feature/Api/AutorizacionApiTest.php`, la tabla de permisos | 25 |
 | `Feature/Api/ClienteApiTest.php` | 22 |
-| `Feature/Api/TrabajadorApiTest.php` · `FaltaApiTest.php` | 14 · 16 |
+| `Feature/Api/TrabajadorApiTest.php` · `FaltaApiTest.php` | 14 · 17 |
 | `Feature/Api/ProveedorApiTest.php` · `EspecialistaApiTest.php` | 12 · 11 |
 | `Feature/Api/PresupuestoApiTest.php` · `LineaPresupuestoApiTest.php` | 21 · 11 |
 | `Feature/Api/ObraApiTest.php` · `GastoApiTest.php` · `IngresoApiTest.php` | 24 · 18 · 16 |
-| `Feature/Api/ParteTrabajoApiTest.php` · `LineaParteTrabajoApiTest.php` | 15 · 18 |
-| `Feature/Api/ParteProveedorApiTest.php` · `ParteEspecialistaApiTest.php` | 15 · 15 |
+| `Feature/Api/ParteTrabajoApiTest.php` · `LineaParteTrabajoApiTest.php` | 16 · 18 |
+| `Feature/Api/ParteProveedorApiTest.php` · `ParteEspecialistaApiTest.php` | 16 · 16 |
 | `Feature/Api/BitacoraApiTest.php` · `ArchivoApiTest.php` | 14 · 9 |
-| `Feature/Api/EstadisticaApiTest.php` · `CalendarioApiTest.php` | 10 · 3 |
+| `Feature/Api/EstadisticaApiTest.php` · `CalendarioApiTest.php` | 10 · 4 |
 | `Feature/Escenario/EscenarioCompletoTest.php` | 3 |
-| **Total** | **389** |
+| **Total** | **425** |
 
 Cada recurso comprueba su CRUD, la validación de cada campo, los valores admitidos, la búsqueda, los filtros, la paginación con `links` y `meta`, el 404 con otro padre y el **403 a un usuario sin rol** en cada operación, además de que la base de datos no cambie.
 
@@ -81,6 +82,7 @@ Cada recurso comprueba su CRUD, la validación de cada campo, los valores admiti
 | `Call to undefined method …::factory()` | Falta `use HasFactory` en el modelo |
 | Los tests de modelo fallan solo por el orden | `$fillable` debe estar en el orden del contrato |
 | 403 en todas las rutas con el administrador | `config('app.admin.email')` no está definido o `Gate::before` no devuelve `true` |
+| El propietario sale `null` o el de la petición | `user_id` debe asignarse en el controlador con el usuario autenticado, después de validar |
 | 403 esperado y llega 200 o 201 | Falta `Gate::authorize()` en esa acción: hay que revisar todas, también los recursos anidados y las rutas adicionales |
 | 422 esperado y llega 403, o al revés | El orden importa: primero se autoriza y después se valida |
 | `Class "Database\Factories\GastoFactory" not found` | La ficha de Gastos no debe crearse con factory: la crea la obra |

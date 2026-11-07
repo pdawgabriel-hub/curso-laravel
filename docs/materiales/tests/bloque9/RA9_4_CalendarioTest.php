@@ -20,7 +20,7 @@ class RA9_4_CalendarioTest extends TestCase
 
     public function test_la_pagina_del_calendario()
     {
-        $this->actingAs(User::factory()->create(['rol' => 'administrativa']));
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
 
         $this->get('/calendario')
             ->assertOk()
@@ -31,7 +31,7 @@ class RA9_4_CalendarioTest extends TestCase
 
     public function test_los_eventos_en_formato_fullcalendar()
     {
-        $this->actingAs(User::factory()->create(['rol' => 'administrativa']));
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
         $i = Ingreso::factory()->create(['fecha' => '2026-05-10']);
         ParteTrabajo::factory()->create(['fecha' => '2026-05-12', 'descripcion' => 'Alicatado']);
         Ingreso::factory()->create(['fecha' => '2026-08-01']);

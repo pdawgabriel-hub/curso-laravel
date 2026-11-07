@@ -22,7 +22,7 @@ class RA9_1_PdfTest extends TestCase
 
     public function test_pdf_del_presupuesto()
     {
-        $this->actingAs(User::factory()->create(['rol' => 'administrativa']));
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
         $p = Presupuesto::factory()->create();
         LineaPresupuesto::factory()->count(3)->create(['presupuesto_id' => $p->id]);
 
@@ -31,7 +31,7 @@ class RA9_1_PdfTest extends TestCase
 
     public function test_pdf_del_parte_de_trabajo()
     {
-        $this->actingAs(User::factory()->create(['rol' => 'administrativa']));
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
         $linea = LineaParteTrabajo::factory()->create();
 
         $this->assertEsPdf($this->get(route('partes-trabajo.pdf', $linea->parte_trabajo_id)));
@@ -39,7 +39,7 @@ class RA9_1_PdfTest extends TestCase
 
     public function test_pdf_del_seguimiento_de_gastos()
     {
-        $this->actingAs(User::factory()->create(['rol' => 'administrativa']));
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
         $obra = Obra::factory()->create();
 
         $this->assertEsPdf($this->get(route('gastos.pdf', $obra->gasto)));

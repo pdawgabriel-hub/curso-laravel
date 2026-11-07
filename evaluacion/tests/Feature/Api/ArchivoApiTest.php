@@ -16,7 +16,7 @@ class ArchivoApiTest extends FeatureTestCase
     {
         parent::setUp();
         Storage::fake();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     private function subir(string $tipo, int $id, UploadedFile $fichero)

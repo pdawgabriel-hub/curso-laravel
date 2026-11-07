@@ -8,8 +8,8 @@ Especificación de la API REST y de los modelos que comprueban los tests del Blo
 |:--|:--|
 | Prefijo | `/api/v1`. Los nombres de ruta llevan el prefijo `api.` (`Route::prefix('v1')->name('api.')`) para no chocar con los de la web (`clientes.index`) |
 | Autenticación | Sanctum (`auth:sanctum`) en todas las rutas salvo `POST /tokens`. Sin token → **401** |
-| Roles | Columna `users.rol`: `administrativa` o `jefe` (mismos permisos), o `null`. El administrador es el usuario cuyo email coincide con `config('app.admin.email')` (`ADMIN_EMAIL` en `.env`) y pasa por `Gate::before` |
-| Permisos | Con rol (o administrador) se puede todo, salvo borrar observaciones e incidencias de otro autor ([ver](#bitácoras-y-adjuntos)); un usuario sin rol recibe **403** en cualquier ruta salvo `GET /user`. Primero se autoriza y después se valida |
+| Roles | Columna `users.rol`: `administrativa`, `jefe` o `null`. El administrador es el usuario cuyo email coincide con `config('app.admin.email')` (`ADMIN_EMAIL` en `.env`) y pasa por `Gate::before` |
+| Permisos | Según la [tabla de permisos](#permisos). Un usuario sin rol recibe **403** en cualquier ruta salvo `GET /user`. Primero se autoriza y después se valida. No hay lectura anónima |
 | Listados | `Resource::collection($query->paginate())`: `{ data: [...], links: {...}, meta: {...} }` |
 | Un registro | `{ data: {...} }` |
 | Crear | **201** con el registro completo (todas las columnas, también las que no se enviaron: `$modelo->refresh()`) |
@@ -32,6 +32,22 @@ Todos los `index` aceptan:
 | `sort`, `order` | Orden por un campo (`sort=nombre&order=desc`). Por defecto `id asc` |
 | `per_page` | Tamaño de página (15 por defecto). `links` incluye `first`, `last`, `prev` y `next`; `meta`, al menos `current_page`, `total` y `per_page` |
 | Filtros | Igualdad exacta sobre los campos indicados en cada recurso (`?estado=aprobado`) |
+
+## Permisos
+
+| Recurso | Ver | Crear | Modificar | Borrar |
+|:--|:--|:--|:--|:--|
+| Clientes, proveedores, especialistas, trabajadores | con rol | con rol | con rol | jefe |
+| Presupuestos | con rol | con rol | con rol; aprobar o retirar la aprobación, solo jefe | jefe |
+| Líneas de presupuesto | con rol | con rol | con rol | con rol |
+| Obras (incluido vincular un presupuesto) | con rol | jefe | jefe | jefe |
+| Partes, faltas | con rol | con rol | propietario o jefe | propietario o jefe |
+| Líneas de parte | con rol | como su parte | como su parte | como su parte |
+| Ingresos, ficha de Gastos, estadísticas | jefe | jefe (Gastos no se crean) | jefe | jefe (Gastos no se borran) |
+| Observaciones, incidencias | si puede ver su registro | con rol, si puede ver su registro | — | propietario o jefe |
+| Adjuntos | si puede ver su registro | si puede modificar su registro | — | si puede modificar su registro |
+
+El **propietario** es el usuario de `user_id`, que la aplicación asigna al crear (el usuario autenticado) y que no se acepta en la petición. El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos. El administrador puede con todo.
 
 ## Autenticación y usuario
 
@@ -88,7 +104,7 @@ Borrar un trabajador con líneas de parte → **409**.
 | `tipo` | `vacaciones` (por defecto), `baja_medica`, `personal`, `injustificada`, `otro` |
 | `motivo` | opcional |
 
-Respuesta: campos + `id, trabajador_id, dias` (inclusive: un día = 1).
+Respuesta: campos + `id, trabajador_id, user_id, dias` (inclusive: un día = 1).
 
 ### Proveedores
 
@@ -191,7 +207,7 @@ Respuesta: campos + `id, codigo, obra_id, anio, total_ingresos, debe`. Se puede 
 | `descripcion` | obligatoria |
 | `lineas` | opcional, array: `lineas.*.trabajador_id` (obligatorio), `lineas.*.horas` (0–24), `lineas.*.coste_hora` (opcional, ≥ 0) |
 
-La cabecera y sus líneas se crean en una transacción. Respuesta: `id, obra_id, fecha, descripcion, horas_totales, coste_total, lineas, created_at, updated_at`. Borrar un parte borra sus líneas.
+La cabecera y sus líneas se crean en una transacción. Respuesta: `id, obra_id, fecha, descripcion, horas_totales, coste_total, lineas, user_id, created_at, updated_at`. Borrar un parte borra sus líneas.
 
 ### Líneas de parte de trabajo
 
@@ -219,6 +235,8 @@ Cada línea copia la tarifa de su trabajador. **Todo o nada**: se valida antes d
 | `estado_pago` | `pendiente` (por defecto) o `pagado` |
 | `fecha`, `descripcion`, `documento` | opcionales (no siempre hay factura) |
 
+Respuesta: campos + `id, obra_id, user_id, created_at, updated_at`.
+
 ## Bitácoras y adjuntos
 
 Rutas genéricas por tipo de entidad. El tipo es el segmento de la URL y coincide con el **mapa polimórfico** (`Relation::enforceMorphMap`), que también se guarda en `*_type`.
@@ -233,9 +251,9 @@ Rutas genéricas por tipo de entidad. El tipo es el segmento de la URL y coincid
 |:--|:--|:--|
 | GET / POST | `/{tipo}/{id}/observaciones` | `{ texto }` obligatorio. El autor (`user_id`) es siempre el usuario autenticado. Orden: más nueva primero |
 | GET | `/user/observaciones` | Observaciones escritas por el **usuario autenticado**, más nueva primero (paginado) |
-| DELETE | `/observaciones/{observacion}` | **204**. Solo su autor, el rol `jefe` o el administrador; si no, **403** |
+| DELETE | `/observaciones/{observacion}` | **204**. Ver la [tabla de permisos](#permisos); si no, **403** |
 | GET / POST | `/{tipo}/{id}/incidencias` | Igual que observaciones |
-| DELETE | `/incidencias/{incidencia}` | **204**. Mismos permisos que las observaciones |
+| DELETE | `/incidencias/{incidencia}` | **204**. Igual que las observaciones |
 | GET / POST | `/{tipo}/{id}/archivos` | Multipart `archivo` (obligatorio, máx. 10 MB). `tipo`: `imagen`, `pdf` u `otro` según el MIME |
 | GET | `/archivos/{archivo}/descarga` | Descarga con el nombre original |
 | DELETE | `/archivos/{archivo}` | Borra la fila **y el fichero** |
@@ -281,18 +299,18 @@ Los tests de modelo comprueban `$fillable` **en este orden exacto**, la tabla y 
 | `LineaPresupuesto` | `presupuesto_id, descripcion, uds, precio` | `presupuesto` |
 | `Gasto` | `obra_id, presupuesto_id, direccion_obra, inicio_obra, fin_obra, solicitud_obra, mandante, gestion_licencia, pago_icio` | `obra`, `presupuesto`, `archivos` |
 | `Ingreso` | `obra_id, cliente_id, nombre_obra, tipo, fecha, documento, num_documento, importe` | `obra`, `cliente`, `observaciones`, `archivos` |
-| `ParteTrabajo` | `obra_id, fecha, descripcion` | `obra`, `lineas`, `incidencias` |
+| `ParteTrabajo` | `obra_id, fecha, descripcion, user_id` | `obra`, `usuario`, `lineas`, `incidencias` |
 | `LineaParteTrabajo` | `parte_trabajo_id, trabajador_id, horas, coste_hora` | `parte` (BelongsTo `ParteTrabajo`), `trabajador` |
-| `ParteProveedor` | `obra_id, proveedor_id, fecha, descripcion, documento, importe, estado_pago` | `obra`, `proveedor`, `archivos`, `incidencias` |
-| `ParteEspecialista` | `obra_id, especialista_id, fecha, descripcion, documento, importe, estado_pago` | `obra`, `especialista`, `archivos`, `incidencias` |
-| `Falta` | `trabajador_id, fecha_inicio, fecha_fin, tipo, motivo` | `trabajador` |
+| `ParteProveedor` | `obra_id, proveedor_id, fecha, descripcion, documento, importe, estado_pago, user_id` | `obra`, `usuario`, `proveedor`, `archivos`, `incidencias` |
+| `ParteEspecialista` | `obra_id, especialista_id, fecha, descripcion, documento, importe, estado_pago, user_id` | `obra`, `usuario`, `especialista`, `archivos`, `incidencias` |
+| `Falta` | `trabajador_id, fecha_inicio, fecha_fin, tipo, motivo, user_id` | `trabajador`, `usuario` |
 | `Observacion` | `texto, user_id` | `observable` (MorphTo), `usuario` (BelongsTo `User`) |
 | `Incidencia` | `texto, user_id` | `incidentable` (MorphTo), `usuario` |
 | `Archivo` | `nombre_archivo, ruta, tipo` | `archivable` (MorphTo) |
 
 Además, `Obra` tiene `lineasTrabajo()` (HasManyThrough) y los métodos `trabajadoresParticipantes()`, `proveedoresParticipantes()` y `especialistasParticipantes()`, y `Trabajador`, `Proveedor` y `Especialista` tienen `obrasParticipadas()`; todos devuelven un `Builder`.
 
-`User` tiene `rol` en su `$fillable`, oculta `password` y `remember_token`, y define `esAdministrador()`, `tieneRol()` y `roles()`.
+`User` tiene `rol` en su `$fillable`, oculta `password` y `remember_token`, y define `esAdmin()`, `esJefe()`, `esAdministrativa()`, `esPropietario($recurso, $propiedad = 'user_id')`, `tieneRol()` y `roles()`.
 
 ### Factories
 

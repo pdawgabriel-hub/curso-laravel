@@ -6,14 +6,14 @@ use App\Models\Cliente;
 use App\Models\Presupuesto;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_1_ClientesApiTest extends FeatureTestCase
+class RA7_2_ClientesApiTest extends FeatureTestCase
 {
     private const CAMPOS = ['id', 'codigo', 'nombre', 'apellidos', 'nombre_completo', 'nif', 'direccion', 'cod_postal', 'telefono', 'created_at', 'updated_at'];
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
     }
 
     private function datos(array $cambios = []): array

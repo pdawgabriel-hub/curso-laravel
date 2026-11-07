@@ -1,0 +1,2048 @@
+openapi: 3.0.3
+info:
+  title: Gestión de Obras API
+  description: API REST de la aplicación Gestión de Obras
+  version: 1.0.0
+servers:
+  - url: http://gestion-obras.test/api/v1
+security:
+  - bearerAuth: []
+paths:
+  /tokens:
+    post:
+      tags: [autenticación]
+      summary: Emite un token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Correcto
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [autenticación]
+      summary: Revoca el token actual
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+  /user:
+    get:
+      tags: [autenticación]
+      summary: El usuario autenticado y sus roles
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+  /clientes:
+    get:
+      tags: [clientes]
+      summary: Lista de clientes
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [clientes]
+      summary: Crea un registro de clientes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cliente'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /clientes/{cliente}:
+    get:
+      tags: [clientes]
+      summary: Un registro de clientes
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [clientes]
+      summary: Modifica un registro de clientes
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cliente'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [clientes]
+      summary: Borra un registro de clientes
+      parameters:
+        - name: cliente
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '409':
+          description: Regla de negocio
+  /trabajadores:
+    get:
+      tags: [trabajadores]
+      summary: Lista de trabajadores
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [trabajadores]
+      summary: Crea un registro de trabajadores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trabajador'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /trabajadores/{trabajador}:
+    get:
+      tags: [trabajadores]
+      summary: Un registro de trabajadores
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [trabajadores]
+      summary: Modifica un registro de trabajadores
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trabajador'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [trabajadores]
+      summary: Borra un registro de trabajadores
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '409':
+          description: Regla de negocio
+  /trabajadores/{trabajador}/faltas:
+    get:
+      tags: [faltas]
+      summary: Lista de faltas
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [faltas]
+      summary: Crea un registro de faltas
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Falta'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /trabajadores/{trabajador}/faltas/{falta}:
+    get:
+      tags: [faltas]
+      summary: Un registro de faltas
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: falta
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [faltas]
+      summary: Modifica un registro de faltas
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: falta
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Falta'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [faltas]
+      summary: Borra un registro de faltas
+      parameters:
+        - name: trabajador
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: falta
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /proveedores:
+    get:
+      tags: [proveedores]
+      summary: Lista de proveedores
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [proveedores]
+      summary: Crea un registro de proveedores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Proveedor'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /proveedores/{proveedor}:
+    get:
+      tags: [proveedores]
+      summary: Un registro de proveedores
+      parameters:
+        - name: proveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [proveedores]
+      summary: Modifica un registro de proveedores
+      parameters:
+        - name: proveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Proveedor'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [proveedores]
+      summary: Borra un registro de proveedores
+      parameters:
+        - name: proveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '409':
+          description: Regla de negocio
+  /especialistas:
+    get:
+      tags: [especialistas]
+      summary: Lista de especialistas
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [especialistas]
+      summary: Crea un registro de especialistas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Especialista'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /especialistas/{especialista}:
+    get:
+      tags: [especialistas]
+      summary: Un registro de especialistas
+      parameters:
+        - name: especialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [especialistas]
+      summary: Modifica un registro de especialistas
+      parameters:
+        - name: especialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Especialista'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [especialistas]
+      summary: Borra un registro de especialistas
+      parameters:
+        - name: especialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '409':
+          description: Regla de negocio
+  /presupuestos:
+    get:
+      tags: [presupuestos]
+      summary: Lista de presupuestos
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [presupuestos]
+      summary: Crea un registro de presupuestos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Presupuesto'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /presupuestos/{presupuesto}:
+    get:
+      tags: [presupuestos]
+      summary: Un registro de presupuestos
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [presupuestos]
+      summary: Modifica un registro de presupuestos
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Presupuesto'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [presupuestos]
+      summary: Borra un registro de presupuestos
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /presupuestos/{presupuesto}/lineas:
+    get:
+      tags: [lineas de presupuesto]
+      summary: Lista de lineas de presupuesto
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [lineas de presupuesto]
+      summary: Crea un registro de lineas de presupuesto
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaPresupuesto'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /presupuestos/{presupuesto}/lineas/{linea}:
+    get:
+      tags: [lineas de presupuesto]
+      summary: Un registro de lineas de presupuesto
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [lineas de presupuesto]
+      summary: Modifica un registro de lineas de presupuesto
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaPresupuesto'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [lineas de presupuesto]
+      summary: Borra un registro de lineas de presupuesto
+      parameters:
+        - name: presupuesto
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /obras:
+    get:
+      tags: [obras]
+      summary: Lista de obras
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [obras]
+      summary: Crea un registro de obras
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Obra'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /obras/{obra}:
+    get:
+      tags: [obras]
+      summary: Un registro de obras
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [obras]
+      summary: Modifica un registro de obras
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Obra'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [obras]
+      summary: Borra un registro de obras
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '409':
+          description: Regla de negocio
+  /obras/{obra}/ingresos:
+    get:
+      tags: [ingresos]
+      summary: Lista de ingresos
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [ingresos]
+      summary: Crea un registro de ingresos
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingreso'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /obras/{obra}/ingresos/{ingreso}:
+    get:
+      tags: [ingresos]
+      summary: Un registro de ingresos
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: ingreso
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [ingresos]
+      summary: Modifica un registro de ingresos
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: ingreso
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingreso'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [ingresos]
+      summary: Borra un registro de ingresos
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: ingreso
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /obras/{obra}/partes-trabajo:
+    get:
+      tags: [partes de trabajo]
+      summary: Lista de partes de trabajo
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [partes de trabajo]
+      summary: Crea un registro de partes de trabajo
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteTrabajo'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /obras/{obra}/partes-trabajo/{parteTrabajo}:
+    get:
+      tags: [partes de trabajo]
+      summary: Un registro de partes de trabajo
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [partes de trabajo]
+      summary: Modifica un registro de partes de trabajo
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteTrabajo'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [partes de trabajo]
+      summary: Borra un registro de partes de trabajo
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /partes-trabajo/{parteTrabajo}/lineas:
+    get:
+      tags: [lineas de parte]
+      summary: Lista de lineas de parte
+      parameters:
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [lineas de parte]
+      summary: Crea un registro de lineas de parte
+      parameters:
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaParteTrabajo'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /partes-trabajo/{parteTrabajo}/lineas/{linea}:
+    get:
+      tags: [lineas de parte]
+      summary: Un registro de lineas de parte
+      parameters:
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [lineas de parte]
+      summary: Modifica un registro de lineas de parte
+      parameters:
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineaParteTrabajo'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [lineas de parte]
+      summary: Borra un registro de lineas de parte
+      parameters:
+        - name: parteTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: linea
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /obras/{obra}/partes-proveedor:
+    get:
+      tags: [partes de proveedor]
+      summary: Lista de partes de proveedor
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [partes de proveedor]
+      summary: Crea un registro de partes de proveedor
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteProveedor'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /obras/{obra}/partes-proveedor/{parteProveedor}:
+    get:
+      tags: [partes de proveedor]
+      summary: Un registro de partes de proveedor
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteProveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [partes de proveedor]
+      summary: Modifica un registro de partes de proveedor
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteProveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteProveedor'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [partes de proveedor]
+      summary: Borra un registro de partes de proveedor
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteProveedor
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /obras/{obra}/partes-especialista:
+    get:
+      tags: [partes de especialista]
+      summary: Lista de partes de especialista
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+    post:
+      tags: [partes de especialista]
+      summary: Crea un registro de partes de especialista
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteEspecialista'
+      responses:
+        '201':
+          description: Creado
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /obras/{obra}/partes-especialista/{parteEspecialista}:
+    get:
+      tags: [partes de especialista]
+      summary: Un registro de partes de especialista
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteEspecialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [partes de especialista]
+      summary: Modifica un registro de partes de especialista
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteEspecialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParteEspecialista'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+    delete:
+      tags: [partes de especialista]
+      summary: Borra un registro de partes de especialista
+      parameters:
+        - name: obra
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: parteEspecialista
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Sin contenido
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+  /gastos:
+    get:
+      tags: [gastos]
+      summary: Lista de gastos
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+  /gastos/{gasto}:
+    get:
+      tags: [gastos]
+      summary: Un registro de gastos
+      parameters:
+        - name: gasto
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+    put:
+      tags: [gastos]
+      summary: Modifica un registro de gastos
+      parameters:
+        - name: gasto
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Gasto'
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '404':
+          description: No encontrado
+        '422':
+          description: Datos no válidos
+  /estadisticas:
+    get:
+      tags: [estadísticas]
+      summary: Panel de análisis financiero
+      parameters:
+        - name: periodo
+          in: query
+          schema:
+            type: string
+            enum: [este_mes, tres_meses, este_anio, todo]
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+  /calendario:
+    get:
+      tags: [estadísticas]
+      summary: Eventos del calendario
+      parameters:
+        - name: desde
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hasta
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Correcto
+        '401':
+          description: Sin autenticar
+        '403':
+          description: Sin permiso
+        '422':
+          description: Datos no válidos
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Cliente:
+      type: object
+      properties:
+        nombre:
+          type: string
+        apellidos:
+          type: string
+        nif:
+          type: string
+        direccion:
+          type: string
+        cod_postal:
+          type: string
+        telefono:
+          type: string
+    Trabajador:
+      type: object
+      properties:
+        tipo:
+          type: string
+        nombre:
+          type: string
+        apellido:
+          type: string
+        telefono:
+          type: string
+        coste_hora_estandar:
+          type: number
+    Proveedor:
+      type: object
+      properties:
+        nombre:
+          type: string
+        direccion:
+          type: string
+        telefono:
+          type: string
+        correo:
+          type: string
+        tipo:
+          type: string
+        referencia:
+          type: string
+        documento:
+          type: string
+        num_documento:
+          type: string
+        base:
+          type: number
+        iva:
+          type: number
+    Especialista:
+      type: object
+      properties:
+        tipo:
+          type: string
+        referencia:
+          type: string
+        comunicacion_parte:
+          type: string
+        nombre:
+          type: string
+        notas:
+          type: string
+        telefono:
+          type: string
+        correo:
+          type: string
+        importe:
+          type: number
+    Falta:
+      type: object
+      properties:
+        fecha_inicio:
+          type: string
+        fecha_fin:
+          type: string
+        tipo:
+          type: string
+        motivo:
+          type: string
+    Presupuesto:
+      type: object
+      properties:
+        fecha:
+          type: string
+        cliente_id:
+          type: integer
+        obra_id:
+          type: integer
+        nombre_cliente:
+          type: string
+        nif:
+          type: string
+        direccion:
+          type: string
+        telefono:
+          type: string
+        iva:
+          type: number
+        estado:
+          type: string
+        proveedor_ids:
+          type: array
+          items:
+            type: integer
+        especialista_ids:
+          type: array
+          items:
+            type: integer
+    LineaPresupuesto:
+      type: object
+      properties:
+        descripcion:
+          type: string
+        uds:
+          type: integer
+        precio:
+          type: number
+    Obra:
+      type: object
+      properties:
+        descripcion:
+          type: string
+        cliente_id:
+          type: integer
+    Gasto:
+      type: object
+      properties:
+        presupuesto_id:
+          type: integer
+        direccion_obra:
+          type: string
+        inicio_obra:
+          type: string
+        fin_obra:
+          type: string
+        solicitud_obra:
+          type: string
+        mandante:
+          type: boolean
+        gestion_licencia:
+          type: boolean
+        pago_icio:
+          type: boolean
+    Ingreso:
+      type: object
+      properties:
+        cliente_id:
+          type: integer
+        nombre_obra:
+          type: string
+        tipo:
+          type: string
+        fecha:
+          type: string
+        documento:
+          type: string
+        num_documento:
+          type: string
+        importe:
+          type: number
+    ParteTrabajo:
+      type: object
+      properties:
+        fecha:
+          type: string
+        descripcion:
+          type: string
+        lineas:
+          type: array
+          items:
+            type: object
+    LineaParteTrabajo:
+      type: object
+      properties:
+        trabajador_id:
+          type: integer
+        horas:
+          type: number
+        coste_hora:
+          type: number
+    ParteProveedor:
+      type: object
+      properties:
+        proveedor_id:
+          type: integer
+        fecha:
+          type: string
+        descripcion:
+          type: string
+        documento:
+          type: string
+        importe:
+          type: number
+        estado_pago:
+          type: string
+    ParteEspecialista:
+      type: object
+      properties:
+        especialista_id:
+          type: integer
+        fecha:
+          type: string
+        descripcion:
+          type: string
+        documento:
+          type: string
+        importe:
+          type: number
+        estado_pago:
+          type: string

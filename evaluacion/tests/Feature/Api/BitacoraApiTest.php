@@ -105,6 +105,7 @@ class BitacoraApiTest extends FeatureTestCase
         $cliente = Cliente::factory()->create();
         $this->postJson("/api/v1/clientes/{$cliente->id}/observaciones", ['texto' => 'A']);
 
+        $this->actuarComo('jefe');
         $this->deleteJson("/api/v1/clientes/{$cliente->id}")->assertNoContent();
         $this->assertDatabaseCount('observaciones', 0);
     }

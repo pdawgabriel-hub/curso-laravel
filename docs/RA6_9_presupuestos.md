@@ -1,5 +1,5 @@
-<!-- {% raw %} -->
 # 6.9. Ejercicios: presupuestos
+<!-- {% raw %} -->
 
 **Referencia teórica:** [Muchos a muchos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/083_relaciones_muchosAmuchos.html) · [Insertar y actualizar con relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/084_DML_Relaciones.html)
 

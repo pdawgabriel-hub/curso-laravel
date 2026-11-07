@@ -14,5 +14,5 @@ php artisan test tests/Feature/Api tests/Feature/Escenario
 |---|---|
 | `TestCase.php`, `Feature/FeatureTestCase.php` | Clases base con `actuarComo()`, `actuarComoAdministrador()`, `assertImporte()`, `assertListado()` y `assertPaginado()` |
 | `Unit/Models/`, `Unit/UserTest.php` | `$fillable`, tabla, relaciones y factory de cada modelo; métodos de `User` |
-| `Feature/Api/` | Un fichero por recurso de la API |
+| `Feature/Api/` | Un fichero por recurso de la API, y `AutorizacionApiTest` con la tabla de permisos |
 | `Feature/Escenario/` | El ciclo completo de una obra |

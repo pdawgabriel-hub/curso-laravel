@@ -76,12 +76,16 @@ class AutenticacionApiTest extends FeatureTestCase
         $this->postJson('/api/v1/obras', ['descripcion' => 'X'])->assertForbidden();
     }
 
-    public function test_jefe_y_administrativa_tienen_los_mismos_permisos()
+    public function test_jefe_y_administrativa_tienen_acceso_con_permisos_distintos()
     {
-        foreach (['jefe', 'administrativa'] as $rol) {
-            $this->actuarComo($rol);
-            $this->postJson('/api/v1/obras', ['descripcion' => "Obra de $rol"])->assertCreated();
-        }
-        $this->assertDatabaseCount('obras', 2);
+        $this->actuarComo('jefe');
+        $this->postJson('/api/v1/obras', ['descripcion' => 'Obra del jefe'])->assertCreated();
+        $this->getJson('/api/v1/clientes')->assertOk();
+
+        $this->actuarComo('administrativa');
+        $this->postJson('/api/v1/obras', ['descripcion' => 'Obra de la administrativa'])->assertForbidden();
+        $this->getJson('/api/v1/clientes')->assertOk();
+
+        $this->assertDatabaseCount('obras', 1);
     }
 }

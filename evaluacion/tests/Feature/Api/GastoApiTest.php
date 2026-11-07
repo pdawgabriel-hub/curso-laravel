@@ -23,7 +23,7 @@ class GastoApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->obra = Obra::factory()->create();
     }
 

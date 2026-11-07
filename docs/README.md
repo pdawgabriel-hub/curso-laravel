@@ -70,12 +70,13 @@ Los arrays se sustituyen por MariaDB y _Eloquent_.
 
 API REST según el [contrato de la API](./contrato-api.md).
 
-1. [API REST y controladores de recursos](./RA7_1_recursos.md)
-2. [Búsqueda, orden y paginación](./RA7_2_busqueda.md)
-3. [Autenticación con _Sanctum_](./RA7_3_sanctum.md)
-4. [Autorización: _Gates_, _Policies_ y roles](./RA7_4_autorizacion.md)
-5. [Ficheros y bitácoras en la API](./RA7_5_ficheros.md)
-6. [Documentación OpenAPI](./RA7_6_openapi.md)
+1. [Introducción a API y REST. _Swagger_](./RA7_1_swagger.md)
+2. [Controladores de recursos](./RA7_2_recursos.md)
+3. [Búsqueda, orden y paginación](./RA7_3_busqueda.md)
+4. [Autenticación con _Sanctum_](./RA7_4_sanctum.md)
+5. [Autorización: _Gates_, _Policies_ y roles](./RA7_5_autorizacion.md)
+6. [Ficheros y bitácoras en la API](./RA7_6_ficheros.md)
+7. _Opcional:_ [_PHP-CRUD-API_ y sesiones en la API](./RA7_7_opcional.md)
 
 Al terminar el bloque: [evaluación](./evaluacion.md).
 

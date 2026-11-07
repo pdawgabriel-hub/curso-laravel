@@ -13,7 +13,7 @@ class FaltaApiTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->trabajador = Trabajador::factory()->create();
     }
 
@@ -24,7 +24,7 @@ class FaltaApiTest extends FeatureTestCase
 
         $this->assertListado(
             $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas"),
-            ['id', 'trabajador_id', 'fecha_inicio', 'fecha_fin', 'tipo', 'motivo', 'dias'],
+            ['id', 'trabajador_id', 'fecha_inicio', 'fecha_fin', 'tipo', 'motivo', 'dias', 'user_id'],
             2
         );
     }
@@ -160,5 +160,15 @@ class FaltaApiTest extends FeatureTestCase
         $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas/{$falta->id}")
             ->assertOk()
             ->assertJsonPath('data.trabajador_id', $this->trabajador->id);
+    }
+
+    public function test_el_propietario_es_el_usuario_autenticado_aunque_se_intente_falsear()
+    {
+        $yo = $this->actuarComo('administrativa');
+        $otro = \App\Models\User::factory()->create();
+
+        $this->postJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas", ['fecha_inicio' => '2026-01-01', 'fecha_fin' => '2026-01-01', 'user_id' => $otro->id])
+            ->assertCreated()
+            ->assertJsonPath('data.user_id', $yo->id);
     }
 }

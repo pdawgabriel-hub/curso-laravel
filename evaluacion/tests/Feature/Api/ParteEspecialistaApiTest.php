@@ -9,14 +9,14 @@ use Tests\Feature\FeatureTestCase;
 
 class ParteEspecialistaApiTest extends FeatureTestCase
 {
-    private const CAMPOS = ['id', 'obra_id', 'especialista_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago', 'created_at', 'updated_at'];
+    private const CAMPOS = ['id', 'obra_id', 'especialista_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago', 'user_id', 'created_at', 'updated_at'];
 
     private Obra $obra;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->actuarComo('administrativa');
+        $this->actuarComo('jefe');
         $this->obra = Obra::factory()->create();
     }
 
@@ -159,5 +159,15 @@ class ParteEspecialistaApiTest extends FeatureTestCase
         $parte = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id]);
 
         $this->getJson($this->url("/{$parte->id}"))->assertOk()->assertJsonPath('data.obra_id', $this->obra->id);
+    }
+
+    public function test_el_propietario_es_el_usuario_autenticado_aunque_se_intente_falsear()
+    {
+        $yo = $this->actuarComo('administrativa');
+        $otro = \App\Models\User::factory()->create();
+
+        $this->postJson($this->url(), ['especialista_id' => Especialista::factory()->create()->id, 'importe' => 10, 'user_id' => $otro->id])
+            ->assertCreated()
+            ->assertJsonPath('data.user_id', $yo->id);
     }
 }

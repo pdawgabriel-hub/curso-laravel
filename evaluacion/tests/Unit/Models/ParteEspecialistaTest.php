@@ -15,7 +15,7 @@ class ParteEspecialistaTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['obra_id', 'especialista_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago'], (new ParteEspecialista())->getFillable());
+        $this->assertEquals(['obra_id', 'especialista_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago', 'user_id'], (new ParteEspecialista())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()
@@ -27,6 +27,7 @@ class ParteEspecialistaTest extends TestCase
     {
         return [
             ['obra', BelongsTo::class],
+            ['usuario', BelongsTo::class],
             ['especialista', BelongsTo::class],
             ['archivos', MorphMany::class],
             ['incidencias', MorphMany::class],
