@@ -43,7 +43,8 @@ class RA6_6_TrabajadoresTest extends TestCase
         $this->seed(TrabajadoresTableSeeder::class);
 
         $this->assertSame(20, Trabajador::count());
-        $this->assertDatabaseHas('trabajadores', ['nombre' => 'Luis', 'apellido' => 'Sánchez', 'tipo' => 'Encargado']);
+        $this->assertDatabaseHas('trabajadores', ['codigo' => 'TRB0001']);
+        $this->assertDatabaseHas('trabajadores', ['codigo' => 'TRB0020']);
     }
 
     public function test_listado_y_detalle()

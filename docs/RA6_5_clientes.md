@@ -3,7 +3,7 @@
 
 **Referencia teórica:** [Ejercicios de bases de datos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/047_ejerciciosBD.html) · [Crear y modificar](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/0475_crearModificarFamiliaProfesional.html)
 
-Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de [5.8](./RA5_8_proyecto.md) a la base de datos. Las demás entidades seguirán este mismo camino: migración, modelo, _factory_, semilla, controlador y vistas.
+Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de [5.8](./RA5_8_proyecto.md) a la base de datos. Las demás entidades seguirán este mismo camino: migración, modelo, _factory_, semilla, _Request_, controlador, rutas y vistas.
 
 ## Ejercicios
 
@@ -79,7 +79,7 @@ Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de
 
     `codigo` no va en la _factory_: lo asigna `TieneCodigo`.
 
-    `ClientesTableSeeder` da de alta los 10 clientes de `resources/datos/array_clientes.php` y otros 10 con `Cliente::factory(10)->create()`. Llámala desde `DatabaseSeeder` y ejecuta:
+    `ClientesTableSeeder` crea 20 clientes con `Cliente::factory(20)->create()`. Llámala desde `DatabaseSeeder` y ejecuta:
 
     ```bash
     php artisan migrate:fresh --seed
@@ -103,7 +103,7 @@ Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de
     - En `ClienteRequest`, el NIF pasa a ser único. Al modificar, debe admitir el suyo: `Rule::unique('clientes')->ignore($this->route('id'))`.
     - Nueva acción `destroy`, con la ruta `DELETE /clientes/destroy/{id}` (`clientes.destroy`), que redirige al listado con `mensaje`, y un botón en el detalle.
 
-6. **Limpieza.** Lo que hiciste en 5.8 ya no hace falta, porque _Eloquent_ es _Active Record_. Borra `app/Dominio`, `app/Repositorios`, su registro en `AppServiceProvider` y `storage/app/clientes.json`, y `ObrasController` deja de recibir el repositorio: de momento, busca al cliente con `Cliente::find()`. `resources/datos/array_clientes.php` se queda, porque lo usa la semilla.
+6. **Limpieza.** Lo que hiciste en 5.8 ya no hace falta, porque _Eloquent_ es _Active Record_. Borra `app/Dominio`, `app/Repositorios`, su registro en `AppServiceProvider`, `storage/app/clientes.json` y `resources/datos/array_clientes.php`, porque los datos ya salen de la _factory_. `ObrasController` deja de recibir el repositorio: de momento, busca al cliente con `Cliente::find()`.
 
 7. **Las vistas.** Usa `$cliente->nombre_completo` en lugar de `nombreCompleto()`, y `$cliente->cod_postal` en lugar de `codPostal`. El detalle muestra el `codigo` y ya no muestra `creadoPor`. Añade `{{ $clientes->links() }}` al listado.
 

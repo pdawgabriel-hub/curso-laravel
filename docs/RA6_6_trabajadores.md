@@ -33,9 +33,9 @@ El mismo camino de [6.5](./RA6_5_clientes.md), con menos ayuda.
     telefono | `fake()->numerify('6########')`
     coste_hora_estandar | `20`
 
-    `TrabajadoresTableSeeder`: los 10 de `array_trabajadores.php` (cópialo a `resources/datos/`) y 10 con la _factory_. Llámala desde `DatabaseSeeder`.
+    `TrabajadoresTableSeeder` crea 20 trabajadores con `Trabajador::factory(20)->create()`. Llámala desde `DatabaseSeeder`.
 
-4. **El controlador y las vistas.** `TrabajadoresController` usa el modelo, con `findOrFail`, y las vistas pasan a `$trabajador->campo`. Añade `destroy` y su ruta `DELETE /trabajadores/destroy/{id}`. El detalle muestra el código, el tipo y la tarifa.
+4. **El controlador y las vistas.** `TrabajadoresController` usa el modelo, con `findOrFail`, y deja de tener `$arrayTrabajadores`. Las vistas pasan a `$trabajador->campo`. Añade `destroy` y su ruta `DELETE /trabajadores/destroy/{id}`. El detalle muestra el código, el tipo y la tarifa.
 
 5. **Investiga.** Responde en tu _pull request_: en `tinker`, compara `(new App\Models\Trabajador)->coste_hora_estandar` con el valor de un trabajador recién leído de la base de datos. ¿Qué aporta cada una de las dos definiciones del valor 20, la de la migración y la de `$attributes`?
 

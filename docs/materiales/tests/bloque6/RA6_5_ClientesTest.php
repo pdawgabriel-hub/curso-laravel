@@ -55,12 +55,13 @@ class RA6_5_ClientesTest extends TestCase
         Cliente::factory()->create(['nif' => '11111111H']);
     }
 
-    public function test_la_semilla_trae_los_clientes_del_array_y_otros_diez()
+    public function test_la_semilla_crea_veinte_clientes_con_la_factory()
     {
         $this->seed(ClientesTableSeeder::class);
 
         $this->assertSame(20, Cliente::count());
-        $this->assertDatabaseHas('clientes', ['nombre' => 'Juan', 'nif' => '12345678Z', 'codigo' => 'CLI0001']);
+        $this->assertDatabaseHas('clientes', ['codigo' => 'CLI0001']);
+        $this->assertDatabaseHas('clientes', ['codigo' => 'CLI0020']);
     }
 
     public function test_los_listados_y_detalles_exigen_sesion()

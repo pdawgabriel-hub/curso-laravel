@@ -61,7 +61,7 @@ El modelo necesita `use HasFactory;`. Las claves ajenas se definen con otra _fac
 
 No son alternativas: cada una tiene su papel.
 
-- Las **semillas** rellenan la base de datos de desarrollo con `migrate:fresh --seed`. Casi todas se limitan a llamar a una _factory_ (`Proveedor::factory(20)->create()`).
+- Las **semillas** rellenan la base de datos de desarrollo con `migrate:fresh --seed`. Todas se apoyan en las _factories_ (`Cliente::factory(20)->create()`): los arrays del Bloque 5 desaparecen en este bloque.
 - Los **tests** crean sus datos con _factories_ y no dependen de las semillas, salvo los que comprueban la propia semilla. Una _factory_ que falle hace fallar todos los tests que la usen.
 
 Por eso cada ejercicio indica los campos de su _factory_. No llevan _factory_ `Secuencia`, `Gasto` (nace con su obra), `Observacion`, `Incidencia` ni `Archivo` (se crean desde su registro).
