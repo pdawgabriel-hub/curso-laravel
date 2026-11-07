@@ -57,6 +57,15 @@ Ingreso::factory()->create(['importe' => 500]);           // lo demás, de la fa
 
 El modelo necesita `use HasFactory;`. Las claves ajenas se definen con otra _factory_ (`'obra_id' => Obra::factory()`), que solo se ejecuta si no se pasa ese valor. Con `APP_FAKER_LOCALE=es_ES` (de [5.2](./RA5_2_estructura.md)), los datos salen en español.
 
+## Semillas y _factories_ en el proyecto
+
+No son alternativas: cada una tiene su papel.
+
+- Las **semillas** rellenan la base de datos de desarrollo con `migrate:fresh --seed`. Casi todas se limitan a llamar a una _factory_ (`Proveedor::factory(20)->create()`).
+- Los **tests** crean sus datos con _factories_ y no dependen de las semillas, salvo los que comprueban la propia semilla. Una _factory_ que falle hace fallar todos los tests que la usen.
+
+Por eso cada ejercicio indica los campos de su _factory_. No llevan _factory_ `Secuencia`, `Gasto` (nace con su obra), `Observacion`, `Incidencia` ni `Archivo` (se crean desde su registro).
+
 ---
 
 **Siguiente:** [6.4. Constructor de consultas](./RA6_4_queryBuilder.md)

@@ -50,22 +50,49 @@ $trabajador->faltas()->create($request->validated() + ['user_id' => $request->us
 
 ## Ejercicios
 
-1. **Obras.** Migración `create_obras_table`: `codigo` (único), `descripcion` (texto, opcional) y `cliente_id` (clave ajena opcional a `clientes`, con `nullOnDelete`). Modelo `Obra` con `PREFIJO = 'OBR'` y las relaciones `cliente()` y, en `Cliente`, `obras()`.
+1. **Obras.**
 
-2. **La ficha de Gastos.** Migración `create_gastos_table`:
+    ```bash
+    php artisan make:migration create_obras_table --create=obras
+    ```
 
     Campo | Tipo | nullable
     -----|----|---
     codigo | string(20), único | no
-    obra_id | clave ajena, **única**, `cascadeOnDelete` | no
+    descripcion | text | sí
+    cliente_id | clave ajena a `clientes`, `nullOnDelete` | sí
+
+    Modelo `Obra` con `$table = 'obras'`, `use HasFactory, TieneCodigo`, `PREFIJO = 'OBR'`, este `$fillable`: `descripcion, cliente_id`, y las relaciones `cliente()` y, en `Cliente`, `obras()`.
+
+2. **La ficha de Gastos.**
+
+    ```bash
+    php artisan make:migration create_gastos_table --create=gastos
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    codigo | string(20), único | no
+    obra_id | clave ajena a `obras`, **única**, `cascadeOnDelete` | no
     presupuesto_id | unsignedBigInteger (su clave ajena se añade en 6.9) | sí
     direccion_obra | string | sí
-    inicio_obra, fin_obra, solicitud_obra | date | sí
-    mandante, gestion_licencia, pago_icio | boolean, `false` por defecto | no
+    inicio_obra | date | sí
+    fin_obra | date | sí
+    solicitud_obra | date | sí
+    mandante | boolean, `false` por defecto | no
+    gestion_licencia | boolean, `false` por defecto | no
+    pago_icio | boolean, `false` por defecto | no
 
-    Modelo `Gasto` con `PREFIJO = 'GAS'`, _casts_ y las relaciones `obra()` y, en `Obra`, `gasto()`. **No lleva _factory_**: la ficha nace con su obra.
+    Modelo `Gasto` con `$table = 'gastos'`, `use TieneCodigo`, `PREFIJO = 'GAS'`, _casts_ de fechas y booleanos, las relaciones `obra()` y, en `Obra`, `gasto()`, y este `$fillable`: `obra_id, presupuesto_id, direccion_obra, inicio_obra, fin_obra, solicitud_obra, mandante, gestion_licencia, pago_icio`. **No lleva _factory_**: la ficha nace con su obra.
 
-3. **La obra crea su ficha.** `ObraFactory`: toda obra creada con la _factory_ tiene su ficha:
+3. **La obra crea su ficha.**
+
+    Campo | Valor en `ObraFactory`
+    -----|----
+    descripcion | `'Reforma de ' . fake()->word()`
+    cliente_id | `Cliente::factory()`
+
+    Toda obra creada con la _factory_ tiene su ficha:
 
     ```php
     public function configure(): static
@@ -76,7 +103,34 @@ $trabajador->faltas()->create($request->validated() + ['user_id' => $request->us
 
     `ObrasController` usa el modelo con `findOrFail`, y `store` crea la obra y su ficha. En [6.13](./RA6_13_transacciones.md) esto se hará en una transacción. Elimina `$arrayObras` y sustituye en las vistas `$obra['campo']` por `$obra->campo`. El alta ofrece un selector de clientes y el detalle muestra `$obra->cliente?->nombre_completo`. De momento, deja de mostrar el total y el estado de pago: volverán, calculados, en [6.12](./RA6_12_calculos.md). Añade `destroy` y su ruta.
 
-4. **Faltas.** Migración `create_faltas_table`: `trabajador_id` (clave ajena, `cascadeOnDelete`), `fecha_inicio`, `fecha_fin`, `tipo` (`enum`: `vacaciones` por defecto, `baja_medica`, `personal`, `injustificada`, `otro`), `motivo` (texto, opcional) y `user_id` (clave ajena opcional a `users`, con `nullOnDelete`). Modelo `Falta`, con las relaciones `trabajador()` y `usuario()`, y el _accessor_ `dias` (inclusive: un solo día cuenta 1). En `Trabajador`, `faltas()`. `FaltaFactory` y `FaltasTableSeeder`, con 0 a 4 faltas por trabajador.
+4. **Faltas.**
+
+    ```bash
+    php artisan make:migration create_faltas_table --create=faltas
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    trabajador_id | clave ajena a `trabajadores`, `cascadeOnDelete` | no
+    fecha_inicio | date | no
+    fecha_fin | date | no
+    tipo | enum: `vacaciones` (por defecto), `baja_medica`, `personal`, `injustificada`, `otro` | no
+    motivo | text | sí
+    user_id | clave ajena a `users`, `nullOnDelete` | sí
+
+    Modelo `Falta` con `$table = 'faltas'`, `use HasFactory`, este `$fillable`: `trabajador_id, fecha_inicio, fecha_fin, tipo, motivo, user_id`, las relaciones `trabajador()` y `usuario()`, y el _accessor_ `dias` (inclusive: un solo día cuenta 1). En `Trabajador`, `faltas()`.
+
+    Campo | Valor en `FaltaFactory`
+    -----|----
+    trabajador_id | `Trabajador::factory()`
+    fecha_inicio | `$inicio = fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    fecha_fin | `date('Y-m-d', strtotime($inicio . ' +' . fake()->numberBetween(0, 10) . ' days'))`
+    tipo | `'vacaciones'`
+    motivo | `fake()->sentence()`
+
+    `user_id` no va en la _factory_: queda vacío salvo que el test lo indique.
+
+    `FaltasTableSeeder` crea de 0 a 4 faltas por cada trabajador. Llámala desde `DatabaseSeeder`, después de la de trabajadores.
 
 5. **Pantallas de faltas.** Se crean desde el trabajador:
 

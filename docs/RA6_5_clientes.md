@@ -7,7 +7,11 @@ Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de
 
 ## Ejercicios
 
-1. **La migración.** Crea `create_clientes_table`:
+1. **Las migraciones.** Todas las tablas de este bloque llevan, además de sus campos, `id()` y `timestamps()`; la excepción son las tablas pivote, que se indican en [6.9](./RA6_9_presupuestos.md).
+
+    ```bash
+    php artisan make:migration create_clientes_table --create=clientes
+    ```
 
     Campo | Tipo | nullable
     -----|----|---
@@ -19,9 +23,18 @@ Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de
     cod_postal | string(10) | sí
     telefono | string(20) | no
 
-    Y `create_secuencias_table`, con `prefijo` (string(10), único) y `siguiente` (entero sin signo, 1 por defecto). Aplícalas y compruébalas en phpMyAdmin.
+    ```bash
+    php artisan make:migration create_secuencias_table --create=secuencias
+    ```
 
-2. **El modelo.** Crea `App\Models\Cliente` con su `$table`, su `$fillable` del [contrato](./contrato-api.md#modelos), `use HasFactory` y el _accessor_ `nombre_completo`.
+    Campo | Tipo | nullable
+    -----|----|---
+    prefijo | string(10), único | no
+    siguiente | entero sin signo, **1** por defecto | no
+
+    Aplícalas y compruébalas en phpMyAdmin.
+
+2. **El modelo.** Crea `App\Models\Cliente` con `$table = 'clientes'`, `use HasFactory`, el _accessor_ `nombre_completo` y este `$fillable`, en este orden: `nombre, apellidos, nif, direccion, cod_postal, telefono`.
 
 3. **Los códigos correlativos.** `codigo` no está en `$fillable`: lo asigna la aplicación.
     - Modelo `Secuencia` (`$fillable`: `prefijo`, `siguiente`), con el método estático `siguiente(string $prefijo): string`, que devuelve `CLI0001`, `CLI0002`… y crea la fila del prefijo si no existe. En [6.13](./RA6_13_transacciones.md) se hará seguro frente a accesos simultáneos.
@@ -48,7 +61,25 @@ Primera entidad completa, paso a paso. Los **clientes** pasan del repositorio de
     $c->codigo;
     ```
 
-4. **La _factory_ y la semilla.** Crea `ClienteFactory` y `ClientesTableSeeder`, que da de alta los 10 clientes de `resources/datos/array_clientes.php` y otros 10 con la _factory_. Llámala desde `DatabaseSeeder` y ejecuta:
+4. **La _factory_ y la semilla.**
+
+    ```bash
+    php artisan make:factory ClienteFactory --model=Cliente
+    php artisan make:seeder ClientesTableSeeder
+    ```
+
+    Campo | Valor en `ClienteFactory`
+    -----|----
+    nombre | `fake()->firstName()`
+    apellidos | `fake()->lastName()`
+    nif | `fake()->unique()->numerify('########') . fake()->randomLetter()`
+    direccion | `fake()->streetAddress()`
+    cod_postal | `fake()->numerify('#####')`
+    telefono | `fake()->numerify('6########')`
+
+    `codigo` no va en la _factory_: lo asigna `TieneCodigo`.
+
+    `ClientesTableSeeder` da de alta los 10 clientes de `resources/datos/array_clientes.php` y otros 10 con `Cliente::factory(10)->create()`. Llámala desde `DatabaseSeeder` y ejecuta:
 
     ```bash
     php artisan migrate:fresh --seed

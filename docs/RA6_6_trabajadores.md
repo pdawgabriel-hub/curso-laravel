@@ -6,7 +6,11 @@ El mismo camino de [6.5](./RA6_5_clientes.md), con menos ayuda.
 
 ## Ejercicios
 
-1. **La migración.** `create_trabajadores_table`:
+1. **La migración.**
+
+    ```bash
+    php artisan make:migration create_trabajadores_table --create=trabajadores
+    ```
 
     Campo | Tipo | nullable
     -----|----|---
@@ -17,9 +21,19 @@ El mismo camino de [6.5](./RA6_5_clientes.md), con menos ayuda.
     telefono | string(20) | sí
     coste_hora_estandar | decimal(8,2), **20** por defecto | no
 
-2. **El modelo.** `Trabajador`, con `$table` (Laravel buscaría `trabajadors`), `$fillable`, `use HasFactory, TieneCodigo`, `PREFIJO = 'TRB'`, el _cast_ de `coste_hora_estandar` a `float`, el valor por defecto en `$attributes` y el _accessor_ `nombre_completo`.
+2. **El modelo.** `Trabajador`, con `$table = 'trabajadores'` (Laravel buscaría `trabajadors`), `use HasFactory, TieneCodigo`, `PREFIJO = 'TRB'`, el _cast_ de `coste_hora_estandar` a `float`, el valor por defecto en `$attributes`, el _accessor_ `nombre_completo` y este `$fillable`: `tipo, nombre, apellido, telefono, coste_hora_estandar`.
 
-3. **La _factory_ y la semilla.** `TrabajadorFactory` y `TrabajadoresTableSeeder`: los 10 de `array_trabajadores.php` (cópialo a `resources/datos/`) y 10 con la _factory_. Llámala desde `DatabaseSeeder`.
+3. **La _factory_ y la semilla.** `TrabajadorFactory`:
+
+    Campo | Valor en `TrabajadorFactory`
+    -----|----
+    tipo | `'Peón'`
+    nombre | `fake()->firstName()`
+    apellido | `fake()->lastName()`
+    telefono | `fake()->numerify('6########')`
+    coste_hora_estandar | `20`
+
+    `TrabajadoresTableSeeder`: los 10 de `array_trabajadores.php` (cópialo a `resources/datos/`) y 10 con la _factory_. Llámala desde `DatabaseSeeder`.
 
 4. **El controlador y las vistas.** `TrabajadoresController` usa el modelo, con `findOrFail`, y las vistas pasan a `$trabajador->campo`. Añade `destroy` y su ruta `DELETE /trabajadores/destroy/{id}`. El detalle muestra el código, el tipo y la tarifa.
 

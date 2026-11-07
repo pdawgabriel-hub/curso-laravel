@@ -23,9 +23,101 @@ public function trabajadoresParticipantes(): Builder
 
 ## Ejercicios
 
-1. **Las tablas.** Migraciones de `partes_trabajo` (`obra_id` con `cascadeOnDelete`, `fecha`, `descripcion` obligatoria, `user_id` opcional con `nullOnDelete`), `lineas_parte_trabajo` (`parte_trabajo_id` con `cascadeOnDelete`, `trabajador_id` con `restrictOnDelete`, `horas` en `decimal(5,2)`, `coste_hora` en `decimal(8,2)`), `partes_proveedor` y `partes_especialista` (`obra_id` con `cascadeOnDelete`, `proveedor_id` o `especialista_id` con `restrictOnDelete`, `fecha`, `descripcion` y `documento` opcionales, `importe` en `decimal(10,2)`, `estado_pago` con `pendiente` por defecto, `user_id` opcional).
+1. **Las tablas.** Una migración por tabla, en este orden.
 
-2. **Los modelos.** `ParteTrabajo`, `LineaParteTrabajo`, `ParteProveedor` y `ParteEspecialista`, con `$table`, `$fillable` y relaciones del [contrato](./contrato-api.md#modelos), y sus _factories_. La fecha por defecto es hoy. `LineaParteTrabajo` tiene `parte()`, indicando la clave: `belongsTo(ParteTrabajo::class, 'parte_trabajo_id')`, y el _accessor_ `coste_subtotal`. En `Trabajador`, `lineasTrabajo()`; en `Proveedor` y `Especialista`, `partes()`; en `Obra`, las de cada tipo de parte y `lineasTrabajo()`.
+    ```bash
+    php artisan make:migration create_partes_trabajo_table --create=partes_trabajo
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    obra_id | clave ajena a `obras`, `cascadeOnDelete` | no
+    fecha | date | no
+    descripcion | text | no
+    user_id | clave ajena a `users`, `nullOnDelete` | sí
+
+    ```bash
+    php artisan make:migration create_lineas_parte_trabajo_table --create=lineas_parte_trabajo
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    parte_trabajo_id | clave ajena a `partes_trabajo`, `cascadeOnDelete` | no
+    trabajador_id | clave ajena a `trabajadores`, `restrictOnDelete` | no
+    horas | decimal(5,2), **0** por defecto | no
+    coste_hora | decimal(8,2), **0** por defecto | no
+
+    ```bash
+    php artisan make:migration create_partes_proveedor_table --create=partes_proveedor
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    obra_id | clave ajena a `obras`, `cascadeOnDelete` | no
+    proveedor_id | clave ajena a `proveedores`, `restrictOnDelete` | no
+    fecha | date | no
+    descripcion | text | sí
+    documento | string | sí
+    importe | decimal(10,2) | no
+    estado_pago | enum: `pendiente` (por defecto), `pagado` | no
+    user_id | clave ajena a `users`, `nullOnDelete` | sí
+
+    ```bash
+    php artisan make:migration create_partes_especialista_table --create=partes_especialista
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    obra_id | clave ajena a `obras`, `cascadeOnDelete` | no
+    especialista_id | clave ajena a `especialistas`, `restrictOnDelete` | no
+    fecha | date | no
+    descripcion | text | sí
+    documento | string | sí
+    importe | decimal(10,2) | no
+    estado_pago | enum: `pendiente` (por defecto), `pagado` | no
+    user_id | clave ajena a `users`, `nullOnDelete` | sí
+
+2. **Los modelos y sus _factories_.** Todos con `use HasFactory` y su `$table`, y las relaciones del [contrato](./contrato-api.md#modelos). La fecha por defecto es hoy.
+
+    - `ParteTrabajo`: `$fillable` `obra_id, fecha, descripcion, user_id`.
+    - `LineaParteTrabajo`: `$fillable` `parte_trabajo_id, trabajador_id, horas, coste_hora`; la relación `parte()`, indicando la clave: `belongsTo(ParteTrabajo::class, 'parte_trabajo_id')`, y el _accessor_ `coste_subtotal`.
+    - `ParteProveedor`: `$fillable` `obra_id, proveedor_id, fecha, descripcion, documento, importe, estado_pago, user_id`.
+    - `ParteEspecialista`: `$fillable` `obra_id, especialista_id, fecha, descripcion, documento, importe, estado_pago, user_id`.
+    - En `Trabajador`, `lineasTrabajo()`; en `Proveedor` y `Especialista`, `partes()`; en `Obra`, las de cada tipo de parte y `lineasTrabajo()`.
+
+    Campo | Valor en `ParteTrabajoFactory`
+    -----|----
+    obra_id | `Obra::factory()`
+    fecha | `fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    descripcion | `fake()->sentence()`
+
+    Campo | Valor en `LineaParteTrabajoFactory`
+    -----|----
+    parte_trabajo_id | `ParteTrabajo::factory()`
+    trabajador_id | `Trabajador::factory()`
+    horas | `fake()->numberBetween(1, 8)`
+
+    Campo | Valor en `ParteProveedorFactory`
+    -----|----
+    obra_id | `Obra::factory()`
+    proveedor_id | `Proveedor::factory()`
+    fecha | `fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    descripcion | `fake()->sentence()`
+    documento | `fake()->bothify('FAC-####')`
+    importe | `fake()->randomFloat(2, 50, 1000)`
+    estado_pago | `'pendiente'`
+
+    Campo | Valor en `ParteEspecialistaFactory`
+    -----|----
+    obra_id | `Obra::factory()`
+    especialista_id | `Especialista::factory()`
+    fecha | `fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    descripcion | `fake()->sentence()`
+    documento | `fake()->bothify('FAC-####')`
+    importe | `fake()->randomFloat(2, 50, 1000)`
+    estado_pago | `'pendiente'`
+
+    `user_id` no va en ninguna _factory_: queda vacío salvo que el test lo indique.
 
 3. **La tarifa se congela.** En el evento `creating` de `LineaParteTrabajo`, si no se indica `coste_hora`, se copia el `coste_hora_estandar` del trabajador. Si mañana sube la tarifa, los partes antiguos no cambian. `LineaParteTrabajoFactory` **no** rellena `coste_hora`.
 

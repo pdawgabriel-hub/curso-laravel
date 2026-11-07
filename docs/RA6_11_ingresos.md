@@ -6,7 +6,34 @@ Con los cobros y las pantallas de la ficha de Gastos, ya están todas las tablas
 
 ## Ejercicios
 
-1. **Ingresos.** Migración `create_ingresos_table`: `codigo` (único), `obra_id` **obligatorio** con `restrictOnDelete`, `cliente_id` opcional con `nullOnDelete`, `nombre_obra`, `tipo`, `documento` y `num_documento` opcionales, `fecha`, e `importe` en `decimal(10,2)`. Modelo `Ingreso` (`PREFIJO = 'ING'`), `IngresoFactory` y las relaciones `obra()`, `cliente()` y, en `Obra` y `Cliente`, `ingresos()`. Si no se indican, la fecha es hoy, y `cliente_id` y `nombre_obra` se toman de la obra.
+1. **Ingresos.**
+
+    ```bash
+    php artisan make:migration create_ingresos_table --create=ingresos
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    codigo | string(20), único | no
+    obra_id | clave ajena a `obras`, `restrictOnDelete` | no
+    cliente_id | clave ajena a `clientes`, `nullOnDelete` | sí
+    nombre_obra | string | sí
+    tipo | string | sí
+    fecha | date | no
+    documento | string | sí
+    num_documento | string | sí
+    importe | decimal(10,2) | no
+
+    Modelo `Ingreso` con `$table = 'ingresos'`, `use HasFactory, TieneCodigo`, `PREFIJO = 'ING'`, este `$fillable`: `obra_id, cliente_id, nombre_obra, tipo, fecha, documento, num_documento, importe`, y las relaciones `obra()`, `cliente()` y, en `Obra` y `Cliente`, `ingresos()`. Si no se indican, la fecha es hoy, y `cliente_id` y `nombre_obra` se toman de la obra.
+
+    Campo | Valor en `IngresoFactory`
+    -----|----
+    obra_id | `Obra::factory()`
+    tipo | `'Transferencia'`
+    fecha | `fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    importe | `fake()->randomFloat(2, 100, 2000)`
+
+    `cliente_id` y `nombre_obra` no van en la _factory_: se toman de la obra.
 
 2. **Pantallas de ingresos.** Desde la obra, con los nombres `obras.ingresos.create`, `obras.ingresos.store` y `obras.ingresos.destroy`, y las mismas URL que los partes. Campos: `importe`, `tipo`, `fecha`, `documento` y `num_documento`. Validación: `importe` > 0; si se envía `cliente_id`, debe ser el de la obra. El detalle de la obra los lista con su código.
 

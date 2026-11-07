@@ -25,22 +25,89 @@ $presupuesto->proveedores()->sync($ids);      // deja exactamente estos
 
 ## Ejercicios
 
-1. **Las tablas.** Migración `create_presupuestos_table`:
+1. **Las tablas.** Una migración por tabla, en este orden.
+
+    ```bash
+    php artisan make:migration create_presupuestos_table --create=presupuestos
+    ```
 
     Campo | Tipo | nullable
     -----|----|---
     codigo | string(20), único | no
     fecha | date | no
-    cliente_id | clave ajena, `restrictOnDelete` | no
-    obra_id | clave ajena, `nullOnDelete` | sí
+    cliente_id | clave ajena a `clientes`, `restrictOnDelete` | no
+    obra_id | clave ajena a `obras`, `nullOnDelete` | sí
     nombre_cliente | string | no
-    nif, direccion, telefono | string | sí
+    nif | string(20) | sí
+    direccion | string | sí
+    telefono | string(20) | sí
     iva | decimal(5,2), **21** por defecto | no
     estado | enum: `aprobado`, `no_aprobado` (por defecto) | no
 
-    En la misma migración: `lineas_presupuesto` (`presupuesto_id` con `cascadeOnDelete`, `descripcion` opcional, `uds`, `precio` en `decimal(10,2)`), y las pivotes `presupuesto_proveedor` y `especialista_presupuesto`, con clave primaria compuesta. Añade también la clave ajena de `gastos.presupuesto_id`, con `nullOnDelete`.
+    ```bash
+    php artisan make:migration create_lineas_presupuesto_table --create=lineas_presupuesto
+    ```
 
-2. **Los modelos.** `Presupuesto` (`PREFIJO = 'PREP'`) y `LineaPresupuesto` (`$table = 'lineas_presupuesto'`), con sus relaciones del [contrato](./contrato-api.md#modelos) y sus _factories_. `PresupuestoFactory` **no** rellena `nombre_cliente`. El _accessor_ `total_linea` es `uds × precio`.
+    Campo | Tipo | nullable
+    -----|----|---
+    presupuesto_id | clave ajena a `presupuestos`, `cascadeOnDelete` | no
+    descripcion | text | sí
+    uds | entero sin signo, **1** por defecto | no
+    precio | decimal(10,2), **0** por defecto | no
+
+    Las dos tablas pivote **no llevan `id()` ni `timestamps()`**, y su clave primaria es compuesta, con `$table->primary(['presupuesto_id', 'proveedor_id'])`:
+
+    ```bash
+    php artisan make:migration create_presupuesto_proveedor_table --create=presupuesto_proveedor
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    presupuesto_id | clave ajena a `presupuestos`, `cascadeOnDelete` | no
+    proveedor_id | clave ajena a `proveedores`, `cascadeOnDelete` | no
+
+    ```bash
+    php artisan make:migration create_especialista_presupuesto_table --create=especialista_presupuesto
+    ```
+
+    Campo | Tipo | nullable
+    -----|----|---
+    especialista_id | clave ajena a `especialistas`, `cascadeOnDelete` | no
+    presupuesto_id | clave ajena a `presupuestos`, `cascadeOnDelete` | no
+
+    Por último, la clave ajena que quedó pendiente en [6.8](./RA6_8_relaciones.md):
+
+    ```bash
+    php artisan make:migration add_presupuesto_foreign_to_gastos_table --table=gastos
+    ```
+
+    ```php
+    $table->foreign('presupuesto_id')->references('id')->on('presupuestos')->nullOnDelete();
+    ```
+
+    Su `down()` hace `$table->dropForeign(['presupuesto_id']);`.
+
+2. **Los modelos y sus _factories_.** Las relaciones son las del [contrato](./contrato-api.md#modelos).
+
+    - `Presupuesto`: `$table = 'presupuestos'`, `use HasFactory, TieneCodigo`, `PREFIJO = 'PREP'`, y este `$fillable`: `fecha, cliente_id, obra_id, nombre_cliente, nif, direccion, telefono, iva, estado`.
+    - `LineaPresupuesto`: `$table = 'lineas_presupuesto'`, `use HasFactory`, el _accessor_ `total_linea` (`uds × precio`), y este `$fillable`: `presupuesto_id, descripcion, uds, precio`.
+
+    Campo | Valor en `PresupuestoFactory`
+    -----|----
+    fecha | `fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
+    cliente_id | `Cliente::factory()`
+    obra_id | `null`
+    iva | `21`
+    estado | `'no_aprobado'`
+
+    `PresupuestoFactory` **no** rellena `nombre_cliente`, `nif`, `direccion` ni `telefono`: se copian del cliente en el ejercicio 3.
+
+    Campo | Valor en `LineaPresupuestoFactory`
+    -----|----
+    presupuesto_id | `Presupuesto::factory()`
+    descripcion | `fake()->sentence(4)`
+    uds | `fake()->numberBetween(1, 10)`
+    precio | `fake()->randomFloat(2, 10, 500)`
 
 3. **Los datos del cliente se copian.** En el evento `creating` de `Presupuesto`, si no se indican: la fecha es hoy, y `nombre_cliente` (nombre completo), `nif`, `direccion` y `telefono` se copian del cliente. Un presupuesto entregado no debe cambiar si el cliente cambia su ficha.
 
