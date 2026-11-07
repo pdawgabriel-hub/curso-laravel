@@ -174,4 +174,69 @@ class PresupuestoApiTest extends FeatureTestCase
 
         $this->getJson("/api/v1/presupuestos/{$p->id}")->assertForbidden();
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_presupuestos()
+    {
+        $x = Presupuesto::factory()->create(['estado' => 'no_aprobado']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/presupuestos")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_presupuestos()
+    {
+        $x = Presupuesto::factory()->create(['estado' => 'no_aprobado']);
+        $antes = \DB::table('presupuestos')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/presupuestos", ['cliente_id' => $this->cliente->id])->assertForbidden();
+
+        $this->assertDatabaseCount('presupuestos', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_presupuestos()
+    {
+        $x = Presupuesto::factory()->create(['estado' => 'no_aprobado']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/presupuestos/{$x->id}", ['estado' => 'aprobado'])->assertForbidden();
+
+        $this->assertDatabaseHas('presupuestos', ['id' => $x->id, 'estado' => 'no_aprobado']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_presupuestos()
+    {
+        $x = Presupuesto::factory()->create(['estado' => 'no_aprobado']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/presupuestos/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('presupuestos', ['id' => $x->id]);
+    }
+
+    public function test_pagina_presupuestos()
+    {
+        Presupuesto::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/presupuestos?per_page=10"), 10, 25);
+    }
+
+    public function test_acepta_los_estados_validos()
+    {
+        foreach (['aprobado', 'no_aprobado'] as $estado) {
+            $this->postJson('/api/v1/presupuestos', ['cliente_id' => $this->cliente->id, 'estado' => $estado])
+                ->assertCreated()
+                ->assertJsonPath('data.estado', $estado);
+        }
+    }
+
+    public function test_filtra_por_cliente()
+    {
+        $propio = Presupuesto::factory()->create(['cliente_id' => $this->cliente->id]);
+        Presupuesto::factory()->create();
+
+        $response = $this->getJson("/api/v1/presupuestos?cliente_id={$this->cliente->id}");
+
+        $this->assertSame([$propio->id], array_column($response->json('data'), 'id'));
+    }
 }

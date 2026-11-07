@@ -9,7 +9,7 @@ Especificación de la API REST y de los modelos que comprueban los tests del Blo
 | Prefijo | `/api/v1`. Los nombres de ruta llevan el prefijo `api.` (`Route::prefix('v1')->name('api.')`) para no chocar con los de la web (`clientes.index`) |
 | Autenticación | Sanctum (`auth:sanctum`) en todas las rutas salvo `POST /tokens`. Sin token → **401** |
 | Roles | Columna `users.rol`: `administrativa` o `jefe` (mismos permisos), o `null`. El administrador es el usuario cuyo email coincide con `config('app.admin.email')` (`ADMIN_EMAIL` en `.env`) y pasa por `Gate::before` |
-| Permisos | Con rol (o administrador) se puede todo; un usuario sin rol recibe **403** en cualquier ruta salvo `GET /user` |
+| Permisos | Con rol (o administrador) se puede todo, salvo borrar observaciones e incidencias de otro autor ([ver](#bitácoras-y-adjuntos)); un usuario sin rol recibe **403** en cualquier ruta salvo `GET /user`. Primero se autoriza y después se valida |
 | Listados | `Resource::collection($query->paginate())`: `{ data: [...], links: {...}, meta: {...} }` |
 | Un registro | `{ data: {...} }` |
 | Crear | **201** con el registro completo (todas las columnas, también las que no se enviaron: `$modelo->refresh()`) |
@@ -30,7 +30,7 @@ Todos los `index` aceptan:
 |:--|:--|
 | `search` | Divide el texto en palabras; cada palabra debe aparecer en alguno de los campos buscables (`LIKE`) |
 | `sort`, `order` | Orden por un campo (`sort=nombre&order=desc`). Por defecto `id asc` |
-| `per_page` | Tamaño de página (15 por defecto) |
+| `per_page` | Tamaño de página (15 por defecto). `links` incluye `first`, `last`, `prev` y `next`; `meta`, al menos `current_page`, `total` y `per_page` |
 | Filtros | Igualdad exacta sobre los campos indicados en cada recurso (`?estado=aprobado`) |
 
 ## Autenticación y usuario
@@ -198,6 +198,16 @@ La cabecera y sus líneas se crean en una transacción. Respuesta: `id, obra_id,
 `apiResource('partes-trabajo.lineas')` (con `scoped()`): `trabajador_id` (obligatorio), `horas` (0–24, obligatorio), `coste_hora` (opcional; si se omite se **copia** el `coste_hora_estandar` del trabajador y ya no cambia).
 Respuesta: `id, parte_trabajo_id, trabajador_id, horas, coste_hora, coste_subtotal, fecha, obra_id` (`fecha` y `obra_id` son los del parte).
 
+**Alta por lote.** POST `/partes-trabajo/{parteTrabajo}/lineas/lote` crea una línea por trabajador con las mismas horas, para una cuadrilla que hace la misma jornada:
+
+| Campo | Validación |
+|:--|:--|
+| `trabajador_ids` | obligatorio, array con al menos 1 id y como máximo `config('gestionobras.max_lineas_lote')` (20 por defecto) |
+| `trabajador_ids.*` | existe y no se repite (`distinct`) |
+| `horas` | obligatorio, 0–24 |
+
+Cada línea copia la tarifa de su trabajador. **Todo o nada**: se valida antes de crear y se crea en una transacción. Respuesta: **201** con `{ data: [ líneas ] }`, sin paginar.
+
 ### Partes de proveedor y de especialista
 
 `apiResource('obras.partes-proveedor')` y `apiResource('obras.partes-especialista')` · filtros: `proveedor_id`/`especialista_id`, `estado_pago`
@@ -222,9 +232,10 @@ Rutas genéricas por tipo de entidad. El tipo es el segmento de la URL y coincid
 | Método | Ruta | Detalle |
 |:--|:--|:--|
 | GET / POST | `/{tipo}/{id}/observaciones` | `{ texto }` obligatorio. El autor (`user_id`) es siempre el usuario autenticado. Orden: más nueva primero |
-| DELETE | `/observaciones/{observacion}` | **204** |
+| GET | `/user/observaciones` | Observaciones escritas por el **usuario autenticado**, más nueva primero (paginado) |
+| DELETE | `/observaciones/{observacion}` | **204**. Solo su autor, el rol `jefe` o el administrador; si no, **403** |
 | GET / POST | `/{tipo}/{id}/incidencias` | Igual que observaciones |
-| DELETE | `/incidencias/{incidencia}` | **204** |
+| DELETE | `/incidencias/{incidencia}` | **204**. Mismos permisos que las observaciones |
 | GET / POST | `/{tipo}/{id}/archivos` | Multipart `archivo` (obligatorio, máx. 10 MB). `tipo`: `imagen`, `pdf` u `otro` según el MIME |
 | GET | `/archivos/{archivo}/descarga` | Descarga con el nombre original |
 | DELETE | `/archivos/{archivo}` | Borra la fila **y el fichero** |
@@ -280,6 +291,8 @@ Los tests de modelo comprueban `$fillable` **en este orden exacto**, la tabla y 
 | `Archivo` | `nombre_archivo, ruta, tipo` | `archivable` (MorphTo) |
 
 Además, `Obra` tiene `lineasTrabajo()` (HasManyThrough) y los métodos `trabajadoresParticipantes()`, `proveedoresParticipantes()` y `especialistasParticipantes()`, y `Trabajador`, `Proveedor` y `Especialista` tienen `obrasParticipadas()`; todos devuelven un `Builder`.
+
+`User` tiene `rol` en su `$fillable`, oculta `password` y `remember_token`, y define `esAdministrador()`, `tieneRol()` y `roles()`.
 
 ### Factories
 

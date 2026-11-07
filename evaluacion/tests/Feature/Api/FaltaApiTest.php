@@ -79,4 +79,86 @@ class FaltaApiTest extends FeatureTestCase
 
         $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas/{$ajena->id}")->assertNotFound();
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_faltas()
+    {
+        $x = Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'personal']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_faltas()
+    {
+        $x = Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'personal']);
+        $antes = \DB::table('faltas')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas", ['fecha_inicio' => '2026-01-01', 'fecha_fin' => '2026-01-02'])->assertForbidden();
+
+        $this->assertDatabaseCount('faltas', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_faltas()
+    {
+        $x = Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'personal']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas/{$x->id}", ['fecha_inicio' => '2026-01-01', 'fecha_fin' => '2026-01-02', 'tipo' => 'otro'])->assertForbidden();
+
+        $this->assertDatabaseHas('faltas', ['id' => $x->id, 'tipo' => 'personal']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_faltas()
+    {
+        $x = Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'personal']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('faltas', ['id' => $x->id]);
+    }
+
+    public function test_pagina_faltas()
+    {
+        Falta::factory()->count(25)->create(['trabajador_id' => $this->trabajador->id]);
+
+        $this->assertPaginado($this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas?per_page=10"), 10, 25);
+    }
+
+    public function test_acepta_todos_los_tipos_validos()
+    {
+        foreach (['vacaciones', 'baja_medica', 'personal', 'injustificada', 'otro'] as $tipo) {
+            $this->postJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas", [
+                'fecha_inicio' => '2026-01-01', 'fecha_fin' => '2026-01-01', 'tipo' => $tipo,
+            ])->assertCreated()->assertJsonPath('data.tipo', $tipo);
+        }
+    }
+
+    public function test_filtra_por_tipo()
+    {
+        Falta::factory()->count(2)->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'vacaciones']);
+        $baja = Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'tipo' => 'baja_medica']);
+
+        $response = $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas?tipo=baja_medica");
+
+        $this->assertSame([$baja->id], array_column($response->json('data'), 'id'));
+    }
+
+    public function test_busca_por_motivo()
+    {
+        Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'motivo' => 'Operación de rodilla']);
+        Falta::factory()->create(['trabajador_id' => $this->trabajador->id, 'motivo' => 'Asuntos propios']);
+
+        $this->assertCount(1, $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas?search=rodilla")->json('data'));
+    }
+
+    public function test_muestra_la_falta_de_su_trabajador()
+    {
+        $falta = Falta::factory()->create(['trabajador_id' => $this->trabajador->id]);
+
+        $this->getJson("/api/v1/trabajadores/{$this->trabajador->id}/faltas/{$falta->id}")
+            ->assertOk()
+            ->assertJsonPath('data.trabajador_id', $this->trabajador->id);
+    }
 }

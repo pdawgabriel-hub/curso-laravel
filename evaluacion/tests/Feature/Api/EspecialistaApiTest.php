@@ -62,4 +62,50 @@ class EspecialistaApiTest extends FeatureTestCase
 
         $this->assertSame([$obra->id], array_column($this->getJson("/api/v1/especialistas/{$e->id}/obras")->json('data'), 'id'));
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_especialistas()
+    {
+        $x = Especialista::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/especialistas")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_especialistas()
+    {
+        $x = Especialista::factory()->create(['nombre' => 'Original']);
+        $antes = \DB::table('especialistas')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/especialistas", ['nombre' => 'A'])->assertForbidden();
+
+        $this->assertDatabaseCount('especialistas', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_especialistas()
+    {
+        $x = Especialista::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/especialistas/{$x->id}", ['nombre' => 'Cambiado'])->assertForbidden();
+
+        $this->assertDatabaseHas('especialistas', ['id' => $x->id, 'nombre' => 'Original']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_especialistas()
+    {
+        $x = Especialista::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/especialistas/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('especialistas', ['id' => $x->id]);
+    }
+
+    public function test_pagina_especialistas()
+    {
+        Especialista::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/especialistas?per_page=10"), 10, 25);
+    }
 }

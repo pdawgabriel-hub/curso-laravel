@@ -125,4 +125,65 @@ class ParteTrabajoApiTest extends FeatureTestCase
         $this->getJson($this->url("/{$ajeno->id}"))->assertNotFound();
         $this->deleteJson($this->url("/{$ajeno->id}"))->assertNotFound();
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_partes()
+    {
+        $x = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/obras/{$this->obra->id}/partes-trabajo")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_partes()
+    {
+        $x = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Original']);
+        $antes = \DB::table('partes_trabajo')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/obras/{$this->obra->id}/partes-trabajo", ['descripcion' => 'A'])->assertForbidden();
+
+        $this->assertDatabaseCount('partes_trabajo', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_partes()
+    {
+        $x = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/obras/{$this->obra->id}/partes-trabajo/{$x->id}", ['descripcion' => 'Cambiada'])->assertForbidden();
+
+        $this->assertDatabaseHas('partes_trabajo', ['id' => $x->id, 'descripcion' => 'Original']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_partes()
+    {
+        $x = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/obras/{$this->obra->id}/partes-trabajo/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('partes_trabajo', ['id' => $x->id]);
+    }
+
+    public function test_pagina_partes()
+    {
+        ParteTrabajo::factory()->count(25)->create(['obra_id' => $this->obra->id]);
+
+        $this->assertPaginado($this->getJson("/api/v1/obras/{$this->obra->id}/partes-trabajo?per_page=10"), 10, 25);
+    }
+
+    public function test_busca_por_descripcion()
+    {
+        ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Demolición de tabiques']);
+        ParteTrabajo::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Pintura']);
+
+        $this->assertCount(1, $this->getJson($this->url() . '?search=tabiques')->json('data'));
+    }
+
+    public function test_muestra_el_parte_de_su_obra()
+    {
+        $parte = ParteTrabajo::factory()->create(['obra_id' => $this->obra->id]);
+
+        $this->getJson($this->url("/{$parte->id}"))->assertOk()->assertJsonPath('data.obra_id', $this->obra->id);
+    }
 }

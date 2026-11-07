@@ -66,4 +66,57 @@ class LineaPresupuestoApiTest extends FeatureTestCase
 
         $this->getJson($this->url("/{$ajena->id}"))->assertNotFound();
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_lineas()
+    {
+        $x = LineaPresupuesto::factory()->create(['presupuesto_id' => $this->presupuesto->id, 'uds' => 2]);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/presupuestos/{$this->presupuesto->id}/lineas")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_lineas()
+    {
+        $x = LineaPresupuesto::factory()->create(['presupuesto_id' => $this->presupuesto->id, 'uds' => 2]);
+        $antes = \DB::table('lineas_presupuesto')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/presupuestos/{$this->presupuesto->id}/lineas", ['uds' => 1, 'precio' => 1])->assertForbidden();
+
+        $this->assertDatabaseCount('lineas_presupuesto', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_lineas()
+    {
+        $x = LineaPresupuesto::factory()->create(['presupuesto_id' => $this->presupuesto->id, 'uds' => 2]);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/presupuestos/{$this->presupuesto->id}/lineas/{$x->id}", ['uds' => 9, 'precio' => 1])->assertForbidden();
+
+        $this->assertDatabaseHas('lineas_presupuesto', ['id' => $x->id, 'uds' => 2]);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_lineas()
+    {
+        $x = LineaPresupuesto::factory()->create(['presupuesto_id' => $this->presupuesto->id, 'uds' => 2]);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/presupuestos/{$this->presupuesto->id}/lineas/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('lineas_presupuesto', ['id' => $x->id]);
+    }
+
+    public function test_pagina_lineas()
+    {
+        LineaPresupuesto::factory()->count(25)->create(['presupuesto_id' => $this->presupuesto->id]);
+
+        $this->assertPaginado($this->getJson("/api/v1/presupuestos/{$this->presupuesto->id}/lineas?per_page=10"), 10, 25);
+    }
+
+    public function test_muestra_la_linea_de_su_presupuesto()
+    {
+        $linea = LineaPresupuesto::factory()->create(['presupuesto_id' => $this->presupuesto->id]);
+
+        $this->getJson($this->url("/{$linea->id}"))->assertOk()->assertJsonPath('data.presupuesto_id', $this->presupuesto->id);
+    }
 }

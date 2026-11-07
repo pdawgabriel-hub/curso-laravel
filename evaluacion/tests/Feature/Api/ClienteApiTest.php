@@ -182,4 +182,39 @@ class ClienteApiTest extends FeatureTestCase
 
         $this->postJson('/api/v1/clientes', $this->datos())->assertCreated();
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_clientes()
+    {
+        $x = Cliente::factory()->create(['telefono' => '600000001']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/clientes")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_clientes()
+    {
+        $x = Cliente::factory()->create(['telefono' => '600000001']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/clientes/{$x->id}", $this->datos())->assertForbidden();
+
+        $this->assertDatabaseHas('clientes', ['id' => $x->id, 'telefono' => '600000001']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_clientes()
+    {
+        $x = Cliente::factory()->create(['telefono' => '600000001']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/clientes/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('clientes', ['id' => $x->id]);
+    }
+
+    public function test_pagina_clientes()
+    {
+        Cliente::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/clientes?per_page=10"), 10, 25);
+    }
 }

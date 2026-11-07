@@ -145,4 +145,11 @@ class EstadisticaApiTest extends FeatureTestCase
         $this->assertImporte(150, $evolucion[1]['ingresos']);
         $this->assertSame(1, $evolucion[1]['obras_finalizadas']);
     }
+
+    public function test_usuario_sin_rol_no_ve_las_estadisticas()
+    {
+        $this->actuarComo(null);
+
+        $this->getJson('/api/v1/estadisticas')->assertForbidden();
+    }
 }

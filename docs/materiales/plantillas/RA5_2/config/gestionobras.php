@@ -24,4 +24,7 @@ return [
     // Tarifa por defecto de un trabajador nuevo (€/h)
     'coste_hora_por_defecto' => 20,
 
+    // Máximo de trabajadores en un alta de líneas por lote (Bloque 7)
+    'max_lineas_lote' => 20,
+
 ];

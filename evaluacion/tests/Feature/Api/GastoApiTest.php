@@ -158,4 +158,56 @@ class GastoApiTest extends FeatureTestCase
 
         $this->assertDatabaseHas('gastos', ['id' => $this->obra->gasto->id, 'obra_id' => $this->obra->id]);
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_gastos()
+    {
+        $x = $this->obra->gasto;
+        $x->update(['direccion_obra' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/gastos")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_gastos()
+    {
+        $x = $this->obra->gasto;
+        $x->update(['direccion_obra' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/gastos/{$x->id}", ['direccion_obra' => 'Cambiada'])->assertForbidden();
+
+        $this->assertDatabaseHas('gastos', ['id' => $x->id, 'direccion_obra' => 'Original']);
+    }
+
+    public function test_pagina_gastos()
+    {
+        Obra::factory()->count(24)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/gastos?per_page=10"), 10, 25);
+    }
+
+    public function test_usuario_sin_rol_no_puede_ver_una_ficha()
+    {
+        $id = $this->obra->gasto->id;
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/gastos/{$id}")->assertForbidden();
+    }
+
+    public function test_filtra_por_obra()
+    {
+        Obra::factory()->create();
+
+        $response = $this->getJson("/api/v1/gastos?obra_id={$this->obra->id}");
+
+        $this->assertSame([$this->obra->id], array_column($response->json('data'), 'obra_id'));
+    }
+
+    public function test_busca_por_direccion_de_la_obra()
+    {
+        $this->obra->gasto->update(['direccion_obra' => 'Calle Sol 3']);
+        Obra::factory()->create()->gasto->update(['direccion_obra' => 'Avenida Luna 9']);
+
+        $this->assertCount(1, $this->getJson('/api/v1/gastos?search=Sol')->json('data'));
+    }
 }

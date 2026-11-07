@@ -114,4 +114,65 @@ class IngresoApiTest extends FeatureTestCase
         $this->deleteJson($this->url("/{$ajeno->id}"))->assertNotFound();
         $this->assertDatabaseHas('ingresos', ['id' => $ajeno->id]);
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_ingresos()
+    {
+        $x = Ingreso::factory()->create(['obra_id' => $this->obra->id, 'importe' => 100]);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/obras/{$this->obra->id}/ingresos")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_ingresos()
+    {
+        $x = Ingreso::factory()->create(['obra_id' => $this->obra->id, 'importe' => 100]);
+        $antes = \DB::table('ingresos')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/obras/{$this->obra->id}/ingresos", ['importe' => 10])->assertForbidden();
+
+        $this->assertDatabaseCount('ingresos', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_ingresos()
+    {
+        $x = Ingreso::factory()->create(['obra_id' => $this->obra->id, 'importe' => 100]);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/obras/{$this->obra->id}/ingresos/{$x->id}", ['importe' => 999])->assertForbidden();
+
+        $this->assertDatabaseHas('ingresos', ['id' => $x->id, 'importe' => 100]);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_ingresos()
+    {
+        $x = Ingreso::factory()->create(['obra_id' => $this->obra->id, 'importe' => 100]);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/obras/{$this->obra->id}/ingresos/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('ingresos', ['id' => $x->id]);
+    }
+
+    public function test_pagina_ingresos()
+    {
+        Ingreso::factory()->count(25)->create(['obra_id' => $this->obra->id]);
+
+        $this->assertPaginado($this->getJson("/api/v1/obras/{$this->obra->id}/ingresos?per_page=10"), 10, 25);
+    }
+
+    public function test_busca_por_tipo()
+    {
+        Ingreso::factory()->create(['obra_id' => $this->obra->id, 'tipo' => 'Efectivo']);
+        Ingreso::factory()->create(['obra_id' => $this->obra->id, 'tipo' => 'Transferencia']);
+
+        $this->assertCount(1, $this->getJson($this->url() . '?search=efectivo')->json('data'));
+    }
+
+    public function test_muestra_el_ingreso_de_su_obra()
+    {
+        $ingreso = Ingreso::factory()->create(['obra_id' => $this->obra->id]);
+
+        $this->getJson($this->url("/{$ingreso->id}"))->assertOk()->assertJsonPath('data.obra_id', $this->obra->id);
+    }
 }

@@ -254,4 +254,71 @@ class ObraApiTest extends FeatureTestCase
 
         $this->assertCount(1, $this->getJson('/api/v1/obras?search=baño')->json('data'));
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_obras()
+    {
+        $x = Obra::factory()->create(['descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/obras")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_obras()
+    {
+        $x = Obra::factory()->create(['descripcion' => 'Original']);
+        $antes = \DB::table('obras')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/obras", ['descripcion' => 'A'])->assertForbidden();
+
+        $this->assertDatabaseCount('obras', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_obras()
+    {
+        $x = Obra::factory()->create(['descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/obras/{$x->id}", ['descripcion' => 'Cambiada'])->assertForbidden();
+
+        $this->assertDatabaseHas('obras', ['id' => $x->id, 'descripcion' => 'Original']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_obras()
+    {
+        $x = Obra::factory()->create(['descripcion' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/obras/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('obras', ['id' => $x->id]);
+    }
+
+    public function test_pagina_obras()
+    {
+        Obra::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/obras?per_page=10"), 10, 25);
+    }
+
+    public function test_filtra_por_cliente()
+    {
+        $propia = Obra::factory()->create(['cliente_id' => $this->cliente->id]);
+        Obra::factory()->create();
+
+        $response = $this->getJson("/api/v1/obras?cliente_id={$this->cliente->id}");
+
+        $this->assertSame([$propia->id], array_column($response->json('data'), 'id'));
+    }
+
+    public function test_usuario_sin_rol_no_puede_vincular_un_presupuesto()
+    {
+        $obra = Obra::factory()->create(['cliente_id' => $this->cliente->id]);
+        $libre = Presupuesto::factory()->create(['cliente_id' => $this->cliente->id]);
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/obras/{$obra->id}/vincular-presupuesto", ['presupuesto_id' => $libre->id])->assertForbidden();
+
+        $this->assertDatabaseHas('presupuestos', ['id' => $libre->id, 'obra_id' => null]);
+    }
 }

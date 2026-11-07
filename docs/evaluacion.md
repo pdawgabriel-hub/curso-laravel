@@ -18,18 +18,21 @@ La batería se entrega como una carpeta `tests/` completa que sustituye a la del
 | Fichero | Tests |
 |:--|--:|
 | `Unit/Models/*Test.php` (17 modelos) | 108 |
+| `Unit/UserTest.php` | 5 |
 | `Feature/Api/AutenticacionApiTest.php` | 9 |
-| `Feature/Api/ClienteApiTest.php` | 18 |
-| `Feature/Api/TrabajadorApiTest.php` · `FaltaApiTest.php` | 9 · 7 |
-| `Feature/Api/ProveedorApiTest.php` · `EspecialistaApiTest.php` | 6 · 6 |
-| `Feature/Api/PresupuestoApiTest.php` · `LineaPresupuestoApiTest.php` | 14 · 5 |
-| `Feature/Api/ObraApiTest.php` · `GastoApiTest.php` · `IngresoApiTest.php` | 17 · 12 · 9 |
-| `Feature/Api/ParteTrabajoApiTest.php` · `LineaParteTrabajoApiTest.php` | 8 · 6 |
-| `Feature/Api/ParteProveedorApiTest.php` · `ParteEspecialistaApiTest.php` | 6 · 6 |
-| `Feature/Api/BitacoraApiTest.php` · `ArchivoApiTest.php` | 9 · 8 |
-| `Feature/Api/EstadisticaApiTest.php` · `CalendarioApiTest.php` | 9 · 2 |
+| `Feature/Api/ClienteApiTest.php` | 22 |
+| `Feature/Api/TrabajadorApiTest.php` · `FaltaApiTest.php` | 14 · 16 |
+| `Feature/Api/ProveedorApiTest.php` · `EspecialistaApiTest.php` | 12 · 11 |
+| `Feature/Api/PresupuestoApiTest.php` · `LineaPresupuestoApiTest.php` | 21 · 11 |
+| `Feature/Api/ObraApiTest.php` · `GastoApiTest.php` · `IngresoApiTest.php` | 24 · 18 · 16 |
+| `Feature/Api/ParteTrabajoApiTest.php` · `LineaParteTrabajoApiTest.php` | 15 · 18 |
+| `Feature/Api/ParteProveedorApiTest.php` · `ParteEspecialistaApiTest.php` | 15 · 15 |
+| `Feature/Api/BitacoraApiTest.php` · `ArchivoApiTest.php` | 14 · 9 |
+| `Feature/Api/EstadisticaApiTest.php` · `CalendarioApiTest.php` | 10 · 3 |
 | `Feature/Escenario/EscenarioCompletoTest.php` | 3 |
-| **Total** | **277** |
+| **Total** | **389** |
+
+Cada recurso comprueba su CRUD, la validación de cada campo, los valores admitidos, la búsqueda, los filtros, la paginación con `links` y `meta`, el 404 con otro padre y el **403 a un usuario sin rol** en cada operación, además de que la base de datos no cambie.
 
 ## Procedimiento
 
@@ -78,4 +81,6 @@ La batería se entrega como una carpeta `tests/` completa que sustituye a la del
 | `Call to undefined method …::factory()` | Falta `use HasFactory` en el modelo |
 | Los tests de modelo fallan solo por el orden | `$fillable` debe estar en el orden del contrato |
 | 403 en todas las rutas con el administrador | `config('app.admin.email')` no está definido o `Gate::before` no devuelve `true` |
+| 403 esperado y llega 200 o 201 | Falta `Gate::authorize()` en esa acción: hay que revisar todas, también los recursos anidados y las rutas adicionales |
+| 422 esperado y llega 403, o al revés | El orden importa: primero se autoriza y después se valida |
 | `Class "Database\Factories\GastoFactory" not found` | La ficha de Gastos no debe crearse con factory: la crea la obra |

@@ -10,6 +10,8 @@ Reproducir los grupos de Odoo: *Administrativa* y *Jefe / Administrador* con los
 - Una **Policy** por modelo (`php artisan make:policy ClientePolicy --model=Cliente`), descubierta automáticamente por su nombre.
 - `Gate::authorize('update', $cliente)` lanza 403 si la Policy devuelve `false`.
 - Cuando varias Policies son iguales, una clase base común evita repetir código.
+- Una Policy también puede decidir según **quién** es el usuario y **de quién** es el registro: `$observacion->user_id === $user->id`.
+- Primero se autoriza y después se valida: un usuario sin permiso recibe 403, no los errores de validación.
 
 ## Ejercicios
 
@@ -17,7 +19,8 @@ Reproducir los grupos de Odoo: *Administrativa* y *Jefe / Administrador* con los
 2. `Gate::before` en `AppServiceProvider::boot()`.
 3. `App\Policies\PolicyBase` con `viewAny`, `view`, `create`, `update` y `delete` que devuelven `$user->tieneRol()`, y una Policy por modelo que hereda de ella.
 4. Todos los métodos de los controladores de la API llaman a `Gate::authorize()` con la acción y el modelo que corresponde.
-5. La web también usa las Policies: los botones de crear, editar y borrar solo se muestran con `@can`.
+5. `ObservacionPolicy` e `IncidenciaPolicy` sobrescriben `delete`: solo su autor o el rol `jefe` (el administrador ya pasa por `Gate::before`). Añadir también `GET /user/observaciones`, con las observaciones del usuario autenticado.
+6. La web también usa las Policies: los botones de crear, editar y borrar solo se muestran con `@can`.
 
 ## Comprueba tu solución automáticamente
 

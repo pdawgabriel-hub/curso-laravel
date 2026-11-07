@@ -57,4 +57,21 @@ abstract class TestCase extends BaseTestCase
             $this->assertCount($cuantos, $response->json('data'));
         }
     }
+
+    /**
+     * Comprueba una página de un listado: número de registros y estructura de links y meta.
+     */
+    protected function assertPaginado(TestResponse $response, int $porPagina, int $total): void
+    {
+        $response->assertOk()
+            ->assertJsonStructure([
+                'data',
+                'links' => ['first', 'last', 'prev', 'next'],
+                'meta' => ['current_page', 'total', 'per_page'],
+            ]);
+
+        $this->assertCount($porPagina, $response->json('data'));
+        $this->assertSame($total, $response->json('meta.total'));
+        $this->assertSame($porPagina, (int) $response->json('meta.per_page'));
+    }
 }

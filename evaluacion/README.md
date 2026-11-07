@@ -12,7 +12,7 @@ php artisan test tests/Feature/Api tests/Feature/Escenario
 
 | Carpeta | Contenido |
 |---|---|
-| `TestCase.php`, `Feature/FeatureTestCase.php` | Clases base con `actuarComo()`, `actuarComoAdministrador()`, `assertImporte()` y `assertListado()` |
-| `Unit/Models/` | `$fillable`, tabla, relaciones y factory de cada modelo |
+| `TestCase.php`, `Feature/FeatureTestCase.php` | Clases base con `actuarComo()`, `actuarComoAdministrador()`, `assertImporte()`, `assertListado()` y `assertPaginado()` |
+| `Unit/Models/`, `Unit/UserTest.php` | `$fillable`, tabla, relaciones y factory de cada modelo; métodos de `User` |
 | `Feature/Api/` | Un fichero por recurso de la API |
 | `Feature/Escenario/` | El ciclo completo de una obra |

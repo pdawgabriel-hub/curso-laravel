@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Especialista;
 use App\Models\Obra;
 use App\Models\ParteEspecialista;
-use App\Models\Especialista;
 use Tests\Feature\FeatureTestCase;
 
 class ParteEspecialistaApiTest extends FeatureTestCase
@@ -79,5 +79,85 @@ class ParteEspecialistaApiTest extends FeatureTestCase
         $ajeno = ParteEspecialista::factory()->create();
 
         $this->getJson($this->url("/{$ajeno->id}"))->assertNotFound();
+    }
+
+    public function test_usuario_sin_rol_no_puede_listar_partes()
+    {
+        $x = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pendiente']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/obras/{$this->obra->id}/partes-especialista")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_partes()
+    {
+        $x = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pendiente']);
+        $antes = \DB::table('partes_especialista')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/obras/{$this->obra->id}/partes-especialista", ['especialista_id' => Especialista::factory()->create()->id, 'importe' => 10])->assertForbidden();
+
+        $this->assertDatabaseCount('partes_especialista', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_partes()
+    {
+        $x = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pendiente']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/obras/{$this->obra->id}/partes-especialista/{$x->id}", ['estado_pago' => 'pagado'])->assertForbidden();
+
+        $this->assertDatabaseHas('partes_especialista', ['id' => $x->id, 'estado_pago' => 'pendiente']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_partes()
+    {
+        $x = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pendiente']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/obras/{$this->obra->id}/partes-especialista/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('partes_especialista', ['id' => $x->id]);
+    }
+
+    public function test_pagina_partes()
+    {
+        ParteEspecialista::factory()->count(25)->create(['obra_id' => $this->obra->id]);
+
+        $this->assertPaginado($this->getJson("/api/v1/obras/{$this->obra->id}/partes-especialista?per_page=10"), 10, 25);
+    }
+
+    public function test_acepta_los_estados_de_pago_validos()
+    {
+        foreach (['pendiente', 'pagado'] as $estado) {
+            $this->postJson($this->url(), ['especialista_id' => Especialista::factory()->create()->id, 'importe' => 10, 'estado_pago' => $estado])
+                ->assertCreated()
+                ->assertJsonPath('data.estado_pago', $estado);
+        }
+    }
+
+    public function test_filtra_por_estado_de_pago_y_por_especialista()
+    {
+        $pagado = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pagado']);
+        ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'estado_pago' => 'pendiente']);
+
+        $this->assertSame([$pagado->id], array_column($this->getJson($this->url() . '?estado_pago=pagado')->json('data'), 'id'));
+        $this->assertSame([$pagado->id], array_column($this->getJson($this->url() . "?especialista_id={$pagado->especialista_id}")->json('data'), 'id'));
+    }
+
+    public function test_busca_por_descripcion_y_documento()
+    {
+        ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Azulejos del baño', 'documento' => 'FAC-1']);
+        ParteEspecialista::factory()->create(['obra_id' => $this->obra->id, 'descripcion' => 'Pintura', 'documento' => 'FAC-2']);
+
+        $this->assertCount(1, $this->getJson($this->url() . '?search=azulejos')->json('data'));
+        $this->assertCount(1, $this->getJson($this->url() . '?search=FAC-2')->json('data'));
+    }
+
+    public function test_muestra_el_parte_de_su_obra()
+    {
+        $parte = ParteEspecialista::factory()->create(['obra_id' => $this->obra->id]);
+
+        $this->getJson($this->url("/{$parte->id}"))->assertOk()->assertJsonPath('data.obra_id', $this->obra->id);
     }
 }

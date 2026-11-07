@@ -41,6 +41,8 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `mandante`, `gestion_licencia`, `pago_icio` (sí/no) | `boolean` | Tipo nativo |
 | `gastos.coste_moo_total` y `coste_moo` | `coste_moo` | Eran el mismo valor |
 | `proveedores.nombre` (opcional) | obligatorio | Un proveedor sin nombre no se puede identificar en los selectores |
+| Bitácoras: las borra cualquier usuario con acceso | Solo su autor, el jefe o el administrador | Una nota no la debería poder eliminar otro compañero; es el único caso en que los roles se distinguen |
+| Líneas de parte, de una en una | Además, alta por lote | Una cuadrilla suele hacer la misma jornada |
 
 ## Mecanismos de Odoo y su equivalente
 

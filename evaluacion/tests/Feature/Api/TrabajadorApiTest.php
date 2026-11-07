@@ -111,4 +111,50 @@ class TrabajadorApiTest extends FeatureTestCase
         $this->assertSame($parte->obra_id, $response->json('data.0.obra_id'));
         $this->assertSame($parte->fecha->format('Y-m-d'), $response->json('data.0.fecha'));
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_trabajadores()
+    {
+        $x = Trabajador::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/trabajadores")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_trabajadores()
+    {
+        $x = Trabajador::factory()->create(['nombre' => 'Original']);
+        $antes = \DB::table('trabajadores')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/trabajadores", ['nombre' => 'A', 'apellido' => 'B'])->assertForbidden();
+
+        $this->assertDatabaseCount('trabajadores', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_trabajadores()
+    {
+        $x = Trabajador::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/trabajadores/{$x->id}", ['nombre' => 'Cambiado'])->assertForbidden();
+
+        $this->assertDatabaseHas('trabajadores', ['id' => $x->id, 'nombre' => 'Original']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_trabajadores()
+    {
+        $x = Trabajador::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/trabajadores/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('trabajadores', ['id' => $x->id]);
+    }
+
+    public function test_pagina_trabajadores()
+    {
+        Trabajador::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/trabajadores?per_page=10"), 10, 25);
+    }
 }

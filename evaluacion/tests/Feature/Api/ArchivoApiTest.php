@@ -100,4 +100,19 @@ class ArchivoApiTest extends FeatureTestCase
 
         $this->subir('clientes', $cliente->id, UploadedFile::fake()->create('a.pdf', 5, 'application/pdf'))->assertNotFound();
     }
+
+    public function test_usuario_sin_rol_no_accede_a_los_adjuntos()
+    {
+        $obra = Obra::factory()->create();
+        $id = $this->subir('obras', $obra->id, UploadedFile::fake()->create('a.pdf', 5, 'application/pdf'))->json('data.id');
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/obras/{$obra->id}/archivos")->assertForbidden();
+        $this->get("/api/v1/archivos/{$id}/descarga", ['Accept' => 'application/json'])->assertForbidden();
+        $this->subir('obras', $obra->id, UploadedFile::fake()->create('b.pdf', 5, 'application/pdf'))->assertForbidden();
+        $this->deleteJson("/api/v1/archivos/{$id}")->assertForbidden();
+
+        $this->assertDatabaseCount('archivos', 1);
+        Storage::assertExists(Archivo::first()->ruta);
+    }
 }

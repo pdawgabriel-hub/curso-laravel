@@ -70,4 +70,58 @@ class ProveedorApiTest extends FeatureTestCase
 
         $this->assertSame([$obra->id], array_column($response->json('data'), 'id'));
     }
+
+    public function test_usuario_sin_rol_no_puede_listar_proveedores()
+    {
+        $x = Proveedor::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->getJson("/api/v1/proveedores")->assertForbidden();
+    }
+
+    public function test_usuario_sin_rol_no_puede_crear_proveedores()
+    {
+        $x = Proveedor::factory()->create(['nombre' => 'Original']);
+        $antes = \DB::table('proveedores')->count();
+        $this->actuarComo(null);
+
+        $this->postJson("/api/v1/proveedores", ['nombre' => 'A', 'base' => 1, 'iva' => 21])->assertForbidden();
+
+        $this->assertDatabaseCount('proveedores', $antes);
+    }
+
+    public function test_usuario_sin_rol_no_puede_modificar_proveedores()
+    {
+        $x = Proveedor::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->putJson("/api/v1/proveedores/{$x->id}", ['nombre' => 'Cambiado', 'base' => 1, 'iva' => 21])->assertForbidden();
+
+        $this->assertDatabaseHas('proveedores', ['id' => $x->id, 'nombre' => 'Original']);
+    }
+
+    public function test_usuario_sin_rol_no_puede_borrar_proveedores()
+    {
+        $x = Proveedor::factory()->create(['nombre' => 'Original']);
+        $this->actuarComo(null);
+
+        $this->deleteJson("/api/v1/proveedores/{$x->id}")->assertForbidden();
+
+        $this->assertDatabaseHas('proveedores', ['id' => $x->id]);
+    }
+
+    public function test_pagina_proveedores()
+    {
+        Proveedor::factory()->count(25)->create();
+
+        $this->assertPaginado($this->getJson("/api/v1/proveedores?per_page=10"), 10, 25);
+    }
+
+    public function test_busca_por_nombre()
+    {
+        Proveedor::factory()->create(['nombre' => 'Cerámicas Levante']);
+        Proveedor::factory()->create(['nombre' => 'Maderas Norte']);
+
+        $this->assertCount(1, $this->getJson('/api/v1/proveedores?search=levante')->json('data'));
+    }
 }

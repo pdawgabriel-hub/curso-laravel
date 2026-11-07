@@ -42,7 +42,9 @@ Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, c
 
 4. **Endpoints adicionales de obras.** `presupuestos-disponibles`, `vincular-presupuesto` (el asistente de Odoo) y los participantes `trabajadores`, `proveedores` y `especialistas`.
 
-5. **Estadísticas y calendario.** `GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
+5. **Alta de líneas por lote.** `POST /partes-trabajo/{parteTrabajo}/lineas/lote` según el [contrato](./contrato-api.md#líneas-de-parte-de-trabajo). Añadir la clave `max_lineas_lote` a `config/gestionobras.php`, validar el array y cada elemento (`trabajador_ids.*`) y crear las líneas en una transacción. Para responder 201 con una colección: `LineaParteTrabajoResource::collection($lineas)->response()->setStatusCode(201)`.
+
+6. **Estadísticas y calendario.** `GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
 
 ## Comprueba tu solución automáticamente
 

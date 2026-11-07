@@ -42,4 +42,11 @@ class CalendarioApiTest extends FeatureTestCase
         $this->getJson('/api/v1/calendario')->assertUnprocessable()->assertJsonValidationErrors(['desde', 'hasta']);
         $this->getJson('/api/v1/calendario?desde=2026-05-31&hasta=2026-05-01')->assertUnprocessable()->assertJsonValidationErrors('hasta');
     }
+
+    public function test_usuario_sin_rol_no_ve_el_calendario()
+    {
+        $this->actuarComo(null);
+
+        $this->getJson('/api/v1/calendario?desde=2026-05-01&hasta=2026-05-31')->assertForbidden();
+    }
 }
