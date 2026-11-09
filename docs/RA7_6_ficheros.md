@@ -2,7 +2,7 @@
 
 **Referencia teórica:** [Manejo de ficheros en la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/11_manejarFicheros.html) · [Laravel: File Uploads](https://laravel.com/docs/13.x/requests#files)
 
-Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas las entidades que las admiten, resolviendo el padre con el mapa polimórfico de 6.9.
+Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas las entidades que las admiten, resolviendo el padre con el mapa polimórfico de [6.14](./RA6_14_bitacoras.md).
 
 ## Conceptos clave
 

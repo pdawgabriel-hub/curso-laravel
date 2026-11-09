@@ -14,55 +14,21 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
 
 ## Ejercicios
 
-1. **Las tablas.** `morphs('observable')` crea las columnas `observable_type` y `observable_id`, con su índice.
+1. **Trait TieneBitacoras.** Trait con `observaciones()`, `incidencias()` (ambas ordenadas de la más nueva a la más antigua) y `archivos()`, y un evento `deleting` que borra las tres. Los archivos se borran **uno a uno** para que se dispare su propio `deleting`.
 
-    ```bash
-    php artisan make:migration create_observaciones_table --create=observaciones
-    ```
+2. **Las relaciones de las bitácoras.** Las tablas existen desde [6.1](./RA6_1_migraciones.md) y los modelos desde [6.2](./RA6_2_modelos.md). Añade:
 
-    Campo | Tipo | nullable
-    -----|----|---
-    observable | `morphs` | no
-    texto | text | no
-    user_id | clave ajena a `users`, `nullOnDelete` | sí
+    - `Observacion`: `observable()` (`morphTo`).
+    - `Incidencia`: `incidentable()` (`morphTo`).
+    - `Archivo`: `archivable()` (`morphTo`), y en `deleting` borra su fichero del disco.
+    - `use TieneBitacoras` en los modelos de la tabla del [contrato](./contrato-api.md#bitácoras-y-adjuntos).
 
-    ```bash
-    php artisan make:migration create_incidencias_table --create=incidencias
-    ```
+3. **Mapa polimórfico.** Registrar en `AppServiceProvider` las claves `users`, `clientes`, `trabajadores`, `proveedores`, `especialistas`, `obras`, `presupuestos`, `gastos`, `ingresos`, `partes-trabajo`, `partes-proveedor` y `partes-especialista`.
 
-    Campo | Tipo | nullable
-    -----|----|---
-    incidentable | `morphs` | no
-    texto | text | no
-    user_id | clave ajena a `users`, `nullOnDelete` | sí
+4. **En las vistas.** En los detalles de las entidades que los admiten (lista en el [contrato](./contrato-api.md#bitácoras-y-adjuntos)):
 
-    ```bash
-    php artisan make:migration create_archivos_table --create=archivos
-    ```
-
-    Campo | Tipo | nullable
-    -----|----|---
-    archivable | `morphs` | no
-    nombre_archivo | string | no
-    ruta | string | no
-    tipo | enum: `imagen`, `pdf`, `otro` | no
-
-    Estas tablas no llevan _factory_ ni semilla: los registros se crean desde su padre (`$obra->observaciones()->create([...])`).
-
-2. **Trait TieneBitacoras.** Trait con `observaciones()`, `incidencias()` (ambas ordenadas de la más nueva a la más antigua) y `archivos()`, y un evento `deleting` que borra las tres. Los archivos se borran **uno a uno** para que se dispare su propio `deleting`.
-
-3. **Modelos Observacion, Incidencia y Archivo.** Con `$table`:
-
-    - `Observacion`: `$fillable` `texto, user_id`; relaciones `observable()` (`morphTo`) y `usuario()`.
-    - `Incidencia`: `$fillable` `texto, user_id`; relaciones `incidentable()` (`morphTo`) y `usuario()`.
-    - `Archivo`: `$fillable` `nombre_archivo, ruta, tipo`; relación `archivable()` (`morphTo`), y en `deleting` borra su fichero del disco.
-
-4. **Mapa polimórfico.** Registrar en `AppServiceProvider` las claves `users`, `clientes`, `trabajadores`, `proveedores`, `especialistas`, `obras`, `presupuestos`, `gastos`, `ingresos`, `partes-trabajo`, `partes-proveedor` y `partes-especialista`.
-
-5. **En las vistas.** En los detalles de las entidades que los admiten (lista en el [contrato](./contrato-api.md#bitácoras-y-adjuntos)):
-
-    - Sección de observaciones e incidencias con un formulario de una sola línea; el autor es el usuario conectado y se muestra con la fecha.
-    - Sección de adjuntos con subida de fichero (`enctype="multipart/form-data"`), descarga y borrado.
+    - Una `<x-tarjeta>` de observaciones y otra de incidencias, con un formulario de una sola línea; el autor es el usuario conectado y se muestra con la fecha.
+    - Una `<x-tarjeta>` de adjuntos con subida de fichero (`<x-formulario :ficheros="true">` o `enctype="multipart/form-data"`), descarga y borrado.
 
     Rutas web de los formularios, protegidas con `auth`, que al guardar vuelven a la página anterior:
 
@@ -74,7 +40,7 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
 
     `{tipo}` es la clave del mapa polimórfico, limitada con `whereIn` a las entidades de cada lista.
 
-6. **Investiga.** Responde en tu _pull request_: quita `enforceMorphMap` y añade una observación a una obra. ¿Qué se guarda en `observable_type`? ¿Qué problema habría si mañana cambias de carpeta el modelo?
+5. **Investiga.** Responde en tu _pull request_: quita `enforceMorphMap` y añade una observación a una obra. ¿Qué se guarda en `observable_type`? ¿Qué problema habría si mañana cambias de carpeta el modelo?
 
 ## Comprueba tu solución automáticamente
 

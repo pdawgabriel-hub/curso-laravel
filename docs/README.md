@@ -54,17 +54,19 @@ Primera versión de la aplicación, **sin base de datos**: los datos salen de ar
 
 Los arrays se sustituyen por MariaDB y _Eloquent_.
 
-1. [Configuración, migraciones y _Schema Builder_](./RA6_1_migraciones.md)
-2. [Modelos de datos mediante ORM](./RA6_2_modelos.md)
-3. [Inicialización de la base de datos: _seeders_ y _factories_](./RA6_3_seeders.md)
+1. [Configuración, migraciones y _Schema Builder_](./RA6_1_migraciones.md): todas las tablas
+2. [Modelos de datos mediante ORM](./RA6_2_modelos.md): todos los modelos
+3. [Inicialización de la base de datos: _seeders_ y _factories_](./RA6_3_seeders.md): todas las _factories_ y los datos de demostración
 4. [Constructor de consultas (_Query Builder_)](./RA6_4_queryBuilder.md)
-5. Ejercicios: [clientes en la base de datos](./RA6_5_clientes.md) · [trabajadores](./RA6_6_trabajadores.md) · [proveedores y especialistas](./RA6_7_proveedores.md)
-6. [Relaciones: obras y faltas](./RA6_8_relaciones.md)
-7. Ejercicios: [presupuestos](./RA6_9_presupuestos.md) · [partes](./RA6_10_partes.md) · [ingresos y ficha de gastos](./RA6_11_ingresos.md)
-8. [Cálculos financieros](./RA6_12_calculos.md)
-9. [Transacciones y bloqueos](./RA6_13_transacciones.md)
-10. [Bitácoras y adjuntos: relaciones polimórficas y ficheros](./RA6_14_bitacoras.md)
-11. _Proyecto:_ [flujo completo de una obra por la web](./RA6_15_proyecto.md)
+5. [Interfaz con Blade: layout y componentes](./RA6_5_interfaz.md)
+6. Ejercicios: [los maestros en la base de datos](./RA6_6_maestros.md)
+7. [Usuarios: rol, administrador y semilla](./RA6_7_usuarios.md)
+8. [Relaciones entre modelos](./RA6_8_relaciones.md)
+9. Ejercicios de relaciones: [obras, ficha de Gastos y faltas](./RA6_9_obras.md) · [presupuestos](./RA6_10_presupuestos.md) · [partes e ingresos](./RA6_11_partes.md)
+10. [Transacciones y bloqueos](./RA6_12_transacciones.md)
+11. [Cálculos financieros](./RA6_13_calculos.md)
+12. [Bitácoras y adjuntos: relaciones polimórficas y ficheros](./RA6_14_bitacoras.md)
+13. _Proyecto:_ [flujo completo de una obra por la web](./RA6_15_proyecto.md)
 
 ## Bloque 7. Servicios web reutilizables (RA7)
 

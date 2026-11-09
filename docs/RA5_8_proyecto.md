@@ -7,7 +7,7 @@ Cierre del bloque: los **clientes** dejan de ser un array dentro del controlador
 
 Solo cambian los clientes. Las obras y los trabajadores se quedan con sus arrays hasta el Bloque 6.
 
-> **Aviso.** Lo que se construye aquí es para aprender los patrones. En [6.5](./RA6_5_clientes.md), `ClientesController` pasa a usar el modelo de _Eloquent_ directamente, y `app/Dominio` y `app/Repositorios` se borran.
+> **Aviso.** Lo que se construye aquí es para aprender los patrones. En [6.6](./RA6_6_maestros.md), `ClientesController` pasa a usar el modelo de _Eloquent_ directamente, y `app/Dominio` y `app/Repositorios` se borran.
 
 ## MVC, por fin completo
 

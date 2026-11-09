@@ -1,4 +1,4 @@
-# 6.12. Cálculos financieros
+# 6.13. Cálculos financieros
 
 **Referencia teórica:** reglas de negocio de [0.4](./004_de_odoo_a_laravel.md#reglas-de-negocio) · [Laravel: Accessors](https://laravel.com/docs/13.x/eloquent-mutators#accessors-and-mutators) · [Agregados de relaciones](https://laravel.com/docs/13.x/eloquent-relationships#aggregating-related-models)
 
@@ -32,12 +32,12 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
 
 4. **En las vistas.**
 
-    - Detalle de la obra: cinco tarjetas con *Total presupuesto*, *Gastos*, *Beneficio de caja*, *Pendiente de cobro* y *Margen proyectado*, una barra de progreso con el porcentaje cobrado y un indicador de color con la salud.
+    - Detalle de la obra: cinco `<x-kpi>` con *Total presupuesto*, *Gastos*, *Beneficio de caja* (tono `negativo` si es menor que 0), *Pendiente de cobro* y *Margen proyectado*; un `<x-progreso>` con el porcentaje cobrado, y la salud y el estado de pago con `<x-insignia>` (verde, ámbar o rojo).
     - Detalle de la ficha de Gastos (`gastos.show`): gastos, ingresos, beneficio real, pendiente y estado.
     - Detalle del trabajador: horas y coste acumulados.
-    - **Formato:** importes y horas con `number_format($x, 2, ',', '.')` (`1.210,00`, `-170,00`, `16,00`); el porcentaje con un decimal (`41,3`). Conviene un único helper, por ejemplo `App\Support\Formato`.
+    - **Formato:** importes y horas con el helper `Formato` de [6.6](./RA6_6_maestros.md) (`1.210,00`, `-170,00`, `16,00`); el porcentaje con un decimal (`41,3`).
     - **Textos:** estado de pago `Pendiente`, `Parcial` o `Pagado`; salud `Verde`, `Ámbar` o `Rojo`; estado de la ficha `En proceso` o `Finalizada`.
-    - Listado de obras: columnas de total, estado de pago y salud. Usar `with()` para no lanzar una consulta por obra al pedir el cliente.
+    - Listado de obras: columnas de total, estado de pago y salud. Listado de presupuestos: la columna `Total`.
 
 5. **Investiga.** Responde en tu _pull request_:
     - ¿Por qué `beneficio` es `ingresos − gastos` y no `total − gastos`? ¿Qué mostraría cada fórmula en una obra recién presupuestada, sin ningún cobro?
@@ -46,16 +46,16 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_12_CalculosTest.php tests/Feature/
-php artisan test --filter=RA6_12
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_13_CalculosTest.php tests/Feature/
+php artisan test --filter=RA6_13
 ```
 
 Resultado esperado: `Tests: 6 passed`. Los valores del test son los del [escenario completo](./anexo_escenario.md): total 1 210 €, gastos 670 €, cobro de 500 € → beneficio −170 €, debe 710 €, 41,3 % cobrado, salud roja.
 
 ## Git
 
-Rama `RA6_12`, commit `feat: ResumenFinanciero con los indicadores de la obra`.
+Rama `RA6_13`, commit `feat: ResumenFinanciero con los indicadores de la obra`.
 
 ---
 
-**Siguiente:** [6.13. Transacciones y bloqueos](./RA6_13_transacciones.md)
+**Siguiente:** [6.14. Bitácoras y adjuntos](./RA6_14_bitacoras.md)

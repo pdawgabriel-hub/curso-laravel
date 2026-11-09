@@ -1,9 +1,9 @@
-# 6.8. Relaciones: obras y faltas
+# 6.8. Relaciones entre modelos
 <!-- {% raw %} -->
 
-**Referencia teórica:** [Relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/08_relaciones.html) · [Uno a uno](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/081_relaciones_unoAuno.html) · [Uno a muchos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/082_relaciones_unoAmuchos.html) · [Insertar y actualizar con relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/084_DML_Relaciones.html)
+**Referencia teórica:** [Relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/08_relaciones.html) · [Uno a uno](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/081_relaciones_unoAuno.html) · [Uno a muchos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/082_relaciones_unoAmuchos.html) · [Muchos a muchos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/083_relaciones_muchosAmuchos.html) · [Insertar y actualizar con relaciones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/084_DML_Relaciones.html) · [Laravel: Has Many Through](https://laravel.com/docs/13.x/eloquent-relationships#has-many-through)
 
-Hasta ahora, cada tabla iba por su cuenta. Las siguientes dependen unas de otras.
+Las claves ajenas existen desde [6.1](./RA6_1_migraciones.md); ahora los modelos las conocen. En vez de `Cliente::find($obra->cliente_id)` se escribe `$obra->cliente`. En este apartado se añaden **todas** las relaciones de la aplicación; las pantallas que las usan llegan en [6.9](./RA6_9_obras.md), [6.10](./RA6_10_presupuestos.md) y [6.11](./RA6_11_partes.md).
 
 ## Uno a uno
 
@@ -40,6 +40,41 @@ $obra->gasto()->create();                      // pone obra_id solo
 $trabajador->faltas()->create($datos);          // pone trabajador_id solo
 ```
 
+## Muchos a muchos
+
+Un presupuesto incluye varios proveedores, y un proveedor aparece en varios presupuestos. Hace falta una **tabla pivote**, nombrada con los dos modelos en singular y por orden alfabético, con lo que Laravel la encuentra sola:
+
+```php
+// Presupuesto
+public function proveedores(): BelongsToMany { return $this->belongsToMany(Proveedor::class); }
+
+// Proveedor
+public function presupuestos(): BelongsToMany { return $this->belongsToMany(Presupuesto::class); }
+```
+
+```php
+$presupuesto->proveedores()->attach($id);     // añade
+$presupuesto->proveedores()->detach($id);     // quita
+$presupuesto->proveedores()->sync($ids);      // deja exactamente estos
+```
+
+## Relaciones a través de otra
+
+Una obra tiene líneas de trabajo **a través de** sus partes, y `whereHas` busca según lo que hay en una relación:
+
+```php
+// Obra
+public function lineasTrabajo(): HasManyThrough
+{
+    return $this->hasManyThrough(LineaParteTrabajo::class, ParteTrabajo::class);
+}
+
+public function trabajadoresParticipantes(): Builder
+{
+    return Trabajador::whereHas('lineasTrabajo.parte', fn ($q) => $q->where('obra_id', $this->id));
+}
+```
+
 ## Propietario
 
 Las faltas guardan quién las registró. El `user_id` **nunca** sale del formulario, igual que el autor en [5.8](./RA5_8_proyecto.md):
@@ -50,117 +85,78 @@ $trabajador->faltas()->create($request->validated() + ['user_id' => $request->us
 
 ## Ejercicios
 
-1. **Obras.**
+1. **Uno a uno y uno a muchos.** Añade estas relaciones. El método del lado "uno" devuelve `HasOne` o `HasMany`; el del lado "muchos", `BelongsTo`.
 
-    ```bash
-    php artisan make:migration create_obras_table --create=obras
-    ```
-
-    Campo | Tipo | nullable
-    -----|----|---
-    codigo | string(20), único | no
-    descripcion | text | sí
-    cliente_id | clave ajena a `clientes`, `nullOnDelete` | sí
-
-    Modelo `Obra` con `$table = 'obras'`, `use HasFactory, TieneCodigo`, `PREFIJO = 'OBR'`, este `$fillable`: `descripcion, cliente_id`, y las relaciones `cliente()` y, en `Cliente`, `obras()`.
-
-2. **La ficha de Gastos.**
-
-    ```bash
-    php artisan make:migration create_gastos_table --create=gastos
-    ```
-
-    Campo | Tipo | nullable
-    -----|----|---
-    codigo | string(20), único | no
-    obra_id | clave ajena a `obras`, **única**, `cascadeOnDelete` | no
-    presupuesto_id | unsignedBigInteger (su clave ajena se añade en 6.9) | sí
-    direccion_obra | string | sí
-    inicio_obra | date | sí
-    fin_obra | date | sí
-    solicitud_obra | date | sí
-    mandante | boolean, `false` por defecto | no
-    gestion_licencia | boolean, `false` por defecto | no
-    pago_icio | boolean, `false` por defecto | no
-
-    Modelo `Gasto` con `$table = 'gastos'`, `use TieneCodigo`, `PREFIJO = 'GAS'`, _casts_ de fechas y booleanos, las relaciones `obra()` y, en `Obra`, `gasto()`, y este `$fillable`: `obra_id, presupuesto_id, direccion_obra, inicio_obra, fin_obra, solicitud_obra, mandante, gestion_licencia, pago_icio`. **No lleva _factory_**: la ficha nace con su obra.
-
-3. **La obra crea su ficha.**
-
-    Campo | Valor en `ObraFactory`
+    Modelo | Relaciones
     -----|----
-    descripcion | `'Reforma de ' . fake()->word()`
-    cliente_id | `Cliente::factory()`
+    `Cliente` | `presupuestos()`, `obras()`, `ingresos()` (HasMany)
+    `Trabajador` | `lineasTrabajo()`, `faltas()` (HasMany)
+    `Proveedor`, `Especialista` | `partes()` (HasMany, a `ParteProveedor` o `ParteEspecialista`)
+    `Obra` | `cliente()` (BelongsTo); `gasto()` (HasOne); `presupuestos()`, `ingresos()`, `partesTrabajo()`, `partesProveedor()`, `partesEspecialista()` (HasMany)
+    `Presupuesto` | `cliente()`, `obra()` (BelongsTo); `lineas()` (HasMany a `LineaPresupuesto`)
+    `LineaPresupuesto` | `presupuesto()`
+    `Gasto` | `obra()`, `presupuesto()`
+    `Ingreso` | `obra()`, `cliente()`
+    `ParteTrabajo` | `obra()`, `usuario()` (BelongsTo a `User` por `user_id`); `lineas()` (HasMany a `LineaParteTrabajo`, clave `parte_trabajo_id`)
+    `LineaParteTrabajo` | `parte()` (`belongsTo(ParteTrabajo::class, 'parte_trabajo_id')`), `trabajador()`
+    `ParteProveedor`, `ParteEspecialista` | `obra()`, `usuario()`, y `proveedor()` o `especialista()`
+    `Falta` | `trabajador()`, `usuario()`
+    `Observacion`, `Incidencia` | `usuario()`
 
-    Toda obra creada con la _factory_ tiene su ficha:
+    Cuando el nombre del método no coincide con la clave ajena (`usuario()` y `user_id`, `parte()` y `parte_trabajo_id`), hay que indicar la clave como segundo parámetro.
+
+2. **Muchos a muchos.** `proveedores()` y `especialistas()` en `Presupuesto`, y `presupuestos()` en `Proveedor` y `Especialista`, sobre las tablas pivote de [6.1](./RA6_1_migraciones.md).
+
+3. **A través de otra y participantes.** `lineasTrabajo()` en `Obra` (HasManyThrough). Y, sin ninguna lista que mantener a mano, quién ha participado en cada obra, deducido de sus partes; todos devuelven un `Builder`:
+    - En `Obra`: `trabajadoresParticipantes()`, `proveedoresParticipantes()` y `especialistasParticipantes()`.
+    - En `Trabajador`, `Proveedor` y `Especialista`: `obrasParticipadas()`.
+
+4. **Usa las relaciones.** Ahora que existen, simplifica lo que hiciste sin ellas:
+    - Los eventos de [6.2](./RA6_2_modelos.md): `$p->cliente` en lugar de `Cliente::find($p->cliente_id)`, y lo mismo con el trabajador y la obra.
+    - `ObraFactory` ([6.3](./RA6_3_seeders.md)): `$obra->gasto()->create()` en lugar de `Gasto::create(['obra_id' => $obra->id])`.
+
+5. **Pruébalo en `tinker`.**
 
     ```php
-    public function configure(): static
-    {
-        return $this->afterCreating(fn (Obra $obra) => $obra->gasto()->firstOrCreate());
-    }
+    $obra = App\Models\Obra::first();
+    $obra->cliente->nombre_completo;
+    $obra->gasto->codigo;
+    $obra->partesTrabajo()->count();
+    $obra->trabajadoresParticipantes()->pluck('nombre');
+    $p = App\Models\Presupuesto::first();
+    $p->proveedores()->sync([1, 2]);
+    App\Models\Proveedor::find(1)->presupuestos->pluck('codigo');
     ```
-
-    `ObrasController` usa el modelo con `findOrFail`, y `store` crea la obra y su ficha. En [6.13](./RA6_13_transacciones.md) esto se hará en una transacción. Elimina `$arrayObras` y sustituye en las vistas `$obra['campo']` por `$obra->campo`. El alta ofrece un selector de clientes y el detalle muestra `$obra->cliente?->nombre_completo`. De momento, deja de mostrar el total y el estado de pago: volverán, calculados, en [6.12](./RA6_12_calculos.md). Añade `destroy` y su ruta.
-
-4. **Faltas.**
-
-    ```bash
-    php artisan make:migration create_faltas_table --create=faltas
-    ```
-
-    Campo | Tipo | nullable
-    -----|----|---
-    trabajador_id | clave ajena a `trabajadores`, `cascadeOnDelete` | no
-    fecha_inicio | date | no
-    fecha_fin | date | no
-    tipo | enum: `vacaciones` (por defecto), `baja_medica`, `personal`, `injustificada`, `otro` | no
-    motivo | text | sí
-    user_id | clave ajena a `users`, `nullOnDelete` | sí
-
-    Modelo `Falta` con `$table = 'faltas'`, `use HasFactory`, este `$fillable`: `trabajador_id, fecha_inicio, fecha_fin, tipo, motivo, user_id`, las relaciones `trabajador()` y `usuario()`, y el _accessor_ `dias` (inclusive: un solo día cuenta 1). En `Trabajador`, `faltas()`.
-
-    Campo | Valor en `FaltaFactory`
-    -----|----
-    trabajador_id | `Trabajador::factory()`
-    fecha_inicio | `$inicio = fake()->dateTimeBetween('-1 year')->format('Y-m-d')`
-    fecha_fin | `date('Y-m-d', strtotime($inicio . ' +' . fake()->numberBetween(0, 10) . ' days'))`
-    tipo | `'vacaciones'`
-    motivo | `fake()->sentence()`
-
-    `user_id` no va en la _factory_: queda vacío salvo que el test lo indique.
-
-    `FaltasTableSeeder` crea de 0 a 4 faltas por cada trabajador. Llámala desde `DatabaseSeeder`, después de la de trabajadores.
-
-5. **Pantallas de faltas.** Se crean desde el trabajador:
-
-    | Método | URL | Nombre |
-    |---|---|---|
-    | GET | `/trabajadores/{trabajador}/faltas/create` | `trabajadores.faltas.create` |
-    | POST | `/trabajadores/{trabajador}/faltas` | `trabajadores.faltas.store` |
-    | DELETE | `/trabajadores/{trabajador}/faltas/{falta}` | `trabajadores.faltas.destroy` |
-    | GET | `/faltas` | `faltas.index` (todas, con el nombre del trabajador) |
-
-    Al guardar o borrar se vuelve al detalle del trabajador, que lista sus faltas con el texto del tipo (`Vacaciones`, `Baja médica`, `Personal`, `Injustificada`, `Otro`) y los días. El propietario es el usuario conectado. Una falta de otro trabajador da 404.
 
 6. **Investiga.** Responde en tu _pull request_:
     - Con `DB::enableQueryLog()` en `tinker`, recorre las obras mostrando el nombre de su cliente, con y sin `with('cliente')`. ¿Cuántas consultas lanza cada una?
-    - Añade `<input name="user_id" value="1">` al formulario de faltas con las herramientas de desarrollo. ¿Qué `user_id` se guarda? ¿Por qué?
+    - Reescribe las consultas 1 y 3 de [6.4](./RA6_4_queryBuilder.md) con relaciones (`with`, `doesntHave`). ¿Cuál se lee mejor?
+    - Borra un presupuesto con líneas. ¿Quién ha borrado las líneas, tu código o la base de datos?
 
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_8_ObrasFaltasTest.php tests/Feature/
+cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_8_RelacionesTest.php tests/Feature/
 php artisan test --filter=RA6_8
 ```
 
 Resultado esperado: `Tests: 9 passed`.
 
+Y los tests de modelo de la evaluación, que comprueban `$fillable`, tabla, relaciones y _factory_ de los 17 modelos:
+
+```bash
+mkdir -p tests/Unit/Models
+cp /var/www/curso-laravel/evaluacion/tests/Unit/Models/*.php tests/Unit/Models/
+php artisan test tests/Unit/Models
+```
+
+Resultado esperado: todos pasan salvo los que comprueban las relaciones de las bitácoras (`observaciones()`, `incidencias()`, `archivos()` y sus `morphTo`), que llegan en [6.14](./RA6_14_bitacoras.md).
+
 ## Git
 
-Rama `RA6_8`. Commits: `feat: obras y ficha de gastos`, `feat: faltas de los trabajadores`.
+Rama `RA6_8`. Commits: `feat: relaciones uno a muchos`, `feat: relaciones muchos a muchos`, `feat: participantes de las obras`.
 
 ---
 
-**Siguiente:** [6.9. Ejercicios: presupuestos](./RA6_9_presupuestos.md)
+**Siguiente:** [6.9. Ejercicios: obras, ficha de Gastos y faltas](./RA6_9_obras.md)
 <!-- {% endraw %} -->

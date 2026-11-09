@@ -23,7 +23,7 @@ Cierre del bloque: la aplicación debe poder usarse de principio a fin en el nav
 
 ## Ejercicios
 
-1. **Rutas y formularios.** Comprueba que tienes todas las rutas de los apartados 6.5 a 6.11 y las de [6.14](./RA6_14_bitacoras.md), con sus formularios.
+1. **Rutas y formularios.** Comprueba que tienes todas las rutas de los apartados [6.6](./RA6_6_maestros.md) a [6.11](./RA6_11_partes.md) y las de [6.14](./RA6_14_bitacoras.md), con sus formularios, y que todas las pantallas usan los componentes de [6.5](./RA6_5_interfaz.md).
 
 2. **Acciones en los detalles.** El detalle de cada registro enlaza lo que depende de él:
     - **Obra:** botones para añadir partes e ingresos, y para borrar cada uno; selector de presupuestos libres; observaciones, incidencias y adjuntos; botón de borrar la obra.
@@ -32,36 +32,20 @@ Cierre del bloque: la aplicación debe poder usarse de principio a fin en el nav
 
 3. **Mensajes.** Toda regla de negocio rechazada vuelve atrás con `session('error')`, y el layout la muestra.
 
-4. **Datos de demostración.** `DatabaseSeeder` llama, en orden, a `UsersTableSeeder` (el administrador, con el email de `config('app.admin.email')`; un usuario con rol `jefe` y otro con rol `administrativa`), a las semillas de cada entidad y a `ObrasTableSeeder`. Añade `ADMIN_EMAIL` a `.env` y `.env.example`, y `'admin' => ['email' => env('ADMIN_EMAIL')]` a `config/app.php`. Por cada una de las 20 obras:
-    - un presupuesto **aprobado** de su cliente con 3 a 6 líneas;
-    - 2 a 5 partes de trabajo con 2 a 4 trabajadores cada uno;
-    - 1 a 3 partes de proveedor y 1 o 2 de especialista, con importes proporcionales al total para que el beneficio no salga siempre negativo;
-    - 0 a 3 ingresos cuya suma **nunca supere el total** de la obra: cada ingreso es un porcentaje de lo que queda pendiente.
+4. **Datos de demostración.** Comprueba que `php artisan migrate:fresh --seed` crea los usuarios de [6.7](./RA6_7_usuarios.md) y las veinte obras de [6.3](./RA6_3_seeders.md), y que, ahora que existen los cálculos, ninguna obra de la demostración muestra un pendiente negativo.
 
-5. **Consultas de negocio.** Con esos datos, resuelve en `tinker` estas consultas, primero con `DB::table()` y después con _Eloquent_ ([6.4](./RA6_4_queryBuilder.md)), y guárdalas con su SQL en `docs/consultas.md` de tu repositorio:
-    1. Obras con el nombre completo de su cliente, ordenadas por código.
-    2. Total cobrado por obra, de mayor a menor.
-    3. Obras sin ningún ingreso.
-    4. Horas y coste de mano de obra por trabajador, los 5 con más horas.
-    5. Gasto en proveedores por proveedor y año.
-    6. Presupuestos aprobados por año, con su número.
-    7. Obras cuyo gasto externo supera 1 000 €, con `having`.
-    8. Ingresos del mes en curso.
-    9. Trabajadores con alguna `baja_medica` en el último año.
-
-6. **Prueba manual.** Repetir el flujo en el navegador con `php artisan migrate:fresh --seed`. Anotar en el pull request lo que se haya tenido que corregir y que los tests no detectaron.
+5. **Prueba manual.** Repetir el flujo en el navegador con `php artisan migrate:fresh --seed`. Anotar en el pull request lo que se haya tenido que corregir y que los tests no detectaron.
 
 ## Comprueba tu solución automáticamente
 
 ```bash
 cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_15_FlujoWebTest.php tests/Feature/
-cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_15_SeedersTest.php tests/Feature/
 php artisan test --filter=RA6_15
 ```
 
-Resultado esperado: `Tests: 13 passed`.
+Resultado esperado: `Tests: 8 passed`.
 
-Y los tests de modelo, que comprueban `$fillable`, tabla, relaciones y _factory_ de los 17 modelos:
+Y los tests de modelo de [6.8](./RA6_8_relaciones.md), que ahora pasan todos, también los de las bitácoras:
 
 ```bash
 mkdir -p tests/Unit/Models
@@ -80,9 +64,8 @@ El test comprueba:
 - el alta y la baja de partes, ingresos, faltas y líneas, y el 404 con otro padre;
 - observaciones, incidencias y adjuntos en la ficha de la obra;
 - que escribir exige iniciar sesión y que la ficha de Gastos no se crea ni se borra;
-- los datos de demostración: veinte registros de cada maestro, veinte obras completas y usuarios de cada rol.
 
-> **Nota.** El test mira el contenido de las páginas, no su aspecto: comprueba que aparece `1.210,00` y que el formulario apunta a la ruta correcta, sin imponer ni el diseño ni los nombres de las vistas. Por eso la prueba manual sigue siendo necesaria, sobre todo en los selectores y en cómo se envían los formularios desde el navegador.
+> **Nota.** Los tests miran el contenido y la estructura de las páginas, no su aspecto: comprueban que aparece `1.210,00`, que el formulario apunta a la ruta correcta y las marcas de [6.5](./RA6_5_interfaz.md), sin imponer colores ni nombres de vistas. Por eso la prueba manual sigue siendo necesaria, sobre todo en los selectores, en cómo se envían los formularios desde el navegador y en cómo se ve en una pantalla estrecha.
 
 ## Git
 

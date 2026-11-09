@@ -6,7 +6,7 @@ Cada acción se permite o no según quién la pide, y a veces según de quién e
 
 - **usuario sin rol:** no accede a nada;
 - **administrador:** el usuario cuyo email coincide con `ADMIN_EMAIL`, que puede con todo;
-- **jefe** y **administrativa:** la columna `rol` de 6.1;
+- **jefe** y **administrativa:** la columna `rol` de [6.7](./RA6_7_usuarios.md);
 - **propietario de un recurso:** el usuario de su `user_id`.
 
 ## _Gates_ y _Policies_
@@ -67,7 +67,7 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
 
 4. **Aprobar.** Método `aprobar` en `PresupuestoPolicy`, solo jefe. En `store` y `update`, si el estado cambia a `aprobado` o deja de serlo, `Gate::authorize('aprobar', Presupuesto::class)`.
 
-5. **El propietario.** En la API, igual que en la web de 6.8 y 6.10: `user_id` es siempre el usuario autenticado, y lo que venga en la petición se ignora. Inclúyelo en la respuesta de partes y faltas.
+5. **El propietario.** En la API, igual que en la web de [6.9](./RA6_9_obras.md) y [6.11](./RA6_11_partes.md): `user_id` es siempre el usuario autenticado, y lo que venga en la petición se ignora. Inclúyelo en la respuesta de partes y faltas.
 
 6. **Las pantallas.** Una regla que solo está en la API no protege nada: quien entra por la web pasaría igual. Añade `Gate::authorize()` a los controladores web, con las mismas _Policies_, y usa `@can` para mostrar solo los botones permitidos. A quien no es jefe no se le muestran los ingresos en el detalle de la obra, ni Gastos en el menú.
 

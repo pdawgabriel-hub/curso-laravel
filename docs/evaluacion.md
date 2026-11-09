@@ -11,7 +11,7 @@ El proyecto se evalúa con tests automáticos, en dos niveles:
 
 La batería se entrega como una carpeta `tests/` completa que sustituye a la del proyecto. **El proyecto está aprobado cuando toda la batería está en verde**, igual que se haría con una batería entregada al final de un módulo: no se conocen los tests de antemano, pero sí el contrato que comprueban.
 
-> **Importante.** Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en [6.15](./RA6_15_proyecto.md).
+> **Importante.** Para que la evaluación tenga sentido, la batería se abre **después** de terminar el Bloque 7. La excepción son los tests de modelo (`Unit/Models`), que solo comprueban lo que el contrato fija (`$fillable`, tabla, relaciones y factory) y se usan ya en [6.8](./RA6_8_relaciones.md) y [6.15](./RA6_15_proyecto.md).
 
 ## Contenido de la batería
 

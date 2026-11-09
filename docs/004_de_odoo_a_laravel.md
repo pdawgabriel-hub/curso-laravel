@@ -48,17 +48,17 @@ La especificación funcional de la aplicación es el informe técnico del módul
 
 | Odoo | Laravel | Apartado |
 |:--|:--|:--|
-| `ir.sequence` | Tabla `secuencias` + `lockForUpdate()` en una transacción | [6.13](./RA6_13_transacciones.md) |
-| `create()` que asigna el código | Evento `creating` del modelo (trait `TieneCodigo`) | [6.5](./RA6_5_clientes.md) |
-| `Obras.create()` que crea su Gastos | `ObraService::crear()` en una transacción | [6.13](./RA6_13_transacciones.md) |
-| `Obras.unlink()` con sus reglas | `ObraService::borrar()` + `ReglaNegocioException` (409) | [6.13](./RA6_13_transacciones.md) |
-| `compute=... store=True` | Accessors o servicio `ResumenFinanciero` calculados al leer | [6.12](./RA6_12_calculos.md) |
+| `ir.sequence` | Tabla `secuencias` + `lockForUpdate()` en una transacción | [6.12](./RA6_12_transacciones.md) |
+| `create()` que asigna el código | Evento `creating` del modelo (trait `TieneCodigo`) | [6.2](./RA6_2_modelos.md) |
+| `Obras.create()` que crea su Gastos | `ObraService::crear()` en una transacción | [6.12](./RA6_12_transacciones.md) |
+| `Obras.unlink()` con sus reglas | `ObraService::borrar()` + `ReglaNegocioException` (409) | [6.12](./RA6_12_transacciones.md) |
+| `compute=... store=True` | Accessors o servicio `ResumenFinanciero` calculados al leer | [6.13](./RA6_13_calculos.md) |
 | `related='cliente_id.nombre'` | Relación + accessor, o `with()` | [6.8](./RA6_8_relaciones.md) |
-| `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.9](./RA6_9_presupuestos.md) |
+| `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.2](./RA6_2_modelos.md) |
 | `@api.constrains`, `_sql_constraints` | Reglas de validación + `unique`/`foreign` en migraciones | [5.6](./RA5_6_formularios.md), [6.1](./RA6_1_migraciones.md) |
 | `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.3](./RA7_3_busqueda.md) |
 | `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.5](./RA7_5_autorizacion.md) |
-| `post_init_hook` (datos de demo) | `DatabaseSeeder`, una semilla por tabla y factories | [6.15](./RA6_15_proyecto.md) |
+| `post_init_hook` (datos de demo) | `DatabaseSeeder`, una semilla por tabla y factories | [6.3](./RA6_3_seeders.md) |
 | `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.2](./RA7_2_recursos.md) |
 | Vistas list/form/kanban | Vistas Blade | [5.4](./RA5_4_vistas.md) |
 | Reportes QWeb | Vistas Blade → PDF con dompdf | [9.1](./RA9_1_pdf.md) |
