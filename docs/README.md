@@ -73,20 +73,27 @@ Los arrays se sustituyen por MariaDB y _Eloquent_.
 API REST según el [contrato de la API](./contrato-api.md).
 
 1. [Introducción a API y REST. _Swagger_](./RA7_1_swagger.md)
-2. [Controladores de recursos](./RA7_2_recursos.md)
-3. [Búsqueda, orden y paginación](./RA7_3_busqueda.md)
-4. [Autenticación con _Sanctum_](./RA7_4_sanctum.md)
-5. [Autorización: _Gates_, _Policies_ y roles](./RA7_5_autorizacion.md)
-6. [Ficheros y bitácoras en la API](./RA7_6_ficheros.md)
-7. _Opcional:_ [_PHP-CRUD-API_ y sesiones en la API](./RA7_7_opcional.md)
+2. [Esqueleto de la API y _API Resources_](./RA7_2_recursos.md)
+3. [Controladores de recursos](./RA7_3_controladores.md)
+4. [Búsqueda, orden y paginación](./RA7_4_busqueda.md)
+5. [Autenticación con _Sanctum_](./RA7_5_sanctum.md)
+6. [Autorización: _Gates_, _Policies_ y roles](./RA7_6_autorizacion.md)
+7. [Ficheros y bitácoras en la API](./RA7_7_ficheros.md)
+8. _Opcional:_ [_PHP-CRUD-API_ y sesiones en la API](./RA7_8_opcional.md)
 
 Al terminar el bloque: [evaluación](./evaluacion.md).
 
-## Bloque 8. Aplicaciones web dinámicas (RA8) — opcional
+## Bloque 8. Aplicaciones web dinámicas (RA8)
 
-La interfaz _Blade_ cubre toda la funcionalidad; este bloque añade una segunda interfaz que consume la API.
+En una rama aparte, `react-admin`: el servidor solo envía datos y la interfaz es _React-Admin_ en _TypeScript_. La rama `main` conserva la interfaz _Blade_.
 
-1. [_React-Admin_ sobre la API](./RA8_1_reactAdmin.md)
+1. [Una rama sin vistas](./RA8_1_breezeApi.md)
+2. [_React-Admin_ con _Inertia_ y _TypeScript_](./RA8_2_reactAdmin.md)
+3. [_Middleware_ para _React-Admin_](./RA8_3_middleware.md)
+4. [_dataProvider_ y _authProvider_](./RA8_4_proveedores.md)
+5. [Los recursos](./RA8_5_recursos.md)
+6. [Los registros que cuelgan de otro](./RA8_6_anidados.md)
+7. _Proyecto:_ [la obra completa en _React-Admin_](./RA8_7_proyecto.md)
 
 ## Bloque 9. Aplicaciones web híbridas (RA9)
 

@@ -15,7 +15,7 @@ use App\Models\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_5_PermisosApiTest extends FeatureTestCase
+class RA7_6_PermisosApiTest extends FeatureTestCase
 {
     public static function maestros(): array
     {

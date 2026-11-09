@@ -6,7 +6,7 @@ El proyecto se evalúa con tests automáticos, en dos niveles:
 
 | Nivel | Cuándo | Qué comprueba |
 |:--|:--|:--|
-| Tests de apartado | Al terminar cada apartado | El ejercicio del apartado (`RA5_3_RutasTest`, `RA7_1_ClientesApiTest`…) |
+| Tests de apartado | Al terminar cada apartado | El ejercicio del apartado (`RA5_3_RutasTest`, `RA7_3_ControladoresTest`…) |
 | Batería de evaluación | Al terminar el Bloque 7 | La API completa y los modelos, según el [contrato](./contrato-api.md), más el [escenario completo](./anexo_escenario.md) |
 
 La batería se entrega como una carpeta `tests/` completa que sustituye a la del proyecto. **El proyecto está aprobado cuando toda la batería está en verde**, igual que se haría con una batería entregada al final de un módulo: no se conocen los tests de antemano, pero sí el contrato que comprueban.

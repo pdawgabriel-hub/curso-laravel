@@ -1,4 +1,4 @@
-# 7.4. Autenticación con Sanctum
+# 7.5. Autenticación con Sanctum
 
 **Referencia teórica:** [Autenticación](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/09_autenticacion.html) · [Por tokens](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/091_autenticacionTokens.html) · [Por sesiones](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/092_autenticacionSesionAPI.html) · [Laravel: Sanctum](https://laravel.com/docs/13.x/sanctum)
 
@@ -14,7 +14,7 @@ Que un cliente externo (una aplicación móvil, otro sistema o un frontend separ
 
 1. `API\TokenController` con `store` (valida `email` y `password`; si no coinciden, `ValidationException` en `email`; si coinciden, `{ token_type: 'Bearer', access_token }`) y `destroy` (borra `currentAccessToken()` y responde 204).
 2. Rutas `POST /api/v1/tokens` (pública) y `DELETE /api/v1/tokens` (autenticada).
-3. `GET /api/v1/user` devuelve el usuario y sus `roles` (en 7.5 se completa el cálculo de roles).
+3. `GET /api/v1/user` devuelve el usuario y sus `roles` (en [7.6](./RA7_6_autorizacion.md) se completa el cálculo de roles).
 4. Probar el flujo completo con `curl`:
 
    ```bash
@@ -28,16 +28,16 @@ Que un cliente externo (una aplicación móvil, otro sistema o un frontend separ
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_4_TokensApiTest.php tests/Feature/
-php artisan test --filter=RA7_4
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_5_TokensApiTest.php tests/Feature/
+php artisan test --filter=RA7_5
 ```
 
 Resultado esperado: `Tests: 5 passed`.
 
 ## Git
 
-Rama `RA7_4`, commit `feat: emisión y revocación de tokens con Sanctum`.
+Rama `RA7_5`, commit `feat: emisión y revocación de tokens con Sanctum`.
 
 ---
 
-**Siguiente:** [7.5. Autorización](./RA7_5_autorizacion.md)
+**Siguiente:** [7.6. Autorización](./RA7_6_autorizacion.md)

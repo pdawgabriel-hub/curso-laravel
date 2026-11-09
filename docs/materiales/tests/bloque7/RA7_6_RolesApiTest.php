@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use Tests\Feature\FeatureTestCase;
 
-class RA7_5_RolesApiTest extends FeatureTestCase
+class RA7_6_RolesApiTest extends FeatureTestCase
 {
     public function test_perfil_del_administrador()
     {

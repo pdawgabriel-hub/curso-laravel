@@ -1,4 +1,4 @@
-# 7.6. Ficheros y bitácoras en la API
+# 7.7. Ficheros y bitácoras en la API
 
 **Referencia teórica:** [Manejo de ficheros en la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/11_manejarFicheros.html) · [Laravel: File Uploads](https://laravel.com/docs/13.x/requests#files)
 
@@ -21,16 +21,16 @@ Rutas genéricas `/{tipo}/{id}/observaciones|incidencias|archivos` para todas la
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_6_ArchivosApiTest.php tests/Feature/
-php artisan test --filter=RA7_6
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_7_ArchivosApiTest.php tests/Feature/
+php artisan test --filter=RA7_7
 ```
 
 Resultado esperado: `Tests: 5 passed`.
 
 ## Git
 
-Rama `RA7_6`, commit `feat: bitácoras y adjuntos en la API`. Al fusionar: `git tag -a bloque-7 -m "Bloque 7: servicios web" && git push --tags`, y empieza la [evaluación](./evaluacion.md).
+Rama `RA7_7`, commit `feat: bitácoras y adjuntos en la API`. Al fusionar: `git tag -a bloque-7 -m "Bloque 7: servicios web" && git push --tags`, y empieza la [evaluación](./evaluacion.md).
 
 ---
 
-**Siguiente:** [7.7. Opcional: _PHP-CRUD-API_ y sesiones en la API](./RA7_7_opcional.md)
+**Siguiente:** [7.8. Opcional: _PHP-CRUD-API_ y sesiones en la API](./RA7_8_opcional.md)

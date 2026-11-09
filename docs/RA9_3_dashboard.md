@@ -7,7 +7,7 @@ El "Análisis Financiero" del módulo de Odoo: indicadores globales, rentabilida
 
 ## Conceptos clave
 
-- El servicio `App\Services\Estadisticas` de 7.2 calcula los datos; la API los devuelve en JSON y la web los pinta. Un único cálculo para las dos interfaces.
+- El servicio `App\Services\Estadisticas` de [7.3](./RA7_3_controladores.md) calcula los datos; la API los devuelve en JSON y la web los pinta. Un único cálculo para las dos interfaces.
 - `Js::from($estadisticas['evolucion_mensual'])` (o `@json`) pasa datos de PHP a JavaScript de forma segura.
 - Chart.js desde un CDN: `<canvas id="grafico-evolucion">` + `new Chart(...)`.
 
@@ -15,7 +15,7 @@ El "Análisis Financiero" del módulo de Odoo: indicadores globales, rentabilida
 
 1. `Estadisticas::PERIODOS = ['este_mes', 'tres_meses', 'este_anio', 'todo']` y `calcular(string $periodo): array`, usado por la API y por la web.
 2. `DashboardController` invocable en la ruta `dashboard` (la de Breeze), protegida con `auth`. Recibe `?periodo=`; un valor desconocido se trata como `todo`. Pasa a la vista `periodo` y `estadisticas`.
-3. Vista con:
+3. Vista con `<x-layout>`, `<x-cabecera>`, `<x-kpi>`, `<x-tarjeta>` y `<x-tabla>` de [6.5](./RA6_5_interfaz.md), y una entrada *Análisis* en el menú lateral:
    - selector de periodo (cuatro enlaces o un `<select>` que recarga la página);
    - tarjetas de resumen (ingresos, gastos, beneficio, horas, pendiente de cobro);
    - gráfico de líneas `grafico-evolucion` (ingresos por mes) y de barras (obras iniciadas y finalizadas);

@@ -6,7 +6,7 @@ Un calendario con presupuestos, ingresos y los tres tipos de parte, cada tipo co
 
 ## Conceptos clave
 
-- El servicio `App\Services\Calendario` de 7.2 une las cinco consultas y devuelve eventos con `tipo`, `fecha`, `titulo`, `modelo` e `id`.
+- El servicio `App\Services\Calendario` de [7.3](./RA7_3_controladores.md) une las cinco consultas y devuelve eventos con `tipo`, `fecha`, `titulo`, `modelo` e `id`.
 - FullCalendar pide los eventos del rango visible a una URL con `?start=…&end=…` (fechas ISO con hora y zona) y espera objetos con `title`, `start` y, opcionalmente, `color` y `extendedProps`.
 
 ## Ejercicios
@@ -14,7 +14,7 @@ Un calendario con presupuestos, ingresos y los tres tipos de parte, cada tipo co
 1. `CalendarioController` web con dos acciones protegidas con `auth`:
    - `index` → vista `calendario` con un `<div id="calendario">` cuyo atributo `data-eventos` es `route('calendario.eventos')`, y FullCalendar desde un CDN.
    - `eventos` (ruta `calendario.eventos`) → valida `start` y `end`, toma solo la fecha y devuelve los eventos del servicio en formato FullCalendar: `title`, `start`, `color` (uno distinto por tipo) y `extendedProps` con `tipo`, `modelo` e `id`.
-2. Vista mensual por defecto, en español (`locale: 'es'`, la semana empieza en lunes), con una leyenda de colores.
+2. Vista con `<x-layout>` y `<x-cabecera>` de [6.5](./RA6_5_interfaz.md), y una entrada *Calendario* en el menú lateral. Mensual por defecto, en español (`locale: 'es'`, la semana empieza en lunes), con una leyenda de colores.
 3. Al pulsar un evento se abre el detalle del registro de origen (equivalente al botón "Abrir registro original" de Odoo).
 
 ## Comprueba tu solución automáticamente

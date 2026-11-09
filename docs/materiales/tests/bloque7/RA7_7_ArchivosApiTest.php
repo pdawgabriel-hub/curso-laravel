@@ -10,7 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_6_ArchivosApiTest extends FeatureTestCase
+class RA7_7_ArchivosApiTest extends FeatureTestCase
 {
     protected function setUp(): void
     {

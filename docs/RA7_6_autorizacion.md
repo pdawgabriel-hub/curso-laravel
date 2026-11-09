@@ -1,4 +1,4 @@
-# 7.5. Autorización: Gates, Policies y roles
+# 7.6. Autorización: Gates, Policies y roles
 
 **Referencia teórica:** [Autorización](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/10_autorizacion.html) · [Gates](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/101_gates.html) · [Policies](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/102_policies.html) · [Roles y permisos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/103_roles.html) · [Laravel: Authorization](https://laravel.com/docs/13.x/authorization)
 
@@ -54,7 +54,44 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
 
     `GET /api/v1/user` devuelve también `roles`. Añade `Gate::before` a `AppServiceProvider::boot()`.
 
-2. **La _Policy_ base.** `App\Policies\PolicyBase`: `viewAny`, `view`, `create` y `update` devuelven `tieneRol()`, y `delete`, `esJefe()`. `ClientePolicy`, `TrabajadorPolicy`, `ProveedorPolicy` y `EspecialistaPolicy` heredan de ella sin más. Añade `Gate::authorize()` a todas las acciones de `ClienteController` y comprueba la primera fila de la tabla con Swagger.
+2. **El ejemplo: clientes.** La _Policy_ base y la de clientes, que hereda de ella sin más:
+
+    ```php
+    namespace App\Policies;
+
+    use App\Models\User;
+
+    abstract class PolicyBase
+    {
+        public function viewAny(User $user): bool { return $user->tieneRol(); }
+        public function view(User $user, $modelo): bool { return $user->tieneRol(); }
+        public function create(User $user): bool { return $user->tieneRol(); }
+        public function update(User $user, $modelo): bool { return $user->tieneRol(); }
+        public function delete(User $user, $modelo): bool { return $user->esJefe(); }
+    }
+
+    class ClientePolicy extends PolicyBase {}
+    ```
+
+    Y cada acción de `ClienteController` autoriza **antes** de validar:
+
+    ```php
+    public function store(Request $request)
+    {
+        Gate::authorize('create', Cliente::class);
+        $cliente = Cliente::create($request->validate($this->reglas()));
+
+        return new ClienteResource($cliente->refresh());
+    }
+
+    public function update(Request $request, Cliente $cliente)
+    {
+        Gate::authorize('update', $cliente);
+        // …
+    }
+    ```
+
+    `TrabajadorPolicy`, `ProveedorPolicy` y `EspecialistaPolicy` son iguales. Comprueba la primera fila de la tabla con Swagger.
 
 3. **El resto de la tabla.** Crea una _Policy_ por modelo:
     - `ObraPolicy`: `create` y `update`, solo jefe. `vincular-presupuesto` es modificar la obra.
@@ -81,16 +118,16 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
 ## Comprueba tu solución automáticamente
 
 ```bash
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_5_*.php tests/Feature/
-php artisan test --filter=RA7_5
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_6_*.php tests/Feature/
+php artisan test --filter=RA7_6
 ```
 
-Resultado esperado: `Tests: 25 passed`. Comprueban los perfiles, la primera fila de la tabla, los presupuestos, los partes y las pantallas. El resto de la tabla (obras, líneas, faltas, ingresos, gastos y adjuntos) se comprueba en la [evaluación](./evaluacion.md).
+Resultado esperado: `Tests: 34 passed`. Comprueban los perfiles, la tabla de permisos entera (maestros, presupuestos, obras, partes y sus líneas, faltas, ingresos, gastos, adjuntos y bitácoras) y las pantallas.
 
 ## Git
 
-Rama `RA7_5`. Commits: `feat: roles de usuario y Gate::before`, `feat: policies de todos los modelos`.
+Rama `RA7_6`. Commits: `feat: roles de usuario y Gate::before`, `feat: policies de todos los modelos`.
 
 ---
 
-**Siguiente:** [7.6. Ficheros y bitácoras en la API](./RA7_6_ficheros.md)
+**Siguiente:** [7.7. Ficheros y bitácoras en la API](./RA7_7_ficheros.md)

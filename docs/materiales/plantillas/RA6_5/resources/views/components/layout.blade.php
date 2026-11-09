@@ -12,6 +12,7 @@
     @php
         // Solo se muestran las entradas cuya ruta ya existe: el menú crece con el proyecto.
         $menu = [
+            'Análisis' => ['dashboard' => 'Panel', 'calendario.index' => 'Calendario'],
             'Comercial' => ['clientes.index' => 'Clientes', 'presupuestos.index' => 'Presupuestos'],
             'Obras' => ['obras.index' => 'Obras', 'gastos.index' => 'Seguimiento de gastos'],
             'Recursos' => [

@@ -1,75 +1,110 @@
-# 7.2. Controladores de recursos
+# 7.2. Esqueleto de la API y API Resources
+<!-- {% raw %} -->
 
-**Referencia teórica:** [API y REST](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/061_api_y_rest.html) · [Esqueleto de la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/062_esqueleto_API.html) · [Controladores de recursos](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/07_resourceController.html) · [Laravel: API Resources](https://laravel.com/docs/13.x/eloquent-resources)
+**Referencia teórica:** [API y REST](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/061_api_y_rest.html) · [Esqueleto de la API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/062_esqueleto_API.html) · [Laravel: API Resources](https://laravel.com/docs/13.x/eloquent-resources)
 
-Implementar todos los recursos del [contrato](./contrato-api.md) en `/api/v1`, con controladores en `App\Http\Controllers\API` y respuestas con API Resources.
+La API devuelve JSON, no vistas. Antes de los controladores, dos piezas: el esqueleto de rutas en `/api/v1` y un **API Resource** por entidad, que decide qué campos salen en cada respuesta. En este apartado se crean **todos** los Resources; los controladores que los usan llegan en [7.3](./RA7_3_controladores.md).
 
 ## Conceptos clave
 
-- `php artisan install:api` instala Sanctum y crea `routes/api.php` (prefijo `/api`). Los apuntes del módulo usan `php artisan breeze:install api`, que además borra `package.json`, Vite y los estilos, porque su interfaz pasa a otro proyecto. Aquí seguimos usando _Blade_, así que no se usa.
-- `php artisan make:controller API/ClienteController --api --model=Cliente` genera los cinco métodos, y `php artisan make:resource ClienteResource`, el recurso.
-- `Route::apiResource('clientes', API\ClienteController::class)` genera `index`, `store`, `show`, `update` y `destroy`.
-- **Recursos anidados**: `apiResource('obras.ingresos', …)` → `/obras/{obra}/ingresos/{ingreso}`. Con `->scoped()`, Laravel comprueba que el hijo pertenece al padre si encuentra la relación por el nombre del parámetro (`ingreso` → `$obra->ingresos()`); si el nombre no coincide (`parteTrabajo` → `partesTrabajo`), la comprobación se hace en el controlador con `abort_if($parte->obra_id !== $obra->id, 404)`.
-- `->parameters(['trabajadores' => 'trabajador'])`: Laravel singulariza en inglés (`trabajadore`), así que conviene fijar los nombres de los parámetros.
-- **API Resource** (`php artisan make:resource ClienteResource`): `array_merge(parent::toArray($request), ['nombre_completo' => …])` añade los campos calculados. Un listado se devuelve con `ClienteResource::collection($query->paginate())`, lo que produce `data`, `links` y `meta`.
-- Al crear se devuelve `new ClienteResource($cliente->refresh())`: sin `refresh()` faltarían las columnas que no venían en la petición. Un `Resource` devuelto desde `store` responde con **201** automáticamente.
+- `php artisan install:api` instala Sanctum y crea `routes/api.php`, con el prefijo `/api`. Los apuntes de referencia usan `php artisan breeze:install api`, que además borra las vistas y Vite porque la interfaz pasa a otro proyecto. Aquí la interfaz _Blade_ sigue en la rama principal, así que no se usa (en el [Bloque 8](./RA8_1_breezeApi.md) sí, en otra rama).
+- Un **API Resource** convierte un modelo en un array. `parent::toArray($request)` devuelve todas sus columnas; se le añaden los campos calculados del [contrato](./contrato-api.md).
+- `new ClienteResource($cliente)` produce `{ "data": { … } }`. `ClienteResource::collection($clientes->paginate())` produce `{ "data": [ … ], "links": { … }, "meta": { … } }`.
+- Un Resource puede incluir otro: `LineaParteTrabajoResource::collection($this->lineas)` dentro del parte.
+
+## El ejemplo: clientes
+
+```bash
+php artisan make:resource ClienteResource
+```
+
+```php
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ClienteResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return array_merge(parent::toArray($request), [
+            'nombre_completo' => $this->nombre_completo,
+        ]);
+    }
+}
+```
+
+Pruébalo en `tinker`:
+
+```php
+(new App\Http\Resources\ClienteResource(App\Models\Cliente::first()))->response()->getData(true);
+```
 
 ## Ejercicios
 
-1. **Esqueleto.**
+1. **El esqueleto.**
 
     ```bash
     php artisan install:api
     ```
 
-    Añadir `HasApiTokens` al modelo `User`. En `routes/api.php`:
+    Añade el _trait_ `HasApiTokens` al modelo `User`. En `routes/api.php`, todo dentro de un grupo con prefijo y nombre:
 
     ```php
     Route::prefix('v1')->name('api.')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
-            Route::apiResource('clientes', API\ClienteController::class)->parameters(['clientes' => 'cliente']);
-            // …
+            Route::get('user', fn (Request $request) => $request->user());
+            // los recursos, en 7.3
         });
     });
     ```
 
-    > **Importante.** Sin `->name('api.')`, los nombres de las rutas de la API (`clientes.index`) sustituyen a los de la web y las vistas generan URLs de la API.
+    > **Importante.** Sin `->name('api.')`, los nombres de las rutas de la API (`clientes.index`) sustituirían a los de la web, y las vistas generarían URLs de la API.
 
-2. **Clientes (ejemplo guiado).** `php artisan make:controller API/ClienteController --api` y `ClienteResource`. Validación, respuestas y regla de borrado según el contrato. Para la validación, el mismo `ClienteRequest` de la web sirve si sus reglas usan `sometimes|required` en la actualización, o se crea uno específico de la API.
+2. **Los Resources.** Uno por modelo, con `parent::toArray()` y estos campos añadidos:
 
-    > **Aviso.** La autorización (`Gate::authorize()`) se añade en [7.5](./RA7_5_autorizacion.md): mientras no existan las Policies, Laravel deniega cualquier comprobación y todas las rutas responderían 403.
+    Resource | Campos que se añaden
+    -----|----
+    `ClienteResource` | `nombre_completo`
+    `TrabajadorResource` | `nombre_completo`, `horas_totales`, `total_euros` ([6.13](./RA6_13_calculos.md))
+    `FaltaResource` | `dias`
+    `ProveedorResource` | `total`
+    `EspecialistaResource` | —
+    `PresupuestoResource` | `anio`, `base_imponible`, `cuota_iva`, `total`, `proveedor_ids` y `especialista_ids` (arrays de ids, con `pluck('id')`)
+    `LineaPresupuestoResource` | `total_linea`
+    `ObraResource` | los indicadores de `ResumenFinanciero` ([6.13](./RA6_13_calculos.md)) con los nombres del contrato (`total`, `horas_totales`, `coste_moo`, `estado_pago`, `gastos_totales`, `beneficio`, `pendiente_cobro`, `margen_proyectado`, `porcentaje_cobrado`, `salud`) y `gasto_id`
+    `GastoResource` | `horas_trabajadas`, `coste_moo`, `coste_hora`, `coste_proveedores`, `coste_especialistas`, `gastos`, `ingresos`, `beneficio_real`, `debe`, `estado`
+    `IngresoResource` | `anio`, `total_ingresos` (todos los ingresos de su obra) y `debe`
+    `ParteTrabajoResource` | `horas_totales`, `coste_total` y `lineas` (con `LineaParteTrabajoResource`)
+    `LineaParteTrabajoResource` | `coste_subtotal`, y la `fecha` y el `obra_id` de su parte
+    `ParteProveedorResource`, `ParteEspecialistaResource` | —
 
-3. **Resto de recursos.** Aplicar el patrón a todos los recursos del contrato, en este orden: trabajadores y faltas, proveedores, especialistas, presupuestos y líneas, obras (con `ObraService`), gastos (`only(['index', 'show', 'update'])`), ingresos, partes de trabajo y sus líneas, partes de proveedor y de especialista.
+    Las fechas salen con formato `Y-m-d`, gracias a los _casts_ de [6.2](./RA6_2_modelos.md).
 
-4. **Endpoints adicionales de obras.** `presupuestos-disponibles`, `vincular-presupuesto` (el asistente de Odoo) y los participantes `trabajadores`, `proveedores` y `especialistas`.
-
-5. **Alta de líneas por lote.** `POST /partes-trabajo/{parteTrabajo}/lineas/lote` según el [contrato](./contrato-api.md#líneas-de-parte-de-trabajo). Añadir la clave `max_lineas_lote` a `config/gestionobras.php`, validar el array y cada elemento (`trabajador_ids.*`) y crear las líneas en una transacción. Para responder 201 con una colección: `LineaParteTrabajoResource::collection($lineas)->response()->setStatusCode(201)`.
-
-6. **Estadísticas y calendario.** `GET /estadisticas` y `GET /calendario` con el formato del contrato. La lógica va en servicios (`App\Services\Estadisticas` y `App\Services\Calendario`), que reutilizará la web en el Bloque 9.
-
-7. **Investiga.** Responde en tu _pull request_:
-    - Quita temporalmente `->name('api.')`. ¿Qué devuelve `route('clientes.index')`? ¿Qué le pasa al menú de la web?
-    - Quita `refresh()` en `store` y crea un cliente sin apellidos. ¿Qué campos faltan en la respuesta?
-    - Prueba cada ruta desde _Swagger UI_: ¿responde lo que dice la especificación?
+3. **Investiga.** Responde en tu _pull request_:
+    - Compara en `tinker` `App\Models\Obra::first()->toArray()` con lo que devuelve su Resource. ¿Qué aporta el Resource?
+    - Quita `->name('api.')` y ejecuta `php artisan route:list --name=clientes`. ¿Qué rutas comparten nombre?
 
 ## Comprueba tu solución automáticamente
 
-Copiar las clases base de los tests de la API (no son tests: aportan `actuarComo()`, `assertImporte()` y `assertListado()`) y el test del apartado:
+Copia las clases base de los tests de la API (no son tests: aportan `actuarComo()`, `assertImporte()` y `assertListado()`) y el test del apartado:
 
 ```bash
 E=/var/www/curso-laravel/evaluacion/tests
 cp $E/TestCase.php tests/
 cp $E/Feature/FeatureTestCase.php tests/Feature/
-cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_2_ClientesApiTest.php tests/Feature/
+cp /var/www/curso-laravel/docs/materiales/tests/bloque7/RA7_2_RecursosTest.php tests/Feature/
 php artisan test --filter=RA7_2
 ```
 
-Resultado esperado: `Tests: 10 passed`. El resto de recursos se comprueba con peticiones manuales (por ejemplo, con la extensión REST Client de VS Code o con `curl`) y, al final del bloque, con la batería de evaluación.
+Resultado esperado: `Tests: 16 passed`.
 
 ## Git
 
-Rama `RA7_2` con un commit por recurso, o una rama por grupo de recursos (`RA7_2_obras`…).
+Rama `RA7_2`. Commits: `feat: esqueleto de la API`, `feat: API Resources`.
 
 ---
 
-**Siguiente:** [7.3. Búsqueda, orden y paginación](./RA7_3_busqueda.md)
+**Siguiente:** [7.3. Controladores de recursos](./RA7_3_controladores.md)
+<!-- {% endraw %} -->

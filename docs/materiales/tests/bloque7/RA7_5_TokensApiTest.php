@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Tests\Feature\FeatureTestCase;
 
-class RA7_4_TokensApiTest extends FeatureTestCase
+class RA7_5_TokensApiTest extends FeatureTestCase
 {
     public function test_emite_un_token_con_credenciales_correctas()
     {

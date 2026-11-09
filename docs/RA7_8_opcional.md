@@ -1,4 +1,4 @@
-# 7.7. Opcional: _PHP-CRUD-API_ y sesiones en la API
+# 7.8. Opcional: _PHP-CRUD-API_ y sesiones en la API
 
 **Referencia teórica:** [Crear una CRUD API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/065_PHP_CRUD_API.html) · [Autenticación con sesiones en API](https://2daw-carlosiii.github.io/marcapersonalFP_REA/documentos/0613_Servidor/092_autenticacionSesionAPI.html)
 
@@ -21,10 +21,10 @@ Sigue la referencia teórica para añadir la ruta `Route::any('/{any}', …)` al
 
 ## Sesiones en la API
 
-Hasta ahora, un cliente externo se identifica con un _token_ ([7.4](./RA7_4_sanctum.md)). Si la API la usa una página de la misma aplicación, puede aprovechar la sesión de quien ya ha iniciado sesión: así funciona, por ejemplo, un _frontend_ como el del Bloque 8.
+Hasta ahora, un cliente externo se identifica con un _token_ ([7.5](./RA7_5_sanctum.md)). Si la API la usa una página de la misma aplicación, puede aprovechar la sesión de quien ya ha iniciado sesión: así funciona, por ejemplo, un _frontend_ como el del Bloque 8.
 
 **Investiga.** Sigue la referencia teórica en la rama de prueba. ¿Qué cambia en la petición? ¿Por qué hace falta proteger también la petición contra CSRF?
 
 ---
 
-**Siguiente:** [8.1. _React-Admin_ sobre la API](./RA8_1_reactAdmin.md)
+**Siguiente:** [8.1. Una rama sin vistas: Breeze API](./RA8_1_breezeApi.md)

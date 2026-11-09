@@ -79,4 +79,4 @@ Rama `RA7_1`. Commits: `chore: instala l5-swagger`, `docs: especificación de la
 
 ---
 
-**Siguiente:** [7.2. Controladores de recursos](./RA7_2_recursos.md)
+**Siguiente:** [7.2. Esqueleto de la API y API Resources](./RA7_2_recursos.md)

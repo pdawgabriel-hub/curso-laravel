@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /** Las pantallas aplican las mismas Policies que la API. */
-class RA7_5_AutorizacionWebTest extends TestCase
+class RA7_6_AutorizacionWebTest extends TestCase
 {
     use RefreshDatabase;
 

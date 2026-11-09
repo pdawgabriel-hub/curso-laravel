@@ -56,10 +56,10 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `related='cliente_id.nombre'` | Relación + accessor, o `with()` | [6.8](./RA6_8_relaciones.md) |
 | `@api.onchange` (copiar datos del cliente) | Evento `creating` del modelo | [6.2](./RA6_2_modelos.md) |
 | `@api.constrains`, `_sql_constraints` | Reglas de validación + `unique`/`foreign` en migraciones | [5.6](./RA5_6_formularios.md), [6.1](./RA6_1_migraciones.md) |
-| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.3](./RA7_3_busqueda.md) |
-| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.5](./RA7_5_autorizacion.md) |
+| `_search_display_name` | Parámetro `search` multipalabra en los listados | [7.4](./RA7_4_busqueda.md) |
+| `ir.model.access.csv` + grupos | Policies + `Gate::before` para el administrador | [7.6](./RA7_6_autorizacion.md) |
 | `post_init_hook` (datos de demo) | `DatabaseSeeder`, una semilla por tabla y factories | [6.3](./RA6_3_seeders.md) |
-| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.2](./RA7_2_recursos.md) |
+| `TransientModel` (asistente) | Endpoint `POST /obras/{obra}/vincular-presupuesto` | [7.3](./RA7_3_controladores.md) |
 | Vistas list/form/kanban | Vistas Blade | [5.4](./RA5_4_vistas.md) |
 | Reportes QWeb | Vistas Blade → PDF con dompdf | [9.1](./RA9_1_pdf.md) |
 | Componente OWL del dashboard | Vista Blade + Chart.js sobre el servicio `Estadisticas` | [9.3](./RA9_3_dashboard.md) |
