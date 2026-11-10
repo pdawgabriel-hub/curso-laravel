@@ -9,6 +9,7 @@ Las tablas, los modelos y los datos ya existen. Ahora las pantallas de **cliente
 
 - **Del array al modelo:** `$this->arrayClientes` pasa a ser `Cliente::paginate(15)`, y `$arrayClientes[$id]` pasa a ser `Cliente::findOrFail($id)`, que responde 404 si no existe. En las vistas, `$cliente['campo']` pasa a ser `$cliente->campo`.
 - **Paginación:** `paginate(15)` devuelve los registros de una página y `{{ $clientes->links() }}` pinta los enlaces `?page=2`.
+- **Un Form Request por entidad**, en `app/Http/Requests/`, con las reglas de su formulario. Se crea con `php artisan make:request ProveedorRequest`; `authorize()` devuelve `true` (los permisos llegan en [7.6](./RA7_6_autorizacion.md)). Los mismos Request validarán la API en [7.3](./RA7_3_controladores.md).
 - **Formato de números:** importes y tarifas con `number_format($x, 2, ',', '.')` (`1.210,00`). Para no repetirlo, un único helper `App\Support\Formato` con un método estático `n(float $x, int $decimales = 2): string`.
 
 ## Las rutas
@@ -59,7 +60,16 @@ Columnas de los listados, en `<th>` y con estos textos:
     ```
 
     - `edit`, igual que `show`. `store` hace `Cliente::create($request->validated())`, y `update`, `findOrFail` + `update`, con las redirecciones de la tabla de rutas.
-    - En `ClienteRequest`, el NIF pasa a ser único. Al modificar, debe admitir el suyo: `Rule::unique('clientes')->ignore($this->route('id'))`.
+    - En `ClienteRequest`, el NIF pasa a ser único. Al modificar, debe admitir el suyo: `Rule::unique('clientes')->ignore($this->route('id'))`. Queda así:
+
+        | Campo | Reglas |
+        |:--|:--|
+        | `nombre` | `required`, `string`, `max:255` |
+        | `apellidos` | `nullable`, `string`, `max:255` |
+        | `nif` | `nullable`, `string`, `max:20`, `Rule::unique('clientes')->ignore($this->route('id'))` |
+        | `direccion` | `required`, `string`, `max:255` |
+        | `cod_postal` | `nullable`, `string`, `max:10` |
+        | `telefono` | `required`, `string`, `max:20` |
     - Nueva acción `destroy`, con su ruta.
 
 2. **Clientes: limpieza.** Lo que hiciste en [5.8](./RA5_8_proyecto.md) ya no hace falta, porque _Eloquent_ es _Active Record_. Borra `app/Dominio`, `app/Repositorios`, su registro en `AppServiceProvider`, `storage/app/clientes.json` y `resources/datos/array_clientes.php`. `ObrasController` deja de recibir el repositorio: de momento, busca al cliente con `Cliente::find()`.
@@ -68,11 +78,35 @@ Columnas de los listados, en `<th>` y con estos textos:
 
 4. **Solo con sesión.** En `routes/clientes.php`, mete también `index` y `show` en el grupo `auth`. Haz lo mismo con las rutas de obras y trabajadores.
 
-5. **Trabajadores.** El mismo camino: `TrabajadoresController` con el modelo y `findOrFail`, sin `$arrayTrabajadores`; `destroy` y su ruta; vistas con componentes. La tarifa se muestra con dos decimales (`22,00 €/h`), con el helper `Formato`. Validación: `nombre` y `apellido` obligatorios, `coste_hora_estandar` numérico y ≥ 0.
+5. **Trabajadores.** El mismo camino: `TrabajadoresController` con el modelo y `findOrFail`, sin `$arrayTrabajadores`; `destroy` y su ruta; vistas con componentes. La tarifa se muestra con dos decimales (`22,00 €/h`), con el helper `Formato`. `TrabajadorRequest`, que ya existe desde [5.6](./RA5_6_formularios.md), queda así:
 
-6. **Proveedores.** Esta vez desde cero, porque no hay controlador ni vistas de etapas anteriores: `ProveedoresController`, `routes/proveedores.php`, `ProveedorRequest` y las cuatro vistas. El listado y el detalle muestran el `total` con IVA (`121,00`). Validación: `nombre` obligatorio, `correo` con formato de email, `base` ≥ 0, `iva` entre 0 y 100.
+    | Campo | Reglas |
+    |:--|:--|
+    | `nombre`, `apellido` | `required`, `string`, `max:255` |
+    | `tipo`, `telefono` | `nullable`, `string`, `max:255` |
+    | `coste_hora_estandar` | `filled`, `numeric`, `min:0` |
 
-7. **Especialistas.** Lo mismo que proveedores. Validación: `nombre` obligatorio, `correo` con formato de email, `importe` ≥ 0.
+    `filled` obliga a rellenarlo si se envía, pero deja que no se envíe: entonces la columna toma su valor por defecto (20).
+
+6. **Proveedores.** Esta vez desde cero, porque no hay controlador ni vistas de etapas anteriores: `ProveedoresController`, `routes/proveedores.php`, `ProveedorRequest` y las cuatro vistas. El listado y el detalle muestran el `total` con IVA (`121,00`). `ProveedorRequest`:
+
+    | Campo | Reglas |
+    |:--|:--|
+    | `nombre` | `required`, `string`, `max:255` |
+    | `direccion`, `telefono`, `tipo`, `referencia`, `documento`, `num_documento` | `nullable`, `string`, `max:255` |
+    | `correo` | `nullable`, `email` |
+    | `base` | `required`, `numeric`, `min:0` |
+    | `iva` | `required`, `numeric`, `between:0,100` |
+
+7. **Especialistas.** Lo mismo que proveedores, con `EspecialistaRequest`:
+
+    | Campo | Reglas |
+    |:--|:--|
+    | `nombre` | `required`, `string`, `max:255` |
+    | `tipo`, `referencia`, `comunicacion_parte`, `telefono` | `nullable`, `string`, `max:255` |
+    | `notas` | `nullable`, `string` |
+    | `correo` | `nullable`, `email` |
+    | `importe` | `nullable`, `numeric`, `min:0` |
 
 8. **El menú.** Comprueba que el menú lateral muestra ya las cuatro secciones, y que la sección en la que estás aparece marcada.
 
@@ -88,7 +122,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_6_MaestrosTest.php t
 php artisan test --filter=RA6_6
 ```
 
-Resultado esperado: `Tests: 18 passed`.
+Resultado esperado: `Tests: 19 passed`.
 
 Además de guardar y validar, el test comprueba las vistas: las columnas de cada listado, la paginación de 15 en 15, el mensaje cuando no hay registros, la entrada del menú marcada, el botón de borrar con confirmación y que, tras un error, el formulario conserva lo escrito y marca el campo con `aria-invalid`.
 

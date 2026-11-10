@@ -195,4 +195,23 @@ class RA6_6_MaestrosTest extends TestCase
         $this->delete(route('especialistas.destroy', $e->id))->assertRedirect(route('especialistas.index'));
         $this->assertDatabaseCount('especialistas', 0);
     }
+
+    public function test_cada_formulario_tiene_su_form_request()
+    {
+        $esperados = [
+            \App\Http\Requests\ClienteRequest::class => ['nombre', 'apellidos', 'nif', 'direccion', 'cod_postal', 'telefono'],
+            \App\Http\Requests\TrabajadorRequest::class => ['nombre', 'apellido', 'tipo', 'telefono', 'coste_hora_estandar'],
+            \App\Http\Requests\ProveedorRequest::class => ['nombre', 'correo', 'base', 'iva'],
+            \App\Http\Requests\EspecialistaRequest::class => ['nombre', 'correo', 'importe', 'notas'],
+        ];
+
+        foreach ($esperados as $clase => $campos) {
+            $this->assertTrue(class_exists($clase), "Falta la clase $clase");
+            $this->assertTrue(is_subclass_of($clase, \Illuminate\Foundation\Http\FormRequest::class), "$clase debe extender FormRequest");
+            $reglas = (new $clase)->rules();
+            foreach ($campos as $campo) {
+                $this->assertArrayHasKey($campo, $reglas, "$clase no tiene reglas para $campo");
+            }
+        }
+    }
 }

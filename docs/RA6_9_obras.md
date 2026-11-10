@@ -16,7 +16,12 @@ Las primeras pantallas que usan relaciones: la obra muestra su cliente y su fich
 
 1. **Obras.** `ObrasController` usa el modelo, con las mismas siete rutas que los maestros ([6.6](./RA6_6_maestros.md)). Elimina `$arrayObras` y la búsqueda del cliente con `Cliente::find()`: ahora es `$obra->cliente`.
     - Listado con las columnas `Código`, `Descripción` y `Cliente`, paginado de 15 en 15.
-    - Alta y modificación: `descripcion` obligatoria y un selector `cliente_id`, opcional.
+    - Alta y modificación con `ObraRequest`:
+
+        | Campo | Reglas |
+        |:--|:--|
+        | `descripcion` | `required`, `string`, `max:255` |
+        | `cliente_id` | `nullable`, `exists:clientes,id` (selector) |
     - **`store` crea la obra y su ficha de Gastos:** `$obra->gasto()->create()`. En [6.12](./RA6_12_transacciones.md) se hará en una transacción.
     - Detalle: código, descripción y cliente; enlaces a modificar y a su ficha de Gastos, y `<x-borrar>`. De momento no muestra el total ni el estado de pago: llegan, calculados, en [6.13](./RA6_13_calculos.md).
 
@@ -31,7 +36,17 @@ Las primeras pantallas que usan relaciones: la obra muestra su cliente y su fich
 
     - Listado con las columnas `Código`, `Obra` y `Cliente`. En el menú aparece como *Seguimiento de gastos*.
     - Detalle con la dirección y las fechas, y un enlace a su obra.
-    - El formulario edita `direccion_obra`, las tres fechas y, con `<x-casilla>`, los tres booleanos. `fin_obra` no puede ser anterior a `inicio_obra`.
+    - El formulario edita `direccion_obra`, las tres fechas y, con `<x-casilla>`, los tres booleanos, con `GastoRequest`:
+
+        | Campo | Reglas |
+        |:--|:--|
+        | `direccion_obra` | `nullable`, `string`, `max:255` |
+        | `inicio_obra`, `solicitud_obra` | `nullable`, `date` |
+        | `fin_obra` | `nullable`, `date`, `after_or_equal:inicio_obra` |
+        | `mandante`, `gestion_licencia`, `pago_icio` | `boolean` |
+        | `presupuesto_id` | `nullable`, `exists:presupuestos,id`; en `after()`, debe ser de la misma obra |
+
+        `obra_id` no está entre las reglas: la ficha no cambia de obra.
 
 3. **Faltas.** Se crean desde el trabajador:
 
@@ -42,7 +57,16 @@ Las primeras pantallas que usan relaciones: la obra muestra su cliente y su fich
     | DELETE | `/trabajadores/{trabajador}/faltas/{falta}` | `trabajadores.faltas.destroy` |
     | GET | `/faltas` | `faltas.index` |
 
-    - Formulario: `fecha_inicio`, `fecha_fin`, `tipo` (selector) y `motivo`. `fecha_fin` no puede ser anterior a `fecha_inicio`.
+    - Formulario con `FaltaRequest`:
+
+        | Campo | Reglas |
+        |:--|:--|
+        | `fecha_inicio` | `required`, `date` |
+        | `fecha_fin` | `required`, `date`, `after_or_equal:fecha_inicio` |
+        | `tipo` | `nullable`, `in:vacaciones,baja_medica,personal,injustificada,otro` (selector) |
+        | `motivo` | `nullable`, `string` |
+
+        `user_id` y `trabajador_id` no están entre las reglas: salen del usuario conectado y de la URL.
     - El propietario es el usuario conectado; el `user_id` **nunca** sale del formulario ([6.8](./RA6_8_relaciones.md#propietario)).
     - Al guardar o borrar se vuelve al detalle del trabajador, que lista sus faltas en una tabla con el texto del tipo (`Vacaciones`, `Baja médica`, `Personal`, `Injustificada`, `Otro`), las fechas, los días y un `<x-borrar>`.
     - `/faltas`: todas, con las columnas `Trabajador`, `Tipo`, `Desde`, `Hasta` y `Días`.
@@ -58,7 +82,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_9_ObrasTest.php test
 php artisan test --filter=RA6_9
 ```
 
-Resultado esperado: `Tests: 8 passed`.
+Resultado esperado: `Tests: 9 passed`.
 
 ## Git
 

@@ -11,7 +11,20 @@ El trabajo y el dinero de una obra: partes de trabajo con sus líneas, partes de
 - **Cabecera y líneas juntas:** `$parte = $obra->partesTrabajo()->create(...)` y, para cada fila, `$parte->lineas()->create(...)`. La tarifa se copia sola, por el evento de [6.2](./RA6_2_modelos.md).
 - **Pestañas con enlaces:** `<x-pestanas>` ([6.5](./RA6_5_interfaz.md)) enlaza a la misma página con `?pestana=partes-trabajo`. El controlador lee `$request->query('pestana')`, comprueba que es una de las conocidas (si no, usa `resumen`) y carga solo lo que necesita esa pestaña. No hace falta JavaScript, y cada pestaña tiene su URL.
 - **Volver a la pestaña:** al guardar o borrar un parte, se redirige a su pestaña: `redirect()->route('obras.show', [$obra->id, 'pestana' => 'partes-trabajo'])`. Los parámetros que no están en la ruta se añaden como _query string_.
-- **Filas vacías:** si el formulario ofrece cuatro filas y se rellenan dos, las otras llegan vacías. Quítalas antes de validar, por ejemplo en `prepareForValidation()` del _Request_.
+- **Filas vacías:** si el formulario ofrece cuatro filas y se rellenan dos, las otras llegan vacías. Quítalas antes de validar, en `prepareForValidation()` de `ParteTrabajoRequest`:
+
+    ```php
+    protected function prepareForValidation(): void
+    {
+        if (is_array($this->input('lineas'))) {
+            $this->merge([
+                'lineas' => collect($this->input('lineas'))
+                    ->reject(fn ($l) => is_array($l) && blank($l['trabajador_id'] ?? null) && blank($l['horas'] ?? null))
+                    ->values()->all(),
+            ]);
+        }
+    }
+    ```
 
 ## El ejemplo: las pestañas de la obra
 
@@ -105,11 +118,41 @@ Cada pestaña es un fichero de `resources/views/obras/pestanas/`. Lo que ya most
     | POST | `/obras/{obra}/partes-trabajo` | `obras.partes-trabajo.store` |
     | DELETE | `/obras/{obra}/partes-trabajo/{parte}` | `obras.partes-trabajo.destroy` |
 
-    El formulario lleva `fecha`, `descripcion` y cuatro filas con `lineas[i][trabajador_id]` (selector) y `lineas[i][horas]`. Validación: `descripcion` obligatoria; cada `trabajador_id` existe; cada `horas` entre 0 y 24. El propietario es el usuario conectado. Al guardar y al borrar se vuelve a la pestaña *Partes de trabajo*.
+    El formulario lleva `fecha`, `descripcion` y cuatro filas con `lineas[i][trabajador_id]` (selector) y `lineas[i][horas]`, y se valida con `ParteTrabajoRequest`:
 
-3. **Partes externos.** Igual para `partes-proveedor` y `partes-especialista`, con nombres `obras.partes-proveedor.*` y `obras.partes-especialista.*`, y los campos `proveedor_id` o `especialista_id` (selector), `fecha`, `descripcion`, `documento`, `importe` (> 0) y `estado_pago` (selector, `pendiente` o `pagado`). Al guardar y al borrar se vuelve a su pestaña.
+    | Campo | Reglas |
+    |:--|:--|
+    | `fecha` | `nullable`, `date` |
+    | `descripcion` | `required`, `string` |
+    | `lineas` | `sometimes`, `array` |
+    | `lineas.*.trabajador_id` | `required`, `exists:trabajadores,id` |
+    | `lineas.*.horas` | `required`, `numeric`, `between:0,24` |
+    | `lineas.*.coste_hora` | `nullable`, `numeric`, `min:0` (la web no lo envía: se copia la tarifa) |
 
-4. **Ingresos.** Desde la obra, con los nombres `obras.ingresos.create`, `obras.ingresos.store` y `obras.ingresos.destroy`, y las mismas URL que los partes. Campos: `importe`, `tipo`, `fecha`, `documento` y `num_documento`. Validación: `importe` > 0; si se envía `cliente_id`, debe ser el de la obra. Al guardar y al borrar se vuelve a la pestaña *Ingresos*.
+    El propietario es el usuario conectado. Al guardar y al borrar se vuelve a la pestaña *Partes de trabajo*.
+
+3. **Partes externos.** Igual para `partes-proveedor` y `partes-especialista`, con nombres `obras.partes-proveedor.*` y `obras.partes-especialista.*`, y un Request para cada uno, `ParteProveedorRequest` y `ParteEspecialistaRequest`:
+
+    | Campo | Reglas |
+    |:--|:--|
+    | `proveedor_id` (o `especialista_id`) | `required`, `exists:proveedores,id` (o `exists:especialistas,id`) (selector) |
+    | `importe` | `required`, `numeric`, `gt:0` |
+    | `estado_pago` | `nullable`, `in:pendiente,pagado` (selector) |
+    | `fecha` | `nullable`, `date` |
+    | `descripcion`, `documento` | `nullable`, `string`, `max:255` |
+
+    Al guardar y al borrar se vuelve a su pestaña.
+
+4. **Ingresos.** Desde la obra, con los nombres `obras.ingresos.create`, `obras.ingresos.store` y `obras.ingresos.destroy`, y las mismas URL que los partes. `IngresoRequest`:
+
+    | Campo | Reglas |
+    |:--|:--|
+    | `importe` | `required`, `numeric`, `gt:0` |
+    | `tipo`, `documento`, `num_documento`, `nombre_obra` | `nullable`, `string`, `max:255` |
+    | `fecha` | `nullable`, `date` |
+    | `cliente_id` | `nullable`, `exists:clientes,id`; en `after()`, debe ser el de la obra (`$this->route('obra')`) |
+
+    El formulario lleva `importe`, `tipo`, `fecha`, `documento` y `num_documento`. Al guardar y al borrar se vuelve a la pestaña *Ingresos*.
 
 5. **Lo de otra obra, 404.** Borrar un parte o un ingreso con la URL de otra obra responde 404.
 
@@ -126,7 +169,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_11_PartesTest.php te
 php artisan test --filter=RA6_11
 ```
 
-Resultado esperado: `Tests: 9 passed`.
+Resultado esperado: `Tests: 10 passed`.
 
 ## Git
 

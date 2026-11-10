@@ -15,7 +15,9 @@ use App\Models\ParteTrabajo;
 use App\Models\Presupuesto;
 use App\Models\Proveedor;
 use App\Models\Trabajador;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionMethod;
 
 /** 7.3: los controladores de recursos de todas las entidades. */
 class RA7_3_ControladoresTest extends FeatureTestCase
@@ -192,5 +194,46 @@ class RA7_3_ControladoresTest extends FeatureTestCase
         $this->getJson('/api/v1/estadisticas?periodo=nunca')->assertUnprocessable();
         $this->getJson('/api/v1/calendario?desde=2026-01-01&hasta=2026-12-31')->assertOk()->assertJsonStructure(['data']);
         $this->getJson('/api/v1/calendario')->assertUnprocessable();
+    }
+
+    public function test_la_api_valida_con_los_form_request_de_la_web()
+    {
+        $r = 'App\\Http\\Requests\\';
+        $c = 'App\\Http\\Controllers\\API\\';
+        $usos = [
+            'ClienteController' => 'ClienteRequest', 'TrabajadorController' => 'TrabajadorRequest',
+            'ProveedorController' => 'ProveedorRequest', 'EspecialistaController' => 'EspecialistaRequest',
+            'PresupuestoController' => 'PresupuestoRequest', 'ObraController' => 'ObraRequest', 'GastoController' => 'GastoRequest',
+            'FaltaController' => 'FaltaRequest', 'LineaPresupuestoController' => 'LineaPresupuestoRequest', 'IngresoController' => 'IngresoRequest',
+            'ParteTrabajoController' => 'ParteTrabajoRequest', 'ParteProveedorController' => 'ParteProveedorRequest',
+            'ParteEspecialistaController' => 'ParteEspecialistaRequest', 'LineaParteTrabajoController' => 'LineaParteTrabajoRequest',
+        ];
+
+        foreach ($usos as $controlador => $request) {
+            $this->assertTrue(is_subclass_of($r . $request, $r . 'GestionRequest'), "$request debe heredar de GestionRequest");
+            foreach (['store', 'update'] as $metodo) {
+                if (! method_exists($c . $controlador, $metodo)) {
+                    continue;   // Gastos no tiene store
+                }
+                $tipos = array_map(fn ($p) => (string) $p->getType(), (new ReflectionMethod($c . $controlador, $metodo))->getParameters());
+                $this->assertContains($r . $request, $tipos, "$controlador::$metodo debe recibir $request");
+            }
+        }
+        foreach (['VincularPresupuestoRequest', 'LoteLineasRequest'] as $request) {
+            $this->assertTrue(is_subclass_of($r . $request, $r . 'GestionRequest'), "$request debe heredar de GestionRequest");
+        }
+    }
+
+    public function test_en_la_api_se_modifica_solo_lo_que_se_envia_y_en_la_web_no()
+    {
+        $cliente = Cliente::factory()->create();
+
+        $this->postJson('/api/v1/clientes', ['telefono' => '600000000'])->assertUnprocessable()->assertJsonValidationErrors(['nombre', 'direccion']);
+        $this->putJson("/api/v1/clientes/{$cliente->id}", ['telefono' => '611111111'])->assertOk()->assertJsonPath('data.telefono', '611111111');
+        $this->assertSame($cliente->nombre, $cliente->fresh()->nombre);
+
+        $this->actingAs(User::factory()->create(['rol' => 'jefe']));
+        $this->put(route('clientes.update', $cliente->id), ['telefono' => '622222222'])->assertSessionHasErrors(['nombre', 'direccion']);
+        $this->assertSame('611111111', $cliente->fresh()->telefono);
     }
 }

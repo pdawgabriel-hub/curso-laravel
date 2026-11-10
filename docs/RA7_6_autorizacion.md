@@ -73,23 +73,25 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
     class ClientePolicy extends PolicyBase {}
     ```
 
-    Y cada acción de `ClienteController` autoriza **antes** de validar:
+    Y cada acción de `ClienteController` autoriza al empezar:
 
     ```php
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
         Gate::authorize('create', Cliente::class);
-        $cliente = Cliente::create($request->validate($this->reglas()));
+        $cliente = Cliente::create($request->validated());
 
         return new ClienteResource($cliente->refresh());
     }
 
-    public function update(Request $request, Cliente $cliente)
+    public function update(ClienteRequest $request, Cliente $cliente)
     {
         Gate::authorize('update', $cliente);
         // …
     }
     ```
+
+    El `ClienteRequest` de [7.3](./RA7_3_controladores.md) ya ha validado antes de que empiece el método: quien no tiene permiso recibe 403 si sus datos son válidos, y 422 si no lo son.
 
     `TrabajadorPolicy`, `ProveedorPolicy` y `EspecialistaPolicy` son iguales. Comprueba la primera fila de la tabla con Swagger.
 
@@ -112,6 +114,7 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
 
 8. **Investiga.** Responde en tu _pull request_:
     - ¿Dónde está mejor comprobar el permiso de aprobar: en la _Policy_, en el _Form Request_ o en la vista? ¿Por qué?
+    - Mueve el `Gate::authorize('create', Cliente::class)` al método `authorize()` de `ClienteRequest` (`return $this->user()->can('create', Cliente::class)`). ¿Qué responde ahora un usuario sin rol que envía un cliente sin nombre? ¿Qué problema tiene hacerlo así en `update`, con la web usando `{id}` y la API `{cliente}`?
     - Entra como administrativa y pide por URL el detalle de una ficha de Gastos. ¿Qué pasa? ¿Y si quitas `Gate::authorize` y dejas solo el `@can`?
     - ¿Qué devuelve `$user->can('delete', $parte)` para el administrador? ¿Quién lo decide?
 

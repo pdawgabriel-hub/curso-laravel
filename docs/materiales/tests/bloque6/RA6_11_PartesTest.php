@@ -176,4 +176,23 @@ class RA6_11_PartesTest extends TestCase
         $this->delete(route('obras.ingresos.destroy', [$this->obra, $ajeno]))->assertNotFound();
         $this->assertDatabaseHas('ingresos', ['id' => $ajeno->id]);
     }
+
+    public function test_cada_formulario_tiene_su_form_request()
+    {
+        $esperados = [
+            \App\Http\Requests\ParteTrabajoRequest::class => ['fecha', 'descripcion', 'lineas', 'lineas.*.trabajador_id', 'lineas.*.horas'],
+            \App\Http\Requests\ParteProveedorRequest::class => ['proveedor_id', 'importe', 'estado_pago', 'fecha', 'descripcion', 'documento'],
+            \App\Http\Requests\ParteEspecialistaRequest::class => ['especialista_id', 'importe', 'estado_pago', 'fecha', 'descripcion', 'documento'],
+            \App\Http\Requests\IngresoRequest::class => ['importe', 'tipo', 'fecha', 'documento', 'num_documento', 'cliente_id'],
+        ];
+
+        foreach ($esperados as $clase => $campos) {
+            $this->assertTrue(class_exists($clase), "Falta la clase $clase");
+            $this->assertTrue(is_subclass_of($clase, \Illuminate\Foundation\Http\FormRequest::class), "$clase debe extender FormRequest");
+            $reglas = (new $clase)->rules();
+            foreach ($campos as $campo) {
+                $this->assertArrayHasKey($campo, $reglas, "$clase no tiene reglas para $campo");
+            }
+        }
+    }
 }

@@ -146,4 +146,22 @@ class RA6_9_ObrasTest extends TestCase
 
         $this->delete(route('trabajadores.faltas.destroy', [$otro, $falta]))->assertNotFound();
     }
+
+    public function test_cada_formulario_tiene_su_form_request()
+    {
+        $esperados = [
+            \App\Http\Requests\ObraRequest::class => ['descripcion', 'cliente_id'],
+            \App\Http\Requests\GastoRequest::class => ['direccion_obra', 'inicio_obra', 'fin_obra', 'solicitud_obra', 'mandante', 'gestion_licencia', 'pago_icio', 'presupuesto_id'],
+            \App\Http\Requests\FaltaRequest::class => ['fecha_inicio', 'fecha_fin', 'tipo', 'motivo'],
+        ];
+
+        foreach ($esperados as $clase => $campos) {
+            $this->assertTrue(class_exists($clase), "Falta la clase $clase");
+            $this->assertTrue(is_subclass_of($clase, \Illuminate\Foundation\Http\FormRequest::class), "$clase debe extender FormRequest");
+            $reglas = (new $clase)->rules();
+            foreach ($campos as $campo) {
+                $this->assertArrayHasKey($campo, $reglas, "$clase no tiene reglas para $campo");
+            }
+        }
+    }
 }

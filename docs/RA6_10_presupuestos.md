@@ -15,7 +15,20 @@ Las pantallas del presupuesto: sus líneas, sus proveedores y especialistas, y l
 
 1. **Las pantallas.** `PresupuestosController` y `routes/presupuestos.php`, con las siete rutas de los maestros. `store` redirige al **detalle**, para añadir las líneas a continuación.
     - Listado con las columnas `Código`, `Fecha`, `Cliente`, `Estado` y `Total` (el total se muestra en [6.13](./RA6_13_calculos.md); hasta entonces, la columna puede quedar vacía). El estado se muestra como `Aprobado` o `No aprobado`, con `<x-insignia>`.
-    - Formulario: `cliente_id` y `obra_id` (selectores), `fecha`, `iva` y `estado`. Validación: `cliente_id` obligatorio; `iva` entre 0 y 100. Si el presupuesto tiene obra y la obra tiene cliente, debe ser el mismo: error en `cliente_id`.
+    - Formulario: `cliente_id` y `obra_id` (selectores), `fecha`, `iva` y `estado`, con `PresupuestoRequest`:
+
+        | Campo | Reglas |
+        |:--|:--|
+        | `cliente_id` | `required`, `exists:clientes,id` |
+        | `obra_id` | `nullable`, `exists:obras,id` |
+        | `fecha` | `nullable`, `date` |
+        | `iva` | `nullable`, `numeric`, `between:0,100` |
+        | `estado` | `nullable`, `in:aprobado,no_aprobado` |
+        | `nombre_cliente`, `nif`, `direccion`, `telefono` | `nullable`, `string`, `max:255` (si no llegan, se copian del cliente al crear) |
+        | `proveedor_ids`, `especialista_ids` | `sometimes`, `array` (ejercicio 3) |
+        | `proveedor_ids.*` · `especialista_ids.*` | `exists:proveedores,id` · `exists:especialistas,id` |
+
+        En `after()`: si el presupuesto tiene obra y la obra tiene cliente, debe ser el mismo; si no, error en `cliente_id`.
 
 2. **Las líneas.** El detalle lista las líneas en una tabla (`Descripción`, `Uds.`, `Precio`, `Total`) con un botón de quitar en cada una, y un formulario debajo para añadir otra:
 
@@ -24,7 +37,15 @@ Las pantallas del presupuesto: sus líneas, sus proveedores y especialistas, y l
     | POST | `/presupuestos/{presupuesto}/lineas` | `presupuestos.lineas.store` |
     | DELETE | `/presupuestos/{presupuesto}/lineas/{linea}` | `presupuestos.lineas.destroy` |
 
-    Validación: `uds` entero ≥ 0; `precio` ≥ 0. Las dos vuelven al detalle. Una línea de otro presupuesto da 404.
+    `LineaPresupuestoRequest`:
+
+    | Campo | Reglas |
+    |:--|:--|
+    | `descripcion` | `nullable`, `string`, `max:255` |
+    | `uds` | `required`, `integer`, `min:0` |
+    | `precio` | `required`, `numeric`, `min:0` |
+
+    Las dos rutas vuelven al detalle. Una línea de otro presupuesto da 404.
 
 3. **Proveedores y especialistas.** Casillas `proveedor_ids[]` y `especialista_ids[]` en el formulario, marcadas con los que ya tiene, que se guardan con `sync`. El detalle del proveedor y del especialista lista sus presupuestos.
 
@@ -34,7 +55,7 @@ Las pantallas del presupuesto: sus líneas, sus proveedores y especialistas, y l
     |---|---|---|
     | POST | `/obras/{obra}/vincular-presupuesto` | `obras.vincular-presupuesto` |
 
-    Solo se aceptan presupuestos libres y del mismo cliente; si no, error en `presupuesto_id`. Vuelve al detalle de la obra, que lista sus presupuestos. (En [6.11](./RA6_11_partes.md), el detalle se divide en pestañas, y esto queda en *Resumen*.)
+    `VincularPresupuestoRequest` con `presupuesto_id`: `required`, `exists:presupuestos,id`, y en `after()`, que sea libre y del mismo cliente que la obra (`$this->route('obra')`); si no, error en `presupuesto_id`. Vuelve al detalle de la obra, que lista sus presupuestos. (En [6.11](./RA6_11_partes.md), el detalle se divide en pestañas, y esto queda en *Resumen*.)
 
 5. **Regla de borrado.** Un cliente con presupuestos no se borra: `clientes.destroy` vuelve atrás con `->with('error', 'motivo')`.
 
@@ -49,7 +70,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_10_PresupuestosTest.
 php artisan test --filter=RA6_10
 ```
 
-Resultado esperado: `Tests: 6 passed`.
+Resultado esperado: `Tests: 7 passed`.
 
 ## Git
 

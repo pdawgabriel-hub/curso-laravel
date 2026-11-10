@@ -119,4 +119,22 @@ class RA6_10_PresupuestosTest extends TestCase
         $this->from(route('clientes.show', $this->cliente->id))->followingRedirects()->delete(route('clientes.destroy', $this->cliente->id))
             ->assertSee('role="alert"', false);
     }
+
+    public function test_cada_formulario_tiene_su_form_request()
+    {
+        $esperados = [
+            \App\Http\Requests\PresupuestoRequest::class => ['cliente_id', 'obra_id', 'fecha', 'iva', 'estado', 'proveedor_ids', 'proveedor_ids.*', 'especialista_ids', 'especialista_ids.*'],
+            \App\Http\Requests\LineaPresupuestoRequest::class => ['descripcion', 'uds', 'precio'],
+            \App\Http\Requests\VincularPresupuestoRequest::class => ['presupuesto_id'],
+        ];
+
+        foreach ($esperados as $clase => $campos) {
+            $this->assertTrue(class_exists($clase), "Falta la clase $clase");
+            $this->assertTrue(is_subclass_of($clase, \Illuminate\Foundation\Http\FormRequest::class), "$clase debe extender FormRequest");
+            $reglas = (new $clase)->rules();
+            foreach ($campos as $campo) {
+                $this->assertArrayHasKey($campo, $reglas, "$clase no tiene reglas para $campo");
+            }
+        }
+    }
 }
