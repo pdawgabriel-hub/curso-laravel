@@ -14,11 +14,11 @@ Cierre del bloque: la aplicación debe poder usarse de principio a fin en el nav
 | 4 | Obras | Obra del cliente, que nace con su ficha de Gastos y estado `Pendiente` |
 | 5 | Detalle de la obra | Se vincula el presupuesto libre. Sin aprobar, la obra sigue sin precio |
 | 6 | Edición del presupuesto | Se aprueba → total de la obra `1.210,00` |
-| 7 | Detalle de la obra → parte de trabajo | Dos trabajadores a 20 €/h, 8 h cada uno → `16,00` horas y `320,00` de mano de obra |
+| 7 | Obra, pestaña *Partes de trabajo* | Dos trabajadores a 20 €/h, 8 h cada uno → `16,00` horas y `320,00` de mano de obra |
 | 8 | Edición del trabajador | Subir su tarifa no cambia lo ya registrado |
-| 9 | Detalle de la obra → partes externos | Proveedor de 200 € y especialista de 150 € → gastos `670,00` |
-| 10 | Detalle de la obra → ingreso de 500 € | Beneficio `-170,00`, pendiente `710,00`, margen `540,00`, `41,3` % cobrado, `Parcial`, `Rojo`; ficha `En proceso` |
-| 11 | Detalle de la obra → ingreso de 710 € | Beneficio `540,00`, `100,0` % cobrado, `Pagado`, `Verde`; ficha `Finalizada` |
+| 9 | Obra, pestañas *Proveedores* y *Especialistas* | Proveedor de 200 € y especialista de 150 € → gastos `670,00` |
+| 10 | Obra, pestaña *Ingresos* → ingreso de 500 € | Beneficio `-170,00`, pendiente `710,00`, margen `540,00`, `41,3` % cobrado, `Parcial`, `Rojo`; ficha `En proceso` |
+| 11 | Obra, pestaña *Ingresos* → ingreso de 710 € | Beneficio `540,00`, `100,0` % cobrado, `Pagado`, `Verde`; ficha `Finalizada` |
 | 12 | Borrar la obra | Rechazado: se vuelve atrás y se muestra el motivo |
 
 ## Ejercicios

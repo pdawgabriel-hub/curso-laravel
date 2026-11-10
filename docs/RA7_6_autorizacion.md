@@ -106,7 +106,7 @@ El calendario se ve con rol, pero a quien no es jefe no le aparecen los ingresos
 
 5. **El propietario.** En la API, igual que en la web de [6.9](./RA6_9_obras.md) y [6.11](./RA6_11_partes.md): `user_id` es siempre el usuario autenticado, y lo que venga en la petición se ignora. Inclúyelo en la respuesta de partes y faltas.
 
-6. **Las pantallas.** Una regla que solo está en la API no protege nada: quien entra por la web pasaría igual. Añade `Gate::authorize()` a los controladores web, con las mismas _Policies_, y usa `@can` para mostrar solo los botones permitidos. A quien no es jefe no se le muestran los ingresos en el detalle de la obra, ni Gastos en el menú.
+6. **Las pantallas.** Una regla que solo está en la API no protege nada: quien entra por la web pasaría igual. Añade `Gate::authorize()` a los controladores web, con las mismas _Policies_, y usa `@can` para mostrar solo los botones permitidos. A quien no es jefe no se le muestra Gastos en el menú ni la pestaña *Ingresos* en el detalle de la obra: quítala de `$pestanas` con `Arr::except(self::PESTANAS, 'ingresos')` cuando `Gate::denies('viewAny', Ingreso::class)`. Así, pedir `?pestana=ingresos` por URL muestra el resumen.
 
 7. **El calendario.** `GET /calendario` omite los ingresos a quien no puede verlos.
 

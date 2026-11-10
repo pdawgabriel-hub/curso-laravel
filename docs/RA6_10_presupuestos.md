@@ -34,7 +34,7 @@ Las pantallas del presupuesto: sus líneas, sus proveedores y especialistas, y l
     |---|---|---|
     | POST | `/obras/{obra}/vincular-presupuesto` | `obras.vincular-presupuesto` |
 
-    Solo se aceptan presupuestos libres y del mismo cliente; si no, error en `presupuesto_id`. Vuelve al detalle de la obra, que lista sus presupuestos.
+    Solo se aceptan presupuestos libres y del mismo cliente; si no, error en `presupuesto_id`. Vuelve al detalle de la obra, que lista sus presupuestos. (En [6.11](./RA6_11_partes.md), el detalle se divide en pestañas, y esto queda en *Resumen*.)
 
 5. **Regla de borrado.** Un cliente con presupuestos no se borra: `clientes.destroy` vuelve atrás con `->with('error', 'motivo')`.
 

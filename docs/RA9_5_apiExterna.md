@@ -20,7 +20,7 @@ Obtener las coordenadas de la dirección de una obra con el servicio público de
    - **422** si la obra no tiene ninguna dirección (sin llamar al servicio).
    - **404** si el servicio no encuentra la dirección.
    - **503** si el servicio falla o no responde.
-3. Mapa en el detalle de la obra con [Leaflet](https://leafletjs.com/) (desde un CDN) y un marcador en las coordenadas.
+3. Mapa en la pestaña *Resumen* del detalle de la obra con [Leaflet](https://leafletjs.com/) (desde un CDN) y un marcador en las coordenadas.
 
 ## Comprueba tu solución automáticamente
 

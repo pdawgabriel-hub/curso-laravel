@@ -10,6 +10,7 @@ Las faltas, las líneas, los partes y los ingresos no tienen pantalla propia: ig
 - `<ReferenceManyField reference="faltas" target="trabajador_id">` pide al _dataProvider_ `getManyReference('faltas', { target: 'trabajador_id', id })`, que el nuestro convierte en `GET /trabajadores/{id}/faltas`.
 - **Alta con el padre ya puesto:** un `<CreateButton>` puede pasar al formulario un registro inicial con `state={{ record: { trabajador_id: 5 } }}`. Así el `create` del _dataProvider_ sabe a qué URL enviarlo.
 - **Volver al padre:** el `redirect` de `<Create>` admite una función que recibe los datos guardados y devuelve la ruta, por ejemplo `trabajadores/5/show`.
+- **Pestañas con ruta:** en `<TabbedShowLayout>`, `<TabbedShowLayout.Tab label="Ingresos" path="ingresos">` abre esa pestaña en `#/obras/5/show/ingresos`. Se usan las mismas claves que `?pestana=` en la web ([6.11](./RA6_11_partes.md)), y tras dar de alta un hijo se vuelve a su pestaña: `obras/5/show/ingresos`.
 - **Borrar sin salir de la ficha:** `<DeleteButton redirect={false}>`. El _dataProvider_ recibe el registro borrado (`previousData`) y saca de él el id del padre.
 - Un recurso registrado solo con `create` (`<Resource name="faltas" create={FaltaCreate} />`) no aparece en el menú, pero tiene su formulario de alta.
 
@@ -30,9 +31,10 @@ export const AltaHijo = ({ recurso, clave, texto }: { recurso: string; clave: st
 /** Borrar un hijo sin salir de la ficha del padre. */
 export const BorrarHijo = () => <DeleteButton redirect={false} mutationMode="pessimistic" />;
 
-/** Tras dar de alta un hijo, se vuelve a la ficha de su padre. */
-export const volverAlPadre = (padre: string, clave: string) => (_recurso?: string, _id?: unknown, datos?: Record<string, unknown>) =>
-    `${padre}/${datos?.[clave]}/show`;
+/** Tras dar de alta un hijo, se vuelve a la ficha de su padre y, si se indica, a una de sus pestañas. */
+export const volverAlPadre = (padre: string, clave: string, pestana?: string) =>
+    (_recurso?: string, _id?: unknown, datos?: Record<string, unknown>) =>
+        `${padre}/${datos?.[clave]}/show${pestana ? `/${pestana}` : ''}`;
 ```
 
 En `recursos/trabajadores.tsx`, la ficha del trabajador con sus faltas y el formulario de alta:
@@ -86,7 +88,16 @@ Y en `App.tsx`, `<Resource {...faltas} />`.
 
 2. **Las líneas del presupuesto.** En la ficha del presupuesto (`PresupuestoShow`), la lista de líneas con un botón *Nueva línea*, y el recurso `lineasPresupuesto` (`name: 'lineas-presupuesto'`) con su alta: descripción, unidades y precio, y vuelta al presupuesto.
 
-3. **Partes e ingresos de la obra.** En `ObraShow`, una pestaña por cada tipo de hijo (*Partes de trabajo*, *Proveedores*, *Especialistas* e *Ingresos*), con su lista, su botón de alta y su botón de borrar. Exporta los recursos de alta en un array `hijosDeObra` y regístralos en `App.tsx` con `hijosDeObra.map(...)`. En los partes externos, el proveedor o el especialista se eligen con `<ReferenceInput>`; el importe debe ser mayor que 0.
+3. **Partes e ingresos de la obra.** En `ObraShow`, una pestaña por cada tipo de hijo, con su lista, su botón de alta y su botón de borrar, igual que en la web:
+
+    Pestaña (`path`) | Recurso | Columnas | Botón de alta
+    -----|----|----|----
+    *Partes de trabajo* (`partes-trabajo`) | `partes-trabajo` | fecha, descripción, horas | *Nuevo parte*
+    *Proveedores* (`partes-proveedor`) | `partes-proveedor` | fecha, proveedor, documento, importe, estado de pago | *Nuevo parte de proveedor*
+    *Especialistas* (`partes-especialista`) | `partes-especialista` | fecha, especialista, documento, importe, estado de pago | *Nuevo parte de especialista*
+    *Ingresos* (`ingresos`) | `ingresos` | código, fecha, tipo, importe | *Nuevo ingreso*
+
+    Cada formulario de alta vuelve a su pestaña: `redirect={volverAlPadre('obras', 'obra_id', 'ingresos')}`. Exporta los recursos de alta en un array `hijosDeObra` y regístralos en `App.tsx` con `hijosDeObra.map(...)`. En los partes externos, el proveedor o el especialista se eligen con `<ReferenceInput>`; el importe debe ser mayor que 0.
 
 4. **Opcional: las líneas de un parte.** El recurso `lineas-parte` cuelga de `partes-trabajo`. Si quieres verlas, hace falta una ficha del parte, con su propio `ReferenceManyField`.
 
@@ -103,7 +114,7 @@ npm run type-check
 npm run build
 ```
 
-Resultado esperado: `Tests 27 passed` entre los cuatro ficheros de Vitest, `type-check` sin errores y la compilación terminada.
+Resultado esperado: `Tests 29 passed` entre los cuatro ficheros de Vitest, `type-check` sin errores y la compilación terminada.
 
 ## Git
 

@@ -40,6 +40,7 @@ Antes de construir las pantallas de cada entidad, la aplicación cambia de aspec
 | `<x-boton>` | Enlace (con `href`) o botón | `href`, `variante` (`primario`, `secundario`, `peligro`), `type` |
 | `<x-tabla>` | Tabla con cabecera; sin filas, muestra un mensaje | `columnas`, `vacio`; slot `pie` |
 | `<x-tarjeta>` | Bloque blanco con título | `titulo`; slot `acciones` |
+| `<x-pestanas>` | Fila de pestañas: cada una es un enlace a la misma página con `?pestana=clave` | `pestanas` (`clave => texto`), `activa` |
 | `<x-dato>` | Par etiqueta/valor dentro de un `<dl>` | `etiqueta` |
 | `<x-insignia>` | Estado en una pastilla de color | `color` (`gris`, `verde`, `ambar`, `rojo`, `azul`) |
 | `<x-kpi>` | Indicador numérico grande | `etiqueta`, `tono` (`neutro`, `positivo`, `negativo`) |
@@ -61,6 +62,7 @@ Los tests de este bloque no miran colores ni clases, sino la estructura. Los com
 | Menú | `<nav aria-label="Principal">`, y la entrada de la sección actual con `aria-current="page"` |
 | Título | Un `<h1>` con el título de la página |
 | Mensajes | Éxito con `role="status"`; error con `role="alert"` |
+| Pestañas | `<nav aria-label="Pestañas">`, un enlace por pestaña con `pestana=clave` en la URL, y la activa con `aria-current="page"` |
 | Tablas | Encabezados `<th scope="col">` con los nombres de columna que pide cada ejercicio, y un texto que empiece por `No hay` cuando no hay filas |
 | Formularios | Tras un error de validación, el valor enviado sigue en el campo, el campo lleva `aria-invalid="true"` y el mensaje aparece en la página |
 | Borrar | Formulario con `_method` `DELETE` y `onsubmit="return confirm(…)"` |
@@ -97,7 +99,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_5_InterfazTest.php t
 php artisan test --filter=RA6_5
 ```
 
-Resultado esperado: `Tests: 9 passed`.
+Resultado esperado: `Tests: 10 passed`.
 
 ## Git
 

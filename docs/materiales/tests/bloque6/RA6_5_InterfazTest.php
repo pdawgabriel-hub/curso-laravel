@@ -118,4 +118,14 @@ class RA6_5_InterfazTest extends TestCase
         $this->blade('<x-kpi etiqueta="Beneficio" tono="negativo">-170,00</x-kpi>')->assertSeeInOrder(['Beneficio', '-170,00']);
         $this->blade('<x-progreso :porcentaje="41.3" />')->assertSee('role="progressbar"', false)->assertSee('aria-valuenow="41.3"', false);
     }
+
+    public function test_pestanas_con_enlaces_y_la_activa_marcada()
+    {
+        $html = (string) $this->blade('<x-pestanas :pestanas="[\'resumen\' => \'Resumen\', \'ingresos\' => \'Ingresos\']" activa="ingresos" />');
+
+        $this->assertStringContainsString('<nav aria-label="Pestañas"', $html);
+        $this->assertStringContainsString('pestana=resumen', $html);
+        $this->assertMatchesRegularExpression('#pestana=ingresos"[^>]*aria-current="page"[^>]*>\s*Ingresos#', $html, 'La pestaña activa lleva aria-current="page"');
+        $this->assertSame(1, substr_count($html, 'aria-current="page"'), 'Solo una pestaña está activa');
+    }
 }

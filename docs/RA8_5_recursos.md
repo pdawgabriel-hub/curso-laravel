@@ -20,7 +20,6 @@ Cada entidad tiene su fichero en `resources/js/react-admin/recursos/`, con su li
 `resources/js/react-admin/recursos/clientes.tsx`:
 
 ```tsx
-import PeopleIcon from '@mui/icons-material/People';
 import {
     Create,
     Datagrid,
@@ -111,7 +110,6 @@ export const ClienteShow = () => (
 /** Todo lo que necesita <Resource> en App.tsx: <Resource {...clientes} />. */
 export const clientes: ResourceProps = {
     name: 'clientes',
-    icon: PeopleIcon,
     options: { label: 'Clientes' },
     recordRepresentation: 'nombre_completo',
     list: ClienteList,
@@ -152,11 +150,34 @@ export const App = () => (
     `obras.tsx` | `obras` y `gastos` | `Código`, descripción, cliente, total, salud | descripción obligatoria; cliente con `ReferenceInput`
     `obras.tsx` (Gastos) | `gastos`, sin `create` | `Código`, obra, gastos, debe | dirección y fechas de la obra
 
-    Cada recurso tiene su `icon` (de `@mui/icons-material`) y su `recordRepresentation`, que es lo que mostrarán los `ReferenceField` que apunten a él: el `codigo` en presupuestos y obras, el `nombre` en proveedores y especialistas, el `nombre_completo` en trabajadores.
+    Cada recurso tiene su `recordRepresentation`, que es lo que mostrarán los `ReferenceField` que apunten a él: el `codigo` en presupuestos y obras, el `nombre` en proveedores y especialistas, el `nombre_completo` en trabajadores.
 
-3. **La ficha de la obra.** Muestra los indicadores de [6.13](./RA6_13_calculos.md) que devuelve la API: total, gastos, beneficio, pendiente y porcentaje cobrado. Usa `<TabbedShowLayout>`: la primera pestaña, *Resumen*; las demás llegan en [8.6](./RA8_6_anidados.md).
+3. **La ficha de la obra.** Muestra los indicadores de [6.13](./RA6_13_calculos.md) que devuelve la API: total, gastos, beneficio, pendiente y porcentaje cobrado. Usa `<TabbedShowLayout>`: la primera pestaña, *Resumen*, sin `path`; las demás llegan en [8.6](./RA8_6_anidados.md).
 
-4. **El menú.** Registra todos los recursos en `App.tsx`. El menú lateral de React-Admin muestra los que tienen `list`.
+4. **El menú.** Registra todos los recursos en `App.tsx`. El menú lateral de React-Admin muestra los que tienen `list`, cada uno con un icono. Para que sea solo texto, como el de la web, `Layout.tsx` le pasa a React-Admin un menú propio:
+
+    ```tsx
+    import type { ReactNode } from 'react';
+    import { Layout as RALayout, Menu, useResourceDefinitions } from 'react-admin';
+
+    /** Menú lateral solo con texto: un enlace por cada recurso que tiene listado. */
+    export const MenuDeTexto = () => {
+        const recursos = useResourceDefinitions();
+        return (
+            <Menu>
+                {Object.values(recursos)
+                    .filter((r) => r.hasList)
+                    .map((r) => (
+                        <Menu.Item key={r.name} to={`/${r.name}`} primaryText={r.options?.label ?? r.name} />
+                    ))}
+            </Menu>
+        );
+    };
+
+    export const Layout = ({ children }: { children: ReactNode }) => <RALayout menu={MenuDeTexto}>{children}</RALayout>;
+    ```
+
+    Sin iconos, el menú plegado no muestra nada; se abre y se cierra con el botón de la barra superior.
 
 5. **Investiga.** Responde en tu _pull request_:
     - Entra como administrativa e intenta borrar un cliente. ¿Qué responde la API y qué muestra React-Admin? ¿Quién protege de verdad los datos?

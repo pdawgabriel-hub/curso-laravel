@@ -32,7 +32,7 @@ Con el volumen de una empresa de reformas (decenas o cientos de obras), calcular
 
 4. **En las vistas.**
 
-    - Detalle de la obra: cinco `<x-kpi>` con *Total presupuesto*, *Gastos*, *Beneficio de caja* (tono `negativo` si es menor que 0), *Pendiente de cobro* y *Margen proyectado*; un `<x-progreso>` con el porcentaje cobrado, y la salud y el estado de pago con `<x-insignia>` (verde, ámbar o rojo).
+    - Detalle de la obra, en la pestaña *Resumen*: cinco `<x-kpi>` con *Total presupuesto*, *Gastos*, *Beneficio de caja* (tono `negativo` si es menor que 0), *Pendiente de cobro* y *Margen proyectado*; un `<x-progreso>` con el porcentaje cobrado, y la salud y el estado de pago con `<x-insignia>` (verde, ámbar o rojo).
     - Detalle de la ficha de Gastos (`gastos.show`): gastos, ingresos, beneficio real, pendiente y estado.
     - Detalle del trabajador: horas y coste acumulados.
     - **Formato:** importes y horas con el helper `Formato` de [6.6](./RA6_6_maestros.md) (`1.210,00`, `-170,00`, `16,00`); el porcentaje con un decimal (`41,3`).

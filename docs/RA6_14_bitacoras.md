@@ -30,7 +30,9 @@ Observaciones, incidencias y archivos adjuntos para cualquier entidad, con tres 
     - Una `<x-tarjeta>` de observaciones y otra de incidencias, con un formulario de una sola línea; el autor es el usuario conectado y se muestra con la fecha.
     - Una `<x-tarjeta>` de adjuntos con subida de fichero (`<x-formulario :ficheros="true">` o `enctype="multipart/form-data"`), descarga y borrado.
 
-    Rutas web de los formularios, protegidas con `auth`, que al guardar vuelven a la página anterior:
+    En la obra, estas tarjetas van en `obras/show.blade.php` **debajo de las pestañas y fuera de ellas**, como el historial de Odoo bajo el formulario: se ven en todas.
+
+    Rutas web de los formularios, protegidas con `auth`, que al guardar vuelven a la página anterior (con su `?pestana=`):
 
     | Método | URL | Nombre |
     |:--|:--|:--|

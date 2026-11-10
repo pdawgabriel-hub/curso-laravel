@@ -112,7 +112,7 @@ Route::get('presupuestos/{presupuesto}/pdf', [PdfController::class, 'presupuesto
     | `/partes-trabajo/{parteTrabajo}/pdf` | `partes-trabajo.pdf` | `pdf.parte-trabajo` | Obra, fecha, descripción y una fila por trabajador con horas, tarifa y subtotal |
     | `/gastos/{gasto}/pdf` | `gastos.pdf` | `pdf.gasto` | Datos de la obra y de su ficha (fechas, licencia, ICIO), costes por tipo, ingresos, beneficio real y pendiente |
 
-3. **El botón *Imprimir*.** En el detalle del presupuesto, del parte y de la ficha de Gastos, un `<x-boton :href="route('presupuestos.pdf', $presupuesto)" variante="secundario" target="_blank">Imprimir</x-boton>`.
+3. **El botón *Imprimir*.** En el detalle del presupuesto, en cada fila de la pestaña *Partes de trabajo* de la obra y en la ficha de Gastos, un `<x-boton :href="route('presupuestos.pdf', $presupuesto)" variante="secundario" target="_blank">Imprimir</x-boton>`.
 
 4. **Investiga.** Responde en tu _pull request_: cambia `stream()` por `download()`. ¿Qué diferencia notas en el navegador? ¿Por qué la vista del PDF no usa `<x-layout>` ni las clases de Tailwind?
 

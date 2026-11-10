@@ -64,6 +64,12 @@ class RA6_15_FlujoWebTest extends TestCase
         $destino ? $response->assertRedirect($destino) : $response->assertRedirect();
     }
 
+    /** URL del detalle de la obra con una pestaña abierta (6.11). */
+    private function pestana(Obra $obra, string $clave): string
+    {
+        return route('obras.show', [$obra->id, 'pestana' => $clave]);
+    }
+
     /** Datos de partida: un cliente, dos trabajadores, un proveedor y un especialista, creados por formulario. */
     private function maestros(): array
     {
@@ -134,8 +140,8 @@ class RA6_15_FlujoWebTest extends TestCase
         $this->enviar('post', route('obras.partes-trabajo.store', $obra), [
             'descripcion' => 'Demolición de tabiques',
             'lineas' => [['trabajador_id' => $ana->id, 'horas' => 8], ['trabajador_id' => $luis->id, 'horas' => 8]],
-        ], route('obras.show', $obra));
-        $this->get(route('obras.show', $obra))->assertSee('Demolición de tabiques')->assertSee('16,00')->assertSee('320,00')->assertSee('Ana Sanz')->assertSee('Luis Gil');
+        ], $this->pestana($obra, 'partes-trabajo'));
+        $this->get($this->pestana($obra, 'partes-trabajo'))->assertSee('Demolición de tabiques')->assertSee('16,00')->assertSee('320,00')->assertSee('Ana Sanz')->assertSee('Luis Gil');
         $this->get(route('trabajadores.show', $ana))->assertSee('8,00')->assertSee('160,00');
 
         // Subir la tarifa no cambia lo ya registrado
@@ -144,10 +150,12 @@ class RA6_15_FlujoWebTest extends TestCase
 
         // Costes externos
         $this->assertFormulario(route('obras.partes-proveedor.create', $obra), route('obras.partes-proveedor.store', $obra), ['proveedor_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago']);
-        $this->enviar('post', route('obras.partes-proveedor.store', $obra), ['proveedor_id' => $proveedor->id, 'importe' => 200], route('obras.show', $obra));
+        $this->enviar('post', route('obras.partes-proveedor.store', $obra), ['proveedor_id' => $proveedor->id, 'importe' => 200], $this->pestana($obra, 'partes-proveedor'));
         $this->assertFormulario(route('obras.partes-especialista.create', $obra), route('obras.partes-especialista.store', $obra), ['especialista_id', 'fecha', 'descripcion', 'documento', 'importe', 'estado_pago']);
-        $this->enviar('post', route('obras.partes-especialista.store', $obra), ['especialista_id' => $especialista->id, 'importe' => 150], route('obras.show', $obra));
-        $this->get(route('obras.show', $obra))->assertSee('670,00')->assertSee('Cerámicas Levante')->assertSee('Marta Vidal');
+        $this->enviar('post', route('obras.partes-especialista.store', $obra), ['especialista_id' => $especialista->id, 'importe' => 150], $this->pestana($obra, 'partes-especialista'));
+        $this->get(route('obras.show', $obra))->assertSee('670,00');
+        $this->get($this->pestana($obra, 'partes-proveedor'))->assertSee('Cerámicas Levante');
+        $this->get($this->pestana($obra, 'partes-especialista'))->assertSee('Marta Vidal');
 
         return $obra;
     }
@@ -162,9 +170,9 @@ class RA6_15_FlujoWebTest extends TestCase
 
         // Primer cobro: 500 € → parcial, en rojo, 41,3 % cobrado
         $this->assertFormulario(route('obras.ingresos.create', $obra), route('obras.ingresos.store', $obra), ['importe', 'tipo', 'fecha', 'documento', 'num_documento']);
-        $this->enviar('post', route('obras.ingresos.store', $obra), ['importe' => 500, 'tipo' => 'Transferencia'], route('obras.show', $obra));
+        $this->enviar('post', route('obras.ingresos.store', $obra), ['importe' => 500, 'tipo' => 'Transferencia'], $this->pestana($obra, 'ingresos'));
+        $this->get($this->pestana($obra, 'ingresos'))->assertSee(Ingreso::firstOrFail()->codigo);
         $this->get(route('obras.show', $obra))
-            ->assertSee(Ingreso::firstOrFail()->codigo)
             ->assertSee('-170,00')      // beneficio de caja
             ->assertSee('710,00')       // pendiente de cobro
             ->assertSee('540,00')       // margen proyectado
@@ -181,7 +189,7 @@ class RA6_15_FlujoWebTest extends TestCase
             ->assertSee('En proceso');
 
         // Segundo cobro: 710 € → pagado, en verde, 100 % cobrado
-        $this->enviar('post', route('obras.ingresos.store', $obra), ['importe' => 710], route('obras.show', $obra));
+        $this->enviar('post', route('obras.ingresos.store', $obra), ['importe' => 710], $this->pestana($obra, 'ingresos'));
         $this->get(route('obras.show', $obra))->assertDontSee('-170,00')->assertSee('540,00')->assertSee('100,0')->assertSee('Pagado')->assertSee('Verde');
         $this->get(route('gastos.show', $gasto))->assertSee('1.210,00')->assertSee('540,00')->assertSee('Finalizada');
 
@@ -295,15 +303,14 @@ class RA6_15_FlujoWebTest extends TestCase
         $pe = ParteEspecialista::factory()->create(['obra_id' => $obra->id]);
         $ingreso = Ingreso::factory()->create(['obra_id' => $obra->id]);
         $rutas = [
-            route('obras.partes-trabajo.destroy', [$obra, $parte]),
-            route('obras.partes-proveedor.destroy', [$obra, $pp]),
-            route('obras.partes-especialista.destroy', [$obra, $pe]),
-            route('obras.ingresos.destroy', [$obra, $ingreso]),
+            'partes-trabajo' => route('obras.partes-trabajo.destroy', [$obra, $parte]),
+            'partes-proveedor' => route('obras.partes-proveedor.destroy', [$obra, $pp]),
+            'partes-especialista' => route('obras.partes-especialista.destroy', [$obra, $pe]),
+            'ingresos' => route('obras.ingresos.destroy', [$obra, $ingreso]),
         ];
-        $pagina = $this->get(route('obras.show', $obra));
-        foreach ($rutas as $ruta) {
-            $pagina->assertSee($ruta, false);
-            $this->enviar('delete', $ruta, [], route('obras.show', $obra));
+        foreach ($rutas as $clave => $ruta) {
+            $this->get($this->pestana($obra, $clave))->assertSee($ruta, false);
+            $this->enviar('delete', $ruta, [], $this->pestana($obra, $clave));
         }
         $this->assertDatabaseCount('partes_trabajo', 0);
         $this->assertDatabaseCount('partes_proveedor', 0);

@@ -2,6 +2,8 @@ import { cleanup, render, screen } from '@testing-library/react';
 import { AdminContext, ResourceContextProvider, testDataProvider } from 'react-admin';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { volverAlPadre } from '../recursos/comunes';
+import { ObraShow } from '../recursos/obras';
 import { PresupuestoShow } from '../recursos/presupuestos';
 import { TrabajadorShow } from '../recursos/trabajadores';
 
@@ -43,5 +45,34 @@ describe('8.6 · Hijos en la ficha del padre', () => {
         expect(dp.getManyReference).toHaveBeenCalledWith('lineas-presupuesto', expect.objectContaining({ target: 'presupuesto_id', id: 5 }));
         expect(await screen.findByText('Alicatado')).toBeTruthy();
         expect(screen.getByText('Nueva línea')).toBeTruthy();
+    });
+
+    it('la ficha de la obra abre la pestaña de su URL, con su lista y su alta', async () => {
+        const dataProvider = testDataProvider({
+            getOne: vi.fn(async () => ({ data: { id: 5, codigo: 'OBR0005', descripcion: 'Reforma de baño', cliente_id: 1 } })) as any,
+            getMany: vi.fn(async () => ({ data: [] })) as any,
+            getManyReference: vi.fn(async () => ({ data: [{ id: 1, obra_id: 5, codigo: 'ING0001', importe: 500 }], total: 1 })) as any,
+        });
+        render(
+            <MemoryRouter initialEntries={['/obras/5/show/ingresos']}>
+                <AdminContext dataProvider={dataProvider}>
+                    <ResourceContextProvider value="obras">
+                        <Routes>
+                            <Route path="/obras/:id/show/*" element={<ObraShow />} />
+                        </Routes>
+                    </ResourceContextProvider>
+                </AdminContext>
+            </MemoryRouter>,
+        );
+
+        expect(await screen.findByText('ING0001')).toBeTruthy();
+        expect(screen.getByText('Nuevo ingreso')).toBeTruthy();
+        expect(dataProvider.getManyReference).toHaveBeenCalledWith('ingresos', expect.objectContaining({ target: 'obra_id', id: 5 }));
+        expect(screen.queryByText('Nuevo parte')).toBeNull();
+    });
+
+    it('tras dar de alta un hijo se vuelve a su pestaña', () => {
+        expect(volverAlPadre('obras', 'obra_id', 'ingresos')(undefined, undefined, { obra_id: 5 })).toBe('obras/5/show/ingresos');
+        expect(volverAlPadre('trabajadores', 'trabajador_id')(undefined, undefined, { trabajador_id: 3 })).toBe('trabajadores/3/show');
     });
 });

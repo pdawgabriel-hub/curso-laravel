@@ -61,7 +61,7 @@ class RA7_6_AutorizacionWebTest extends TestCase
         $ajeno = ParteTrabajo::factory()->create(['obra_id' => $obra->id, 'user_id' => User::factory()->create()->id]);
 
         $this->actingAs($yo);
-        $pagina = $this->get(route('obras.show', $obra->id))->assertOk();
+        $pagina = $this->get(route('obras.show', [$obra->id, 'pestana' => 'partes-trabajo']))->assertOk();
         $pagina->assertSee(route('obras.partes-trabajo.destroy', [$obra, $mio]), false)->assertDontSee(route('obras.partes-trabajo.destroy', [$obra, $ajeno]), false);
         $this->delete(route('obras.partes-trabajo.destroy', [$obra, $mio]))->assertRedirect();
         $this->delete(route('obras.partes-trabajo.destroy', [$obra, $ajeno]))->assertForbidden();
@@ -81,7 +81,8 @@ class RA7_6_AutorizacionWebTest extends TestCase
         $this->get(route('gastos.show', $obra->gasto))->assertForbidden();
         $this->post(route('obras.ingresos.store', $obra), ['importe' => 10])->assertForbidden();
         $this->delete(route('obras.ingresos.destroy', [$obra, $ingreso]))->assertForbidden();
-        $this->get(route('obras.show', $obra))->assertOk()->assertDontSee($ingreso->codigo);
+        $this->get(route('obras.show', [$obra->id, 'pestana' => 'ingresos']))->assertOk()
+            ->assertDontSee($ingreso->codigo)->assertDontSee('pestana=ingresos"', false);
         $this->assertDatabaseCount('ingresos', 1);
     }
 }

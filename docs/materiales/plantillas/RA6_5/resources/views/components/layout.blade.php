@@ -43,11 +43,10 @@
                                     <li>
                                         <a href="{{ route($ruta) }}" @if ($activo) aria-current="page" @endif
                                            @class([
-                                               'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition',
-                                               'bg-slate-800 text-white' => $activo,
-                                               'hover:bg-slate-800/60 hover:text-white' => ! $activo,
+                                               'block rounded-md border-l-[3px] px-3 py-2 text-sm font-medium transition',
+                                               'border-amber-400 bg-slate-800 text-white' => $activo,
+                                               'border-transparent hover:bg-slate-800/60 hover:text-white' => ! $activo,
                                            ])>
-                                            <span @class(['size-1.5 rounded-full', 'bg-amber-400' => $activo, 'bg-slate-600' => ! $activo])></span>
                                             {{ $texto }}
                                         </a>
                                     </li>
