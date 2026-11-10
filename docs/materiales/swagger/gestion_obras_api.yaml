@@ -1881,10 +1881,6 @@ components:
           type: string
         num_documento:
           type: string
-        base:
-          type: number
-        iva:
-          type: number
     Especialista:
       type: object
       properties:
@@ -1902,8 +1898,6 @@ components:
           type: string
         correo:
           type: string
-        importe:
-          type: number
     Falta:
       type: object
       properties:

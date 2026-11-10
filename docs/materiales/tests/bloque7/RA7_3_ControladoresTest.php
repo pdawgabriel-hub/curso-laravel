@@ -45,7 +45,7 @@ class RA7_3_ControladoresTest extends FeatureTestCase
         return match ($nombre) {
             'clientes' => ['/api/v1/clientes', Cliente::factory()->create(), ['nombre' => 'Ana', 'direccion' => 'C/ Sol 1', 'telefono' => '600000000'], ['nombre', 'direccion', 'telefono'], null],
             'trabajadores' => ['/api/v1/trabajadores', Trabajador::factory()->create(), ['nombre' => 'Luis', 'apellido' => 'Gil'], ['nombre', 'apellido'], null],
-            'proveedores' => ['/api/v1/proveedores', Proveedor::factory()->create(), ['nombre' => 'Sur', 'base' => 100, 'iva' => 21], ['nombre', 'base', 'iva'], null],
+            'proveedores' => ['/api/v1/proveedores', Proveedor::factory()->create(), ['nombre' => 'Sur', 'tipo' => 'Materiales'], ['nombre'], null],
             'especialistas' => ['/api/v1/especialistas', Especialista::factory()->create(), ['nombre' => 'Marta'], ['nombre'], null],
             'presupuestos' => ['/api/v1/presupuestos', Presupuesto::factory()->create(), ['cliente_id' => Cliente::factory()->create()->id], ['cliente_id'], null],
             'obras' => ['/api/v1/obras', Obra::factory()->create(), ['descripcion' => 'Reforma de baño'], [], null],

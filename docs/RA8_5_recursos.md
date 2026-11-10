@@ -144,8 +144,8 @@ export const App = () => (
     Fichero | Exporta | Listado | Formulario
     -----|----|----|----
     `trabajadores.tsx` | `trabajadores` | `Código`, nombre, tipo, tarifa | nombre y apellido obligatorios, tipo, teléfono, tarifa ≥ 0
-    `proveedores.tsx` | `proveedores` | `Código`, nombre, tipo, total | nombre, base e IVA obligatorios; correo con `email()`; IVA entre 0 y 100
-    `especialistas.tsx` | `especialistas` | `Código`, nombre, tipo, teléfono | nombre obligatorio; correo; importe ≥ 0; notas
+    `proveedores.tsx` | `proveedores` | `Código`, nombre, tipo, teléfono | nombre obligatorio; correo con `email()`; dirección, tipo, referencia y documento
+    `especialistas.tsx` | `especialistas` | `Código`, nombre, tipo, teléfono | nombre obligatorio; correo; notas
     `presupuestos.tsx` | `presupuestos` | `Código`, fecha, cliente (`ReferenceField`), estado, total; filtro por estado | cliente y obra con `ReferenceInput`; fecha, IVA, estado; proveedores y especialistas con `ReferenceArrayInput`
     `obras.tsx` | `obras` y `gastos` | `Código`, descripción, cliente, total, salud | descripción obligatoria; cliente con `ReferenceInput`
     `obras.tsx` (Gastos) | `gastos`, sin `create` | `Código`, obra, gastos, debe | dirección y fechas de la obra

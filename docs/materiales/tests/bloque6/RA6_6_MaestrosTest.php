@@ -167,14 +167,14 @@ class RA6_6_MaestrosTest extends TestCase
     {
         $this->entrar();
 
-        $this->post(route('proveedores.store'), ['nombre' => 'Materiales Sur', 'base' => 100, 'iva' => 21])->assertSessionHasNoErrors()->assertRedirect(route('proveedores.index'));
+        $this->post(route('proveedores.store'), ['nombre' => 'Materiales Sur', 'tipo' => 'Materiales'])->assertSessionHasNoErrors()->assertRedirect(route('proveedores.index'));
         $p = Proveedor::firstOrFail();
-        $this->get(route('proveedores.index'))->assertSee('Materiales Sur')->assertSee('121,00');
-        $this->get(route('proveedores.show', $p->id))->assertSee($p->codigo)->assertSee('121,00');
-        $this->put(route('proveedores.update', $p->id), ['nombre' => 'Materiales Norte', 'base' => 100, 'iva' => 21])->assertRedirect(route('proveedores.show', $p->id));
+        $this->get(route('proveedores.index'))->assertSee('Materiales Sur');
+        $this->get(route('proveedores.show', $p->id))->assertSee($p->codigo)->assertSee('Materiales');
+        $this->put(route('proveedores.update', $p->id), ['nombre' => 'Materiales Norte'])->assertRedirect(route('proveedores.show', $p->id));
         $this->assertDatabaseHas('proveedores', ['id' => $p->id, 'nombre' => 'Materiales Norte']);
 
-        $this->post(route('proveedores.store'), ['nombre' => 'X', 'base' => -1, 'iva' => 150, 'correo' => 'mal'])->assertSessionHasErrors(['base', 'iva', 'correo']);
+        $this->post(route('proveedores.store'), ['correo' => 'mal'])->assertSessionHasErrors(['nombre', 'correo']);
 
         $this->delete(route('proveedores.destroy', $p->id))->assertRedirect(route('proveedores.index'));
         $this->assertDatabaseCount('proveedores', 0);
@@ -190,7 +190,7 @@ class RA6_6_MaestrosTest extends TestCase
         $this->get(route('especialistas.show', $e->id))->assertSee('Arquitecta');
         $this->put(route('especialistas.update', $e->id), ['nombre' => 'Marta Vidal'])->assertRedirect(route('especialistas.show', $e->id));
 
-        $this->post(route('especialistas.store'), ['importe' => -1])->assertSessionHasErrors(['nombre', 'importe']);
+        $this->post(route('especialistas.store'), ['correo' => 'mal'])->assertSessionHasErrors(['nombre', 'correo']);
 
         $this->delete(route('especialistas.destroy', $e->id))->assertRedirect(route('especialistas.index'));
         $this->assertDatabaseCount('especialistas', 0);
@@ -201,8 +201,8 @@ class RA6_6_MaestrosTest extends TestCase
         $esperados = [
             \App\Http\Requests\ClienteRequest::class => ['nombre', 'apellidos', 'nif', 'direccion', 'cod_postal', 'telefono'],
             \App\Http\Requests\TrabajadorRequest::class => ['nombre', 'apellido', 'tipo', 'telefono', 'coste_hora_estandar'],
-            \App\Http\Requests\ProveedorRequest::class => ['nombre', 'correo', 'base', 'iva'],
-            \App\Http\Requests\EspecialistaRequest::class => ['nombre', 'correo', 'importe', 'notas'],
+            \App\Http\Requests\ProveedorRequest::class => ['nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento'],
+            \App\Http\Requests\EspecialistaRequest::class => ['nombre', 'tipo', 'referencia', 'comunicacion_parte', 'telefono', 'correo', 'notas'],
         ];
 
         foreach ($esperados as $clase => $campos) {

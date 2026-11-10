@@ -88,15 +88,13 @@ Columnas de los listados, en `<th>` y con estos textos:
 
     `filled` obliga a rellenarlo si se envía, pero deja que no se envíe: entonces la columna toma su valor por defecto (20).
 
-6. **Proveedores.** Esta vez desde cero, porque no hay controlador ni vistas de etapas anteriores: `ProveedoresController`, `routes/proveedores.php`, `ProveedorRequest` y las cuatro vistas. El listado y el detalle muestran el `total` con IVA (`121,00`). `ProveedorRequest`:
+6. **Proveedores.** Esta vez desde cero, porque no hay controlador ni vistas de etapas anteriores: `ProveedoresController`, `routes/proveedores.php`, `ProveedorRequest` y las cuatro vistas. La ficha solo guarda los datos del proveedor: lo que se le paga son sus partes ([6.11](./RA6_11_partes.md)). `ProveedorRequest`:
 
     | Campo | Reglas |
     |:--|:--|
     | `nombre` | `required`, `string`, `max:255` |
     | `direccion`, `telefono`, `tipo`, `referencia`, `documento`, `num_documento` | `nullable`, `string`, `max:255` |
     | `correo` | `nullable`, `email` |
-    | `base` | `required`, `numeric`, `min:0` |
-    | `iva` | `required`, `numeric`, `between:0,100` |
 
 7. **Especialistas.** Lo mismo que proveedores, con `EspecialistaRequest`:
 
@@ -106,7 +104,6 @@ Columnas de los listados, en `<th>` y con estos textos:
     | `tipo`, `referencia`, `comunicacion_parte`, `telefono` | `nullable`, `string`, `max:255` |
     | `notas` | `nullable`, `string` |
     | `correo` | `nullable`, `email` |
-    | `importe` | `nullable`, `numeric`, `min:0` |
 
 8. **El menú.** Comprueba que el menú lateral muestra ya las cuatro secciones, y que la sección en la que estás aparece marcada.
 

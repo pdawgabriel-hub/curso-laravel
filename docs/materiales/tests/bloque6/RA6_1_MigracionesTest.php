@@ -20,8 +20,8 @@ class RA6_1_MigracionesTest extends TestCase
             'clientes' => ['clientes', ['id', 'codigo', 'nombre', 'apellidos', 'nif', 'direccion', 'cod_postal', 'telefono', 'created_at', 'updated_at']],
             'secuencias' => ['secuencias', ['id', 'prefijo', 'siguiente']],
             'trabajadores' => ['trabajadores', ['id', 'codigo', 'tipo', 'nombre', 'apellido', 'telefono', 'coste_hora_estandar']],
-            'proveedores' => ['proveedores', ['id', 'codigo', 'nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento', 'base', 'iva']],
-            'especialistas' => ['especialistas', ['id', 'codigo', 'tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo', 'importe']],
+            'proveedores' => ['proveedores', ['id', 'codigo', 'nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento']],
+            'especialistas' => ['especialistas', ['id', 'codigo', 'tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo']],
             'obras' => ['obras', ['id', 'codigo', 'descripcion', 'cliente_id']],
             'presupuestos' => ['presupuestos', ['id', 'codigo', 'fecha', 'cliente_id', 'obra_id', 'nombre_cliente', 'nif', 'direccion', 'telefono', 'iva', 'estado']],
             'lineas_presupuesto' => ['lineas_presupuesto', ['id', 'presupuesto_id', 'descripcion', 'uds', 'precio']],
@@ -46,6 +46,16 @@ class RA6_1_MigracionesTest extends TestCase
         $this->assertTrue(Schema::hasTable($tabla), "Falta la tabla {$tabla}");
         foreach ($columnas as $columna) {
             $this->assertTrue(Schema::hasColumn($tabla, $columna), "Falta la columna {$tabla}.{$columna}");
+        }
+    }
+
+    public function test_las_fichas_de_proveedor_y_especialista_no_guardan_importes()
+    {
+        // Lo que se paga a un proveedor o a un especialista va en sus partes, no en su ficha
+        foreach (['proveedores' => ['base', 'iva', 'total', 'importe'], 'especialistas' => ['importe', 'base', 'iva']] as $tabla => $columnas) {
+            foreach ($columnas as $columna) {
+                $this->assertFalse(Schema::hasColumn($tabla, $columna), "{$tabla}.{$columna} sobra: los importes van en partes_proveedor y partes_especialista");
+            }
         }
     }
 

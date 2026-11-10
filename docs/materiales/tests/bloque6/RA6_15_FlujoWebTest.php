@@ -80,10 +80,10 @@ class RA6_15_FlujoWebTest extends TestCase
         $this->enviar('post', route('trabajadores.store'), ['nombre' => 'Ana', 'apellido' => 'Sanz', 'coste_hora_estandar' => 20], route('trabajadores.index'));
         $this->enviar('post', route('trabajadores.store'), ['nombre' => 'Luis', 'apellido' => 'Gil', 'coste_hora_estandar' => 20], route('trabajadores.index'));
 
-        $this->assertFormulario(route('proveedores.create'), route('proveedores.store'), ['nombre', 'correo', 'base', 'iva']);
-        $this->enviar('post', route('proveedores.store'), ['nombre' => 'Cerámicas Levante', 'base' => 100, 'iva' => 21], route('proveedores.index'));
+        $this->assertFormulario(route('proveedores.create'), route('proveedores.store'), ['nombre', 'correo', 'tipo']);
+        $this->enviar('post', route('proveedores.store'), ['nombre' => 'Cerámicas Levante', 'tipo' => 'Materiales'], route('proveedores.index'));
 
-        $this->assertFormulario(route('especialistas.create'), route('especialistas.store'), ['nombre', 'tipo', 'importe']);
+        $this->assertFormulario(route('especialistas.create'), route('especialistas.store'), ['nombre', 'tipo', 'telefono']);
         $this->enviar('post', route('especialistas.store'), ['nombre' => 'Marta Vidal', 'tipo' => 'Arquitecta'], route('especialistas.index'));
 
         return [Cliente::firstOrFail(), Trabajador::where('nombre', 'Ana')->firstOrFail(), Trabajador::where('nombre', 'Luis')->firstOrFail(), Proveedor::firstOrFail(), Especialista::firstOrFail()];

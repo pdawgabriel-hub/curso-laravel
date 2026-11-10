@@ -41,6 +41,7 @@ La especificación funcional de la aplicación es el informe técnico del módul
 | `mandante`, `gestion_licencia`, `pago_icio` (sí/no) | `boolean` | Tipo nativo |
 | `gastos.coste_moo_total` y `coste_moo` | `coste_moo` | Eran el mismo valor |
 | `proveedores.nombre` (opcional) | obligatorio | Un proveedor sin nombre no se puede identificar en los selectores |
+| `proveedores.base`, `iva` y `total`; `especialistas.importe` (tarifas de referencia) | Se quitan | La ficha solo guarda los datos del proveedor o del especialista. Cada factura o gasto suyo es un **parte** de la obra (`partes_proveedor`, `partes_especialista`), con su `importe` |
 | Administrativa y Jefe, con los mismos permisos | [Tabla de permisos](./contrato-api.md#permisos): obras, ingresos, gastos, aprobar y borrar son del jefe; cada uno gestiona sus partes y faltas | Permite practicar _Policies_ con roles y propietario |
 | Líneas de parte, de una en una | Además, alta por lote | Una cuadrilla suele hacer la misma jornada |
 
@@ -104,7 +105,6 @@ estado      = 'finalizado' si (total − ingresos ≤ 0 y ingresos > 0) · 'proc
 **Otros**
 
 ```
-proveedor.total    = base × (1 + iva / 100)
 falta.dias         = (fecha_fin − fecha_inicio) + 1
 ingreso.total_ingresos = Σ importe de todos los ingresos de su obra;  ingreso.debe = obra.total − total_ingresos
 ```
@@ -132,8 +132,8 @@ ingreso.total_ingresos = Σ importe de todos los ingresos de su obra;  ingreso.d
 |:--|:--|
 | Códigos únicos; NIF único (puede quedar vacío) | Clientes y todas las entidades con código |
 | Una ficha de Gastos por obra (`UNIQUE(obra_id)`) | Gastos |
-| `0 ≤ iva ≤ 100` | Presupuestos, Proveedores |
-| `coste_hora_estandar ≥ 0`, `base ≥ 0`, `importe ≥ 0` | Trabajadores, Proveedores, Especialistas |
+| `0 ≤ iva ≤ 100` | Presupuestos |
+| `coste_hora_estandar ≥ 0` | Trabajadores |
 | `importe > 0` | Partes de proveedor y especialista, Ingresos |
 | `0 ≤ horas ≤ 24` | Líneas de parte de trabajo |
 | `fecha_fin ≥ fecha_inicio` | Faltas; `fin_obra ≥ inicio_obra` en Gastos |

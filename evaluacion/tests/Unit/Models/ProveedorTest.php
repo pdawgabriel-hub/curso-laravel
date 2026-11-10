@@ -16,7 +16,7 @@ class ProveedorTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento', 'base', 'iva'], (new Proveedor())->getFillable());
+        $this->assertEquals(['nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento'], (new Proveedor())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()

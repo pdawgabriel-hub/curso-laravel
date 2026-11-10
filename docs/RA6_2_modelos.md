@@ -88,8 +88,8 @@ protected static function booted(): void
     -----|----|----|----
     `Cliente` | `clientes` | `CLI` | `nombre, apellidos, nif, direccion, cod_postal, telefono`
     `Trabajador` | `trabajadores` | `TRB` | `tipo, nombre, apellido, telefono, coste_hora_estandar`
-    `Proveedor` | `proveedores` | `PROV` | `nombre, direccion, telefono, correo, tipo, referencia, documento, num_documento, base, iva`
-    `Especialista` | `especialistas` | `ESP` | `tipo, referencia, comunicacion_parte, nombre, notas, telefono, correo, importe`
+    `Proveedor` | `proveedores` | `PROV` | `nombre, direccion, telefono, correo, tipo, referencia, documento, num_documento`
+    `Especialista` | `especialistas` | `ESP` | `tipo, referencia, comunicacion_parte, nombre, notas, telefono, correo`
     `Obra` | `obras` | `OBR` | `descripcion, cliente_id`
     `Presupuesto` | `presupuestos` | `PREP` | `fecha, cliente_id, obra_id, nombre_cliente, nif, direccion, telefono, iva, estado`
     `LineaPresupuesto` | `lineas_presupuesto` | — | `presupuesto_id, descripcion, uds, precio`
@@ -108,9 +108,9 @@ protected static function booted(): void
 
 3. **Conversiones, valores por defecto y _accessors_.**
 
-    - _Casts_: fechas con `'date:Y-m-d'` (`fecha`, `fecha_inicio`, `fecha_fin`, `inicio_obra`, `fin_obra`, `solicitud_obra`); importes, horas, tarifas, `base` e `iva` con `'float'`; `uds` con `'integer'`; `mandante`, `gestion_licencia` y `pago_icio` con `'boolean'`.
+    - _Casts_: fechas con `'date:Y-m-d'` (`fecha`, `fecha_inicio`, `fecha_fin`, `inicio_obra`, `fin_obra`, `solicitud_obra`); importes, horas, tarifas e `iva` con `'float'`; `uds` con `'integer'`; `mandante`, `gestion_licencia` y `pago_icio` con `'boolean'`.
     - `$attributes`: `Trabajador` con `coste_hora_estandar` 20; `Presupuesto` con `iva` 21 y `estado` `no_aprobado`; `ParteProveedor` y `ParteEspecialista` con `estado_pago` `pendiente`; `Falta` con `tipo` `vacaciones`.
-    - _Accessors_: `nombre_completo` en `Cliente` (nombre y apellidos) y en `Trabajador` (nombre y apellido); `total` en `Proveedor` (`base × (1 + iva / 100)`, redondeado a 2 decimales); `total_linea` en `LineaPresupuesto` (`uds × precio`); `coste_subtotal` en `LineaParteTrabajo` (`horas × coste_hora`); `dias` en `Falta` (inclusive: un solo día cuenta 1).
+    - _Accessors_: `nombre_completo` en `Cliente` (nombre y apellidos) y en `Trabajador` (nombre y apellido); `total_linea` en `LineaPresupuesto` (`uds × precio`); `coste_subtotal` en `LineaParteTrabajo` (`horas × coste_hora`); `dias` en `Falta` (inclusive: un solo día cuenta 1).
 
 4. **Lo que se rellena solo al crear.** Con el evento `creating` de cada modelo ([Eventos del modelo](#eventos-del-modelo)). Solo se rellena lo que no venga ya indicado:
 

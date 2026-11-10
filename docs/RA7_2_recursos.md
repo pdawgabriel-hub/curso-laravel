@@ -69,8 +69,7 @@ Pruébalo en `tinker`:
     `ClienteResource` | `nombre_completo`
     `TrabajadorResource` | `nombre_completo`, `horas_totales`, `total_euros` ([6.13](./RA6_13_calculos.md))
     `FaltaResource` | `dias`
-    `ProveedorResource` | `total`
-    `EspecialistaResource` | —
+    `ProveedorResource`, `EspecialistaResource` | —
     `PresupuestoResource` | `anio`, `base_imponible`, `cuota_iva`, `total`, `proveedor_ids` y `especialista_ids` (arrays de ids, con `pluck('id')`)
     `LineaPresupuestoResource` | `total_linea`
     `ObraResource` | los indicadores de `ResumenFinanciero` ([6.13](./RA6_13_calculos.md)) con los nombres del contrato (`total`, `horas_totales`, `coste_moo`, `estado_pago`, `gastos_totales`, `beneficio`, `pendiente_cobro`, `margen_proyectado`, `porcentaje_cobrado`, `salud`) y `gasto_id`

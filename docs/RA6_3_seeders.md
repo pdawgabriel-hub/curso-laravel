@@ -95,8 +95,6 @@ Por eso cada ejercicio indica los campos de su _factory_. No llevan _factory_ `S
     correo | `fake()->companyEmail()`
     tipo | `'Materiales'`
     referencia | `fake()->bothify('REF-####')`
-    base | `fake()->randomFloat(2, 100, 5000)`
-    iva | `21`
 
     Campo | Valor en `EspecialistaFactory`
     -----|----
@@ -105,7 +103,6 @@ Por eso cada ejercicio indica los campos de su _factory_. No llevan _factory_ `S
     nombre | `fake()->name()`
     telefono | `fake()->numerify('6########')`
     correo | `fake()->safeEmail()`
-    importe | `fake()->randomFloat(2, 100, 2000)`
 
 2. **Obras, presupuestos e ingresos.** Una clave ajena se rellena con la _factory_ del otro modelo (`Cliente::factory()`), que solo se ejecuta si no se pasa ese valor.
 

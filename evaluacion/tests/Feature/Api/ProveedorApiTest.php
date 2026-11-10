@@ -9,7 +9,7 @@ use Tests\Feature\FeatureTestCase;
 
 class ProveedorApiTest extends FeatureTestCase
 {
-    private const CAMPOS = ['id', 'codigo', 'nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento', 'base', 'iva', 'total', 'created_at', 'updated_at'];
+    private const CAMPOS = ['id', 'codigo', 'nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento', 'created_at', 'updated_at'];
 
     protected function setUp(): void
     {
@@ -24,29 +24,29 @@ class ProveedorApiTest extends FeatureTestCase
         $this->assertListado($this->getJson('/api/v1/proveedores'), self::CAMPOS, 2);
     }
 
-    public function test_crea_un_proveedor_y_calcula_el_total_con_iva()
+    public function test_crea_un_proveedor_sin_importes_en_la_ficha()
     {
-        $response = $this->postJson('/api/v1/proveedores', ['nombre' => 'Materiales Sur', 'base' => 100, 'iva' => 21]);
+        $response = $this->postJson('/api/v1/proveedores', ['nombre' => 'Materiales Sur', 'tipo' => 'Materiales']);
 
-        $response->assertCreated()->assertJsonPath('data.codigo', 'PROV0001');
-        $this->assertImporte(121, $response->json('data.total'));
+        $response->assertCreated()->assertJsonPath('data.codigo', 'PROV0001')->assertJsonPath('data.tipo', 'Materiales');
+        $response->assertJsonMissingPath('data.base')->assertJsonMissingPath('data.iva')->assertJsonMissingPath('data.total');
     }
 
-    public function test_valida_base_iva_y_correo()
+    public function test_valida_nombre_y_correo()
     {
-        $this->postJson('/api/v1/proveedores', ['nombre' => 'X', 'base' => -1, 'iva' => 150, 'correo' => 'no-es-correo'])
+        $this->postJson('/api/v1/proveedores', ['nombre' => 'X', 'correo' => 'no-es-correo'])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['base', 'iva', 'correo']);
+            ->assertJsonValidationErrors(['correo']);
         $this->postJson('/api/v1/proveedores', [])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['nombre', 'base', 'iva']);
+            ->assertJsonValidationErrors(['nombre']);
     }
 
     public function test_puede_actualizar_y_borrar_un_proveedor()
     {
         $p = Proveedor::factory()->create();
 
-        $this->putJson("/api/v1/proveedores/{$p->id}", ['nombre' => 'Nuevo', 'base' => 200, 'iva' => 10])
+        $this->putJson("/api/v1/proveedores/{$p->id}", ['nombre' => 'Nuevo'])
             ->assertOk()->assertJsonPath('data.nombre', 'Nuevo');
         $this->deleteJson("/api/v1/proveedores/{$p->id}")->assertNoContent();
         $this->assertDatabaseMissing('proveedores', ['id' => $p->id]);
@@ -85,7 +85,7 @@ class ProveedorApiTest extends FeatureTestCase
         $antes = \DB::table('proveedores')->count();
         $this->actuarComo(null);
 
-        $this->postJson("/api/v1/proveedores", ['nombre' => 'A', 'base' => 1, 'iva' => 21])->assertForbidden();
+        $this->postJson("/api/v1/proveedores", ['nombre' => 'A'])->assertForbidden();
 
         $this->assertDatabaseCount('proveedores', $antes);
     }
@@ -95,7 +95,7 @@ class ProveedorApiTest extends FeatureTestCase
         $x = Proveedor::factory()->create(['nombre' => 'Original']);
         $this->actuarComo(null);
 
-        $this->putJson("/api/v1/proveedores/{$x->id}", ['nombre' => 'Cambiado', 'base' => 1, 'iva' => 21])->assertForbidden();
+        $this->putJson("/api/v1/proveedores/{$x->id}", ['nombre' => 'Cambiado'])->assertForbidden();
 
         $this->assertDatabaseHas('proveedores', ['id' => $x->id, 'nombre' => 'Original']);
     }

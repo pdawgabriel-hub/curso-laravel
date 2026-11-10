@@ -31,7 +31,7 @@ class AutorizacionApiTest extends FeatureTestCase
         return [
             'clientes' => [Cliente::class, 'clientes', ['nombre' => 'A', 'direccion' => 'B', 'telefono' => 'C']],
             'trabajadores' => [Trabajador::class, 'trabajadores', ['nombre' => 'A', 'apellido' => 'B']],
-            'proveedores' => [Proveedor::class, 'proveedores', ['nombre' => 'A', 'base' => 1, 'iva' => 21]],
+            'proveedores' => [Proveedor::class, 'proveedores', ['nombre' => 'A']],
             'especialistas' => [Especialista::class, 'especialistas', ['nombre' => 'A']],
         ];
     }

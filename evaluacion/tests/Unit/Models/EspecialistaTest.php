@@ -16,7 +16,7 @@ class EspecialistaTest extends TestCase
 
     public function test_tiene_los_atributos_asignables_esperados()
     {
-        $this->assertEquals(['tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo', 'importe'], (new Especialista())->getFillable());
+        $this->assertEquals(['tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo'], (new Especialista())->getFillable());
     }
 
     public function test_usa_la_tabla_correcta()

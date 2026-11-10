@@ -115,16 +115,14 @@ Respuesta: campos + `id, trabajador_id, user_id, dias` (inclusive: un día = 1).
 | `nombre` | obligatorio |
 | `direccion`, `telefono`, `tipo`, `referencia`, `documento`, `num_documento` | opcionales |
 | `correo` | opcional, email |
-| `base` | obligatorio, ≥ 0 |
-| `iva` | obligatorio, entre 0 y 100 |
 
-Respuesta: campos + `id, codigo, total` (`base × (1 + iva/100)`). Borrar con partes → **409**. GET `/proveedores/{proveedor}/obras`.
+Respuesta: campos + `id, codigo, created_at, updated_at`. La ficha no guarda importes: cada factura o gasto del proveedor es un [parte de proveedor](#partes-de-proveedor-y-de-especialista). Borrar con partes → **409**. GET `/proveedores/{proveedor}/obras`.
 
 ### Especialistas
 
 `apiResource('especialistas')` · buscables: `codigo`, `nombre`, `tipo`
 
-Campos: `tipo, referencia, comunicacion_parte, nombre` (obligatorio)`, notas, telefono, correo` (email)`, importe` (opcional, ≥ 0).
+Campos: `tipo, referencia, comunicacion_parte, nombre` (obligatorio)`, notas, telefono, correo` (email). Como en proveedores, sus importes van en sus [partes](#partes-de-proveedor-y-de-especialista).
 Borrar con partes → **409**. GET `/especialistas/{especialista}/obras`.
 
 ## Presupuestos
@@ -292,8 +290,8 @@ Los tests de modelo comprueban `$fillable` **en este orden exacto**, la tabla y 
 |:--|:--|:--|
 | `Cliente` | `nombre, apellidos, nif, direccion, cod_postal, telefono` | `presupuestos`, `obras`, `ingresos` (HasMany), `observaciones` (MorphMany) |
 | `Trabajador` | `tipo, nombre, apellido, telefono, coste_hora_estandar` | `lineasTrabajo`, `faltas` (HasMany), `observaciones`, `archivos` (MorphMany) |
-| `Proveedor` | `nombre, direccion, telefono, correo, tipo, referencia, documento, num_documento, base, iva` | `partes` (HasMany), `presupuestos` (BelongsToMany), `observaciones`, `archivos` |
-| `Especialista` | `tipo, referencia, comunicacion_parte, nombre, notas, telefono, correo, importe` | `partes`, `presupuestos`, `observaciones`, `archivos` |
+| `Proveedor` | `nombre, direccion, telefono, correo, tipo, referencia, documento, num_documento` | `partes` (HasMany), `presupuestos` (BelongsToMany), `observaciones`, `archivos` |
+| `Especialista` | `tipo, referencia, comunicacion_parte, nombre, notas, telefono, correo` | `partes`, `presupuestos`, `observaciones`, `archivos` |
 | `Obra` | `descripcion, cliente_id` | `cliente` (BelongsTo), `gasto` (HasOne), `presupuestos`, `ingresos`, `partesTrabajo`, `partesProveedor`, `partesEspecialista` (HasMany), `observaciones`, `incidencias`, `archivos` |
 | `Presupuesto` | `fecha, cliente_id, obra_id, nombre_cliente, nif, direccion, telefono, iva, estado` | `cliente`, `obra`, `lineas`, `proveedores`, `especialistas`, `observaciones`, `incidencias`, `archivos` |
 | `LineaPresupuesto` | `presupuesto_id, descripcion, uds, precio` | `presupuesto` |

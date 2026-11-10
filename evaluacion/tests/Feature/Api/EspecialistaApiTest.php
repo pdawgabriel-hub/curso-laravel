@@ -9,7 +9,7 @@ use Tests\Feature\FeatureTestCase;
 
 class EspecialistaApiTest extends FeatureTestCase
 {
-    private const CAMPOS = ['id', 'codigo', 'tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo', 'importe', 'created_at', 'updated_at'];
+    private const CAMPOS = ['id', 'codigo', 'tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo', 'created_at', 'updated_at'];
 
     protected function setUp(): void
     {
@@ -26,17 +26,20 @@ class EspecialistaApiTest extends FeatureTestCase
 
     public function test_crea_un_especialista()
     {
-        $this->postJson('/api/v1/especialistas', ['nombre' => 'Marta Gil', 'tipo' => 'Arquitecto', 'importe' => 300])
+        $this->postJson('/api/v1/especialistas', ['nombre' => 'Marta Gil', 'tipo' => 'Arquitecto'])
             ->assertCreated()
             ->assertJsonStructure(['data' => self::CAMPOS])
             ->assertJsonPath('data.codigo', 'ESP0001');
     }
 
-    public function test_valida_nombre_e_importe_no_negativo()
+    public function test_valida_nombre_y_correo_y_no_guarda_importes()
     {
-        $this->postJson('/api/v1/especialistas', ['importe' => -1])
+        $this->postJson('/api/v1/especialistas', ['correo' => 'no-es-correo'])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['nombre', 'importe']);
+            ->assertJsonValidationErrors(['nombre', 'correo']);
+        $this->postJson('/api/v1/especialistas', ['nombre' => 'Marta', 'importe' => 300])
+            ->assertCreated()
+            ->assertJsonMissingPath('data.importe');
     }
 
     public function test_busca_por_tipo()

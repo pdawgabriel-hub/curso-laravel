@@ -114,8 +114,6 @@ Los tests usan SQLite en memoria (`phpunit.xml`) y la aplicación MariaDB: las m
     referencia | string | sí
     documento | string | sí
     num_documento | string | sí
-    base | decimal(10,2) | no
-    iva | decimal(5,2) | no
 
     ```bash
     php artisan make:migration create_especialistas_table --create=especialistas
@@ -131,7 +129,6 @@ Los tests usan SQLite en memoria (`phpunit.xml`) y la aplicación MariaDB: las m
     notas | text | sí
     telefono | string(20) | sí
     correo | string | sí
-    importe | decimal(10,2) | sí
 
 4. **Obras y presupuestos.**
 
@@ -341,7 +338,7 @@ cp /var/www/curso-laravel/docs/materiales/tests/bloque6/RA6_1_MigracionesTest.ph
 php artisan test --filter=RA6_1
 ```
 
-Resultado esperado: `Tests: 25 passed`.
+Resultado esperado: `Tests: 26 passed`.
 
 > **Nota.** Los tests de [5.x](./RA5_8_proyecto.md) se retiran aquí porque, a medida que avance el bloque, los arrays y el repositorio desaparecen.
 

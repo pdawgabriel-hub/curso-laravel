@@ -34,8 +34,8 @@ class RA6_2_ModelosTest extends TestCase
         return [
             'Cliente' => [Cliente::class, 'clientes', ['nombre', 'apellidos', 'nif', 'direccion', 'cod_postal', 'telefono']],
             'Trabajador' => [Trabajador::class, 'trabajadores', ['tipo', 'nombre', 'apellido', 'telefono', 'coste_hora_estandar']],
-            'Proveedor' => [Proveedor::class, 'proveedores', ['nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento', 'base', 'iva']],
-            'Especialista' => [Especialista::class, 'especialistas', ['tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo', 'importe']],
+            'Proveedor' => [Proveedor::class, 'proveedores', ['nombre', 'direccion', 'telefono', 'correo', 'tipo', 'referencia', 'documento', 'num_documento']],
+            'Especialista' => [Especialista::class, 'especialistas', ['tipo', 'referencia', 'comunicacion_parte', 'nombre', 'notas', 'telefono', 'correo']],
             'Obra' => [Obra::class, 'obras', ['descripcion', 'cliente_id']],
             'Presupuesto' => [Presupuesto::class, 'presupuestos', ['fecha', 'cliente_id', 'obra_id', 'nombre_cliente', 'nif', 'direccion', 'telefono', 'iva', 'estado']],
             'LineaPresupuesto' => [LineaPresupuesto::class, 'lineas_presupuesto', ['presupuesto_id', 'descripcion', 'uds', 'precio']],
@@ -71,7 +71,7 @@ class RA6_2_ModelosTest extends TestCase
         $this->assertSame('CLI0001', $this->cliente()->codigo);
         $this->assertSame('CLI0002', $this->cliente(['nif' => null])->codigo);
         $this->assertSame('TRB0001', Trabajador::create(['nombre' => 'Luis', 'apellido' => 'Gil'])->codigo);
-        $this->assertSame('PROV0001', Proveedor::create(['nombre' => 'Sur', 'base' => 100, 'iva' => 21])->codigo);
+        $this->assertSame('PROV0001', Proveedor::create(['nombre' => 'Sur'])->codigo);
         $this->assertSame('ESP0001', Especialista::create(['nombre' => 'Marta'])->codigo);
         $this->assertSame('OBR0001', Obra::create(['descripcion' => 'Baño'])->codigo);
         $this->assertSame('GAS0001', Gasto::create(['obra_id' => Obra::firstOrFail()->id])->codigo);
@@ -92,7 +92,6 @@ class RA6_2_ModelosTest extends TestCase
         $this->assertSame('Luis Gil', $t->nombre_completo);
         $this->assertSame('Juan Pérez', $this->cliente()->nombre_completo);
         $this->assertSame('Hostelería Sol', (new Cliente(['nombre' => 'Hostelería Sol']))->nombre_completo);
-        $this->assertEqualsWithDelta(121, Proveedor::create(['nombre' => 'Sur', 'base' => 100, 'iva' => 21])->total, 0.001);
         $this->assertEqualsWithDelta(102, (new LineaPresupuesto(['uds' => 4, 'precio' => 25.5]))->total_linea, 0.001);
         $this->assertEqualsWithDelta(160, (new LineaParteTrabajo(['horas' => 8, 'coste_hora' => 20]))->coste_subtotal, 0.001);
         $this->assertSame(5, (new Falta(['fecha_inicio' => '2026-08-03', 'fecha_fin' => '2026-08-07']))->dias);
